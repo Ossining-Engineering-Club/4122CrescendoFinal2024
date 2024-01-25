@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
@@ -33,6 +34,8 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
+
     m_aprilTagLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
     // Configure the button bindings
