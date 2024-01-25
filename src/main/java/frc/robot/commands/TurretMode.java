@@ -73,9 +73,9 @@ public class TurretMode extends Command {
             double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
             SmartDashboard.putNumber("rotSpeed", rotSpeed);
             
-            m_drive.Drive(0.6*xSpeed, 0.6*ySpeed, rotSpeed, true);
+            m_drive.Drive(0.4*xSpeed, 0.4*ySpeed, rotSpeed, true);
         }else{
-           m_drive.Drive(0.6*xSpeed, 0.6*ySpeed, 0.6*rotation, true);
+           m_drive.Drive(0.4*xSpeed, 0.4*ySpeed, 0.4*rotation, true);
         }
 
         //SmartDashboard.putNumber("Vision Yaw PID Setpoint: ", );
