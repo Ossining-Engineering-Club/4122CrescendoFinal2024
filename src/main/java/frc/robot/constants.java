@@ -94,7 +94,7 @@ public final class constants {
     public static final double k_gyroOffset = -k_PI;
 
     public static final double kMaxAngularSpeed = 9.89;
-    public static final double kMaxAngularAcceleration = 4.5; // change to 9.89 after testing
+    public static final double kMaxAngularAcceleration = 9.89; // change to 9.89 after testing
 
     //Auto things
     //anglepid
