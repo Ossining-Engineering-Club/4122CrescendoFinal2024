@@ -45,6 +45,8 @@ public class TurretMode extends Command {
         m_GoalY = goaly;
 
         addRequirements(m_drive);
+
+        m_rotPIDController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
