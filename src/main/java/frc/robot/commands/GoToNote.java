@@ -43,7 +43,7 @@ public class GoToNote extends Command {
         m_transPIDController.reset(Math.sqrt(m_limelight.getTA()/100));
         m_rotPIDController.reset(-m_limelight.getTX()/180*Math.PI);
         m_transPIDController.setGoal(1);
-        m_rotPIDController.setGoal(m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI);
+        m_rotPIDController.setGoal(0);
         prevTX = -m_limelight.getTX()/180*Math.PI;
         prevTransAngle = m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI;
     }
@@ -68,7 +68,7 @@ public class GoToNote extends Command {
             double ySpeed = overallSpeed*Math.sin(transAngle);
 
             double rotSpeed = MathUtil.clamp(
-                -m_rotPIDController.calculate(-m_drive.getAngle().getRadians())-m_rotPIDController.getSetpoint().velocity,
+                -m_rotPIDController.calculate(tx)-m_rotPIDController.getSetpoint().velocity,
                 -constants.kMaxAngularSpeed,
                 constants.kMaxAngularSpeed);
 

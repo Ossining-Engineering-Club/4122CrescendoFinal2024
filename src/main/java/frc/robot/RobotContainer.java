@@ -78,7 +78,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("Pos1 - P - A - B - C");
+        return new PathPlannerAuto("note detection auto");
     }
 }
 

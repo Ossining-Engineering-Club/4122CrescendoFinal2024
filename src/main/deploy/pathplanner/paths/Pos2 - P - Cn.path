@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 4.441,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 0.4,
     "maxAngularVelocity": 566.66,
     "maxAngularAcceleration": 566.66
   },
@@ -45,5 +45,5 @@
   "reversed": false,
   "folder": "Note Detection",
   "previewStartingState": null,
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

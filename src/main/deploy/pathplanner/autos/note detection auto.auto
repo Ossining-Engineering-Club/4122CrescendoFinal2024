@@ -18,9 +18,15 @@
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GoToNote"
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cn - Bn"
           }
         },
         {
@@ -32,7 +38,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cn - Bn"
+            "pathName": "Bn - An"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "An - Pos1"
           }
         }
       ]
