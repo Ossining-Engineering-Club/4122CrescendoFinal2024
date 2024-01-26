@@ -28,6 +28,9 @@ public class GoToNote extends Command {
         new TrapezoidProfile.Constraints(constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration)
     );
 
+    private double prevTX;
+    private double prevTransAngle;
+
     public GoToNote(Drivetrain drive, Limelight limelight) {
         m_drive = drive;
         m_limelight = limelight;
@@ -40,7 +43,9 @@ public class GoToNote extends Command {
         m_transPIDController.reset(Math.sqrt(m_limelight.getTA()/100));
         m_rotPIDController.reset(-m_limelight.getTX()/180*Math.PI);
         m_transPIDController.setGoal(1);
-        m_rotPIDController.setGoal(0);
+        m_rotPIDController.setGoal(m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI);
+        prevTX = -m_limelight.getTX()/180*Math.PI;
+        prevTransAngle = m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI;
     }
 
     @Override
@@ -51,28 +56,19 @@ public class GoToNote extends Command {
 
             if (Math.abs(tx) < constants.kVisionXToleranceRadians) tx = 0;
 
-            // not used, used dual crosshair instead
-            // adding limelight offsets
-            /*double distFromLL = findDistance(m_limelight.getScreenspaceX());
-            double xDist = distFromLL*Math.cos(tx);
-            double yDist = distFromLL*Math.sin(tx);
-            SmartDashboard.putNumber("LL rel xDist", xDist);
-            SmartDashboard.putNumber("LL rel yDist", yDist);
-            xDist += Constants.kNoteLimelightForwardOffset;
-            yDist += Constants.kNoteLimelightRightOffset;
-            SmartDashboard.putNumber("distFromLL", distFromLL);
-            SmartDashboard.putNumber("xDist", xDist);
-            SmartDashboard.putNumber("yDist", yDist);
-            double robotRelativeTX = Math.atan2(yDist, xDist);
-            SmartDashboard.putNumber("robotRelativeTX", robotRelativeTX);*/
-
             double overallSpeed = 1.0/*m_transPIDController.calculate(Math.sqrt(ta))*/;
-            double transAngle = m_drive.getAngle().getRadians()+tx;//robotRelativeTX;
+            double transAngle = m_drive.getAngle().getRadians()+tx;
+            // if the limelight measurement is old, use the previous transAngle
+            if (Math.abs(tx-prevTX) < 0.00001) transAngle = prevTransAngle;
+            else {
+                prevTX = tx;
+                prevTransAngle = transAngle;
+            }
             double xSpeed = overallSpeed*Math.cos(transAngle);
             double ySpeed = overallSpeed*Math.sin(transAngle);
 
             double rotSpeed = MathUtil.clamp(
-                -m_rotPIDController.calculate(tx/*robotRelativeTX*/)-m_rotPIDController.getSetpoint().velocity,
+                -m_rotPIDController.calculate(-m_drive.getAngle().getRadians())-m_rotPIDController.getSetpoint().velocity,
                 -constants.kMaxAngularSpeed,
                 constants.kMaxAngularSpeed);
 
@@ -89,8 +85,9 @@ public class GoToNote extends Command {
         //SmartDashboard.putNumber("vision x pid setpoint", m_xPIDController.getSetpoint().position);
     }
 
-    public double findDistance(double screenspaceX) {
-        return 0.0;
+    @Override
+    public boolean isFinished() {
+        return !m_limelight.hasTarget();
     }
 
 }

@@ -14,13 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "P - Cn"
+            "pathName": "Pos2 - P - Cn"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "GoToNote"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cn - Bn"
           }
         }
       ]

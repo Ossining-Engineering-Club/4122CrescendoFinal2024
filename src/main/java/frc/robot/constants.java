@@ -31,7 +31,7 @@ public final class constants {
     public static final double k_KRI = 0.0;
     public static final double k_KRD = 0.00025;
 
-    public static final double kMaxSpeed = 2.00;//4.441; // also remember to change in pathplanner
+    public static final double kMaxSpeed = 4.441; // also remember to change in pathplanner
     public static final double kMaxAcceleration = 4.441;
     
     public static final double k_offsetadj = 1.0;
