@@ -16,6 +16,14 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Rotation2d;
 
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -36,7 +44,6 @@ public class Drivetrain extends SubsystemBase {
   private SwerveMod LFMod = new SwerveMod(3,4,10,false, constants.k_LFZERO,true,true);
   //Robot Dimensions 27,305 by 29,845 (in inches)
   //Positions defined from a top down view
-  private final Limelight m_limelight = new Limelight("limelight");
   public Pose2d tempSetpoint;
   private Translation2d frontLeftLocation = new Translation2d(0.29845, 0.27305);
   private Translation2d frontRightLocation = new Translation2d(0.29845, -0.27305);
@@ -168,33 +175,7 @@ public class Drivetrain extends SubsystemBase {
       RFMod.ResetEncoder();
       RBMod.ResetEncoder();
   }
-  public double getVisionX() {
-    return m_limelight.getBotX();
-  }
 
-public double getVisionY() {
-    return m_limelight.getBotY();
-}
-
-public double getVisionZ() {
-    return m_limelight.getBotZ();
-}
-
-public double getVisionYaw() {
-    return m_limelight.getBotYaw();
-}
-
-public double getVisionPitch() {
-    return m_limelight.getBotPitch();
-}
-
-public double getVisionRoll() {
-    return m_limelight.getBotRoll();
-}
-
-public boolean visionHasTarget() {
-    return m_limelight.hasTarget();
-}
 public SwerveModulePosition[] getModulePositions(){
   return new SwerveModulePosition[] {
                                   LFMod.GetPosition(),
@@ -231,6 +212,7 @@ public void resetPose(Pose2d pose) {
     SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
     SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
     
+    Logger.recordOutput("MySwerveModuleStates", getModuleStates());
   }
 
   @Override
