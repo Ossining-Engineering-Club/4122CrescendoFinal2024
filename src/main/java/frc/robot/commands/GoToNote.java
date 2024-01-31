@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,8 @@ public class GoToNote extends Command {
     private double prevTX;
     private double prevTransAngle;
 
+    private final LinearFilter m_rotFilter = LinearFilter.movingAverage(50);
+
     public GoToNote(Drivetrain drive, Limelight limelight) {
         m_drive = drive;
         m_limelight = limelight;
@@ -41,15 +44,17 @@ public class GoToNote extends Command {
     @Override
     public void initialize() {
         m_transPIDController.reset(Math.sqrt(m_limelight.getTA()/100));
-        m_rotPIDController.reset(-m_limelight.getTX()/180*Math.PI);
+        m_rotPIDController.reset(m_drive.getAngle().getRadians());
         m_transPIDController.setGoal(1);
-        m_rotPIDController.setGoal(0);
+        m_rotFilter.reset();
+        for (int i = 0; i < 50; i++) m_rotFilter.calculate(m_drive.getAngle().getRadians());
         prevTX = -m_limelight.getTX()/180*Math.PI;
         prevTransAngle = m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI;
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putNumber("GoToNote gyro angle", m_drive.getAngle().getRadians());
         if (m_limelight.hasTarget()) {
             double tx = -m_limelight.getTX()/180*Math.PI;
             double ta = m_limelight.getTA()/100;
@@ -64,17 +69,24 @@ public class GoToNote extends Command {
                 prevTX = tx;
                 prevTransAngle = transAngle;
             }
+
             double xSpeed = overallSpeed*Math.cos(transAngle);
             double ySpeed = overallSpeed*Math.sin(transAngle);
 
+            m_rotPIDController.setGoal(m_rotFilter.calculate(transAngle));
+            SmartDashboard.putNumber("GoToNote rot setpoint", m_rotPIDController.getSetpoint().position);
+
             double rotSpeed = MathUtil.clamp(
-                -m_rotPIDController.calculate(tx)-m_rotPIDController.getSetpoint().velocity,
+                m_rotPIDController.calculate(m_drive.getAngle().getRadians())+m_rotPIDController.getSetpoint().velocity,
                 -constants.kMaxAngularSpeed,
                 constants.kMaxAngularSpeed);
 
             SmartDashboard.putNumber("tx", tx);
             //SmartDashboard.putNumber("sqrt(ta)", Math.sqrt(ta));
             SmartDashboard.putNumber("transAngle", transAngle);
+            SmartDashboard.putNumber("xSpeed", xSpeed);
+            SmartDashboard.putNumber("ySpeed", ySpeed);
+            SmartDashboard.putNumber("rotSpeed", rotSpeed);
             
             m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
         }
@@ -88,6 +100,10 @@ public class GoToNote extends Command {
     @Override
     public boolean isFinished() {
         return !m_limelight.hasTarget();
+    }
+
+    public double wrapAngle(double angle) {
+        return (angle+Math.PI)%(2*Math.PI)-Math.PI;
     }
 
 }

@@ -212,7 +212,8 @@ public void resetPose(Pose2d pose) {
     SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
     SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
     
-    Logger.recordOutput("MySwerveModuleStates", getModuleStates());
+    Logger.recordOutput("SwerveModuleStates", getModuleStates());
+    Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
   }
 
   @Override
