@@ -137,6 +137,7 @@ public final class constants {
     public static final double kIntakeGearing = 1.0;
     public static final double kIntakePivotGearing = 1.0;
     public static final double kIntakeMaxSpeed = 1.0;
+    public static final double kIntakeDefaultSpeed = 1000.0; // RPM
     public static final double kIntakePivotMaxVelocity = 1.0;
     public static final double kIntakePivotMaxAcceleration = 1.0;
     public static final double[] kIntakePivotPIDGains = {1.0, 0.0, 0.0};

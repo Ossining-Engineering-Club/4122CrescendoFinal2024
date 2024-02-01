@@ -10,10 +10,12 @@ import edu.wpi.first.math.MathUtil;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Intake;
 
 public class GoToNote extends Command {
     private final Drivetrain m_drive;
     private final Limelight m_limelight;
+    private final Intake m_intake;
 
     private final ProfiledPIDController m_transPIDController = new ProfiledPIDController(
         constants.kVisionTransPIDGains[0],
@@ -34,18 +36,20 @@ public class GoToNote extends Command {
 
     private final LinearFilter m_rotFilter = LinearFilter.movingAverage(50);
 
-    public GoToNote(Drivetrain drive, Limelight limelight) {
+    public GoToNote(Drivetrain drive, Limelight limelight, Intake intake) {
         m_drive = drive;
         m_limelight = limelight;
+        m_intake = intake;
 
-        addRequirements(m_drive);
+        addRequirements(m_drive, m_intake);
     }
 
     @Override
     public void initialize() {
-        m_transPIDController.reset(Math.sqrt(m_limelight.getTA()/100));
+        //m_transPIDController.reset(Math.sqrt(m_limelight.getTA()/100));
         m_rotPIDController.reset(m_drive.getAngle().getRadians());
-        m_transPIDController.setGoal(1);
+        //m_transPIDController.setGoal(1);
+        m_intake.start();
         m_rotFilter.reset();
         for (int i = 0; i < 50; i++) m_rotFilter.calculate(m_drive.getAngle().getRadians());
         prevTX = -m_limelight.getTX()/180*Math.PI;
@@ -99,7 +103,7 @@ public class GoToNote extends Command {
 
     @Override
     public boolean isFinished() {
-        return !m_limelight.hasTarget();
+        return m_intake.isIntaken();
     }
 
     public double wrapAngle(double angle) {

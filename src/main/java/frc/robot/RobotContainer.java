@@ -32,11 +32,11 @@ public class RobotContainer {
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   CommandXboxController m_driverController = new CommandXboxController(0);
 
-  private final Breakbeam testBreakbeam = new Breakbeam(0);
+  private final Breakbeam testBreakbeam = new Breakbeam(3);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
+    //NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
 
     m_aprilTagLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
@@ -70,7 +70,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
-    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
+    //m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
     m_driverController.x().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
         
   }

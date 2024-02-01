@@ -66,6 +66,18 @@ public class Intake extends SubsystemBase {
         m_pivotPID.setGoal(positionRadians);
     }
 
+    public void start() {
+        setVelocity(constants.kIntakeDefaultSpeed);
+    }
+
+    public void stop() {
+        setVelocity(0);
+    }
+
+    public void reverse() {
+        setVelocity(-constants.kIntakeDefaultSpeed);
+    }
+
     public boolean isIntaken() {
         return m_breakbeam.isTripped();
     }
