@@ -18,8 +18,10 @@ public class IntermediateMoveNote extends Command {
     public void initialize() {
 
     }
+
     @Override
     public void execute() {
+        if (true);
     }
 
     @Override 

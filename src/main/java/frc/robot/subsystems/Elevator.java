@@ -22,17 +22,34 @@ public class Elevator extends SubsystemBase {
     private final RelativeEncoder m_dumperReleaseEnc;
 
     public Elevator(int nElevatorID, int ElevatorRaiseID, int dumperReleaseMotorID){
-
+        //creating motors and creating/reseting encoders
         m_noteElevatorMotor = new CANSparkMax(nElevatorID, MotorType.kBrushless);
         m_noteElevatorEnc = m_noteElevatorMotor.getEncoder();
+        m_noteElevatorEnc.setPosition(0.0);
 
         m_dumperReleaseMotor = new CANSparkMax(dumperReleaseMotorID, MotorType.kBrushless);
         m_dumperReleaseEnc = m_dumperReleaseMotor.getEncoder();
+        m_dumperReleaseEnc.setPosition(0.0);
 
         m_elevatorRaisingMotor = new CANSparkMax(ElevatorRaiseID, MotorType.kBrushless);
         m_elevatorRaisingEnc = m_elevatorRaisingMotor.getEncoder();
+        m_elevatorRaisingEnc.setPosition(0.0);
     }  
 
+    //Resetting encoders
+    public void resetElevatorEncoder(){
+        m_elevatorRaisingEnc.setPosition(0.0);
+    }
+
+    public void resetNElevatorEncoder(){
+        m_noteElevatorEnc.setPosition(0.0);
+    }
+
+    public void resetDumperEncoders(){
+        m_dumperReleaseEnc.setPosition(0.0);
+    }
+    
+    //Setting motor speeds
     public void ElevatorMove(double elevatorMotorSpeed){
         m_elevatorRaisingMotor.set(elevatorMotorSpeed);
     }
@@ -43,6 +60,19 @@ public class Elevator extends SubsystemBase {
 
     public void DumperRelease(double dumperReleaseMotorSpeed){
         m_dumperReleaseMotor.set(dumperReleaseMotorSpeed);
+    }
+
+    //Getting encoder values
+    public double getElevatorEncoder(){
+        return m_elevatorRaisingEnc.getPosition();
+    }
+
+    public double getNElevatorEncoder(){
+        return m_noteElevatorEnc.getPosition();
+    }
+
+    public double getDumperEncoder(){
+        return m_dumperReleaseEnc.getPosition();
     }
 
     @Override

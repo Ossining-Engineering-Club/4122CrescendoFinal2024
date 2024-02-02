@@ -154,10 +154,24 @@ public final class constants {
     //Elevator
     public static final double kElevatorGearing = 1.0;
     public static final double knElevatorGearing = 1.0;
-    public static final double kDumperPivotGearing = 1.0;
-    public static final double kDumperPivotMaxVelocity = 1.0;
-    public static final double kDumperPivotMaxAcceleration = 1.0;
-    public static final double[] kDumperPivotPIDGains = {1.0, 0.0, 0.0};
+    public static final double[] kElevatorPIDGains = {1.0, 0.0, 0.0};
+    public static final double kElevatorMaxSpeed = 1.0;
+    public static final double kElevatorMaxAcceleration = 1.0;
+
+    // Enums
+    public static enum State {
+        CLEAR,
+        INTAKE,
+        ELEVATOR,
+        SHOOTER,
+        SYSTEM
+    }
+        
+    public static enum Direction {
+        FORWARD,
+        REVERSE,
+        STOPPED
+    }
 
 
 }

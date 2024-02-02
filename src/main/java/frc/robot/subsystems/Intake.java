@@ -11,6 +11,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 
 import frc.robot.constants;
 import frc.robot.subsystems.Breakbeam;
+import frc.robot.constants.Direction;
 
 public class Intake extends SubsystemBase {
     private final CANSparkMax m_intakeMotor;
@@ -28,6 +29,8 @@ public class Intake extends SubsystemBase {
         );
 
     private final Breakbeam m_breakbeam;
+
+    private Direction m_direction = Direction.STOPPED;
 
     public Intake(int intakeMotorID, int pivotMotorID, int breakbeamReceiverPin) {
         m_intakeMotor = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
@@ -68,17 +71,25 @@ public class Intake extends SubsystemBase {
 
     public void start() {
         setVelocity(constants.kIntakeDefaultSpeed);
+        m_direction = Direction.FORWARD;
     }
 
     public void stop() {
         setVelocity(0);
+        m_direction = Direction.STOPPED;
     }
 
     public void reverse() {
         setVelocity(-constants.kIntakeDefaultSpeed);
+        m_direction = Direction.REVERSE;
     }
 
-    public boolean isIntaken() {
+    public boolean BBisTripped() {
         return m_breakbeam.isTripped();
     }
+
+    public Direction getDirection() {
+        return m_direction;
+    }
+
 }

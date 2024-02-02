@@ -19,6 +19,8 @@ public class Breakbeam extends SubsystemBase {
         return m_receiver.getVoltage() > 3.0;
     }
 
+    
+
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("breakbeam is tripped?", isTripped());

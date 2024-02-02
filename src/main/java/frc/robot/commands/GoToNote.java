@@ -103,7 +103,7 @@ public class GoToNote extends Command {
 
     @Override
     public boolean isFinished() {
-        return m_intake.isIntaken();
+        return m_intake.BBisTripped();
     }
 
     public double wrapAngle(double angle) {

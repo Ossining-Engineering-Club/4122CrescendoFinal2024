@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
+import frc.robot.constants.Direction;
+
  
 import frc.robot.subsystems.Breakbeam;
 
@@ -24,18 +26,34 @@ public class Intermediate extends SubsystemBase {
     private Breakbeam fowardBreakbeam;
     private Breakbeam directionalBreakbeam;
 
-    private final int MotorPower = 100;
+    private final int MotorPower = 1;
 
     private double LEDVoltage;
 
     private RelativeEncoder e_Forward; // encoder for neo's
     private RelativeEncoder e_Directional; // encoder for neo's
-    
+
+    /*private enum Direction{
+        FORWARDELEVATOR,
+        BACKWARDEL,
+        ZERO
+    }*/
+    //private enum directionr;
+
+    /*private enum Direction {
+        FORWARD,
+        REVERSE,
+        STOPPED
+    }*/
+
+    private Direction shooterDirection;
+    private Direction elevatorDirection;
 
     public Intermediate(int intermediateForwardID, int intermediateDirectionID, int ledPinForward, int receiverPinFoward, int ledPort) {
         m_ForwardMotor = new CANSparkMax(intermediateForwardID, MotorType.kBrushless);
         m_DirectionMotor = new CANSparkMax(intermediateDirectionID, MotorType.kBrushless);
-
+        shooterDirection = Direction.STOPPED;
+        elevatorDirection = Direction.STOPPED;
         ledSpark = new Spark(ledPort);
 
         e_Forward = m_ForwardMotor.getEncoder();
@@ -46,18 +64,26 @@ public class Intermediate extends SubsystemBase {
     public void moveToElevator() {
         m_ForwardMotor.set(MotorPower);
         m_DirectionMotor.set(-(MotorPower));
+        elevatorDirection = Direction.FORWARD;
+        shooterDirection = Direction.STOPPED;
     }
     public void moveToShooter() {
         m_ForwardMotor.set(MotorPower);
         m_DirectionMotor.set(MotorPower);
+        elevatorDirection = Direction.STOPPED;
+        shooterDirection = Direction.FORWARD;
     }
     public void ejectIntermediateElevator() {
         m_ForwardMotor.set(-(MotorPower));
         m_DirectionMotor.set(MotorPower);
+        elevatorDirection = Direction.REVERSE;
+        shooterDirection = Direction.STOPPED;
     }
     public void ejectIntermediateShooter() {
         m_ForwardMotor.set(-(MotorPower));
         m_DirectionMotor.set(-MotorPower);
+        elevatorDirection = Direction.STOPPED;
+        shooterDirection = Direction.REVERSE;
     }
     public void stopIntermediate() {
         m_ForwardMotor.set(0.0);
@@ -65,17 +91,23 @@ public class Intermediate extends SubsystemBase {
 
         LEDVoltage = 0;
         ledSpark.setVoltage(LEDVoltage);
+        elevatorDirection = Direction.STOPPED;
+        shooterDirection = Direction.STOPPED;
     }
-    public void leftIntermediate() {
-        if (fowardBreakbeam.isTripped() == true || directionalBreakbeam.isTripped() == true){
-            this.stopIntermediate();
-        }
+    public Direction getShooterDirection() {
+        return shooterDirection;
+    }
+    public Direction getElevatorDirection() {
+        return elevatorDirection;
     }
     public void resetEncoders() {
         e_Forward.setPosition(0.0);
-        e_Directional.setPosition(0.0);
-        
+        e_Directional.setPosition(0.0); 
     }
-
-
+    public boolean ElevatorBBisTripped(){
+        return directionalBreakbeam.isTripped();
+    }
+    public boolean ShooterBBisTripped() {
+        return fowardBreakbeam.isTripped();
+    }
 }
