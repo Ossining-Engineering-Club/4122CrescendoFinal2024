@@ -110,6 +110,10 @@ public class RobotContainer {
         }
     }
   }
+
+  public State getState() {
+    return m_state;
+  }
   
   private void configureButtonBindings() {
     m_driverController.a().onTrue(new TurretMode(

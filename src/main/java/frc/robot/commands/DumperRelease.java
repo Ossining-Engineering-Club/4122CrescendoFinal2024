@@ -3,25 +3,27 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
+import java.lang.Runnable;
 import frc.robot.subsystems.Intermediate;
 import frc.robot.constants;
 
-//this command makes the note go into the elevator and then stay there until it is needed
-public class NoteIntoElevator extends Command {
+public class DumperRelease extends Command {
 
     private final Elevator m_elevatorSubsystem;
     private final Intermediate m_intermediarySubsystem;
+    private final Runnable updateState;
 
-    public NoteIntoElevator(Elevator elevator, Intermediate intermediate) {
+    public DumperRelease(Elevator elevator, Intermediate intermediate, Runnable updateState) {
         m_elevatorSubsystem = elevator;
         m_intermediarySubsystem = intermediate;
+        this.updateState = updateState;
     
-        addRequirements(m_elevatorSubsystem);
+        addRequirements(m_elevatorSubsystem, m_intermediarySubsystem);
     }
 
     @Override 
     public void initialize() {
-        m_elevatorSubsystem.NoteElevatorMove(0.5); 
+        m_elevatorSubsystem.DumperRelease(0.5); 
     }
 
     @Override 
@@ -31,11 +33,12 @@ public class NoteIntoElevator extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_elevatorSubsystem.NoteElevatorMove(0.0);
+        m_elevatorSubsystem.DumperRelease(0.0);
+        updateState.run();
     }
 
     @Override
     public boolean isFinished() {
-        return m_intermediarySubsystem.ElevatorBBisTripped();
+        return !m_intermediarySubsystem.ElevatorBBisTripped();
     }
 }

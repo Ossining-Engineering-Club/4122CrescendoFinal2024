@@ -22,7 +22,7 @@ public class Elevator extends SubsystemBase {
     private final RelativeEncoder m_dumperReleaseEnc;
 
     public Elevator(int nElevatorID, int ElevatorRaiseID, int dumperReleaseMotorID){
-        //creating motors and creating/reseting encoders
+        //creating motors and creating/resetting encoders
         m_noteElevatorMotor = new CANSparkMax(nElevatorID, MotorType.kBrushless);
         m_noteElevatorEnc = m_noteElevatorMotor.getEncoder();
         m_noteElevatorEnc.setPosition(0.0);

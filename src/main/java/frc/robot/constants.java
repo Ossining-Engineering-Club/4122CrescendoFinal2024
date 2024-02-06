@@ -173,5 +173,8 @@ public final class constants {
         STOPPED
     }
 
+    //Climber
+
+    public static final double[] kClimberPIDGains = {1.0, 0.0, 0.0};
 
 }
