@@ -46,9 +46,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    0.4*MathUtil.applyDeadband(-m_driverController.getLeftY(), constants.kControllerDeadband)*constants.kMaxSpeed,
-                    0.4*MathUtil.applyDeadband(-m_driverController.getLeftX(),constants.kControllerDeadband)*constants.kMaxSpeed,
-                    0.4*MathUtil.applyDeadband(-m_driverController.getRightX(),constants.kControllerDeadband)*constants.kMaxAngularSpeed,
+                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getLeftY(), constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getLeftY())*constants.kMaxSpeed,
+                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getLeftX(),constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getLeftX())*constants.kMaxSpeed,
+                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getRightX(),constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getRightX())*constants.kMaxAngularSpeed,
                     true),
             m_robotDrive));    
   }
