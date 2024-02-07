@@ -25,18 +25,18 @@ import frc.robot.subsystems.Limelight;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain m_robotDrive = new Drivetrain(13);
-  private final Limelight m_aprilTagLimelight = new Limelight("limelight");
+  private final Limelight m_shooterLimelight = new Limelight("limelight");
+  private final Limelight m_elevatorLimelight = new Limelight("tochange");
   private final Limelight m_noteLimelight = new Limelight("limelight");
+  private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   CommandXboxController m_driverController = new CommandXboxController(0);
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
 
-    m_aprilTagLimelight.setPipeline(0);
+    m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
     // Configure the button bindings
     configureButtonBindings();
@@ -62,7 +62,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_driverController.a().onTrue(new TurretMode(
       m_robotDrive, 
-      m_aprilTagLimelight, 
+      m_shooterLimelight, 
       -8.308975,
       1.442593, 
       () -> -m_driverController.getLeftY(), 
