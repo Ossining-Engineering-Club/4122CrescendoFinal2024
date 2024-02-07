@@ -33,7 +33,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Robot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */

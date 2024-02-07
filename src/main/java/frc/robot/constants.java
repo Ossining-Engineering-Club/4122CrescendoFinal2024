@@ -132,4 +132,49 @@ public final class constants {
     // Limelight
     public static final double kNoteLimelightForwardOffset = 0.0;
     public static final double kNoteLimelightRightOffset = 0.0;
+
+    // Intake
+    public static final double kIntakeGearing = 1.0;
+    public static final double kIntakePivotGearing = 1.0;
+    public static final double kIntakeMaxSpeed = 1.0;
+    public static final double kIntakeDefaultSpeed = 1000.0; // RPM
+    public static final double kIntakePivotMaxVelocity = 1.0;
+    public static final double kIntakePivotMaxAcceleration = 1.0;
+    public static final double[] kIntakePivotPIDGains = {1.0, 0.0, 0.0};
+
+    //Shooter 
+    public static final double[] kShooter1PIDGains = {1.0, 0.0, 0.0};
+    public static final double[] kShooter2PIDGains = {1.0, 0.0, 0.0};
+    public static final double[] kAnglePIDGains = {1.0, 0.0, 0.0};
+    public static final double kShooterGearRatio = 1.0/1.0;
+    public static final double kRPMTolerance = 5.0;
+    public static final double kangleTolerance = .2;
+    public static final double kAngleRatio = 1.0/1.0;
+
+    //Elevator
+    public static final double kElevatorGearing = 1.0;
+    public static final double knElevatorGearing = 1.0;
+    public static final double[] kElevatorPIDGains = {1.0, 0.0, 0.0};
+    public static final double kElevatorMaxSpeed = 1.0;
+    public static final double kElevatorMaxAcceleration = 1.0;
+
+    // Enums
+    public static enum State {
+        CLEAR,
+        INTAKE,
+        ELEVATOR,
+        SHOOTER,
+        SYSTEM
+    }
+        
+    public static enum Direction {
+        FORWARD,
+        REVERSE,
+        STOPPED
+    }
+
+    //Climber
+
+    public static final double[] kClimberPIDGains = {1.0, 0.0, 0.0};
+
 }
