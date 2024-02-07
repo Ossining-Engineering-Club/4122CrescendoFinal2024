@@ -17,12 +17,6 @@ import frc.robot.commands.TurretMode;
 //import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Breakbeam;
-import frc.robot.constants.State;
-import frc.robot.constants.Direction;
-import frc.robot.subsystems.Intermediate;
-import frc.robot.subsystems.Intake;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -37,15 +31,11 @@ public class RobotContainer {
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   CommandXboxController m_driverController = new CommandXboxController(0);
 
-  private final Breakbeam testBreakbeam = new Breakbeam(3);
-  private Intermediate intermediate;
-  private Intake intake;
-  public State m_state;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    //NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
-    m_state = State.CLEAR;
+    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
+
     m_aprilTagLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
     // Configure the button bindings
@@ -69,52 +59,6 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-
-  public void updateState(){
-    if (intake.BBisTripped() ||
-        intermediate.ShooterBBisTripped() ||
-        intermediate.ElevatorBBisTripped() || m_state != State.CLEAR){
-          
-        //Loadig Bay Conditions
-        if(intake.BBisTripped()){
-          m_state = State.INTAKE;
-        }
-        else if(intermediate.ElevatorBBisTripped()){
-          m_state = State.ELEVATOR;
-        }
-        else if(intermediate.ShooterBBisTripped()){
-          m_state = State.SHOOTER;
-        }
-        //Clear or SYS condition
-        else if (m_state == State.INTAKE && !intake.BBisTripped()) {
-          if (intake.getDirection() == Direction.FORWARD) {
-            m_state = State.SYSTEM;
-          } else if(intake.getDirection() == Direction.REVERSE){
-            m_state = State.CLEAR;
-          }
-        }
-        else if (m_state == State.ELEVATOR && !intermediate.ElevatorBBisTripped()) {
-          if (intermediate.getElevatorDirection() == Direction.FORWARD) {
-            m_state = State.CLEAR;
-          } else if(intermediate.getElevatorDirection() == Direction.REVERSE){
-            m_state = State.SYSTEM;
-          }  
-        }
-        else if (m_state == State.SHOOTER && !intermediate.ShooterBBisTripped()) {
-          if (intermediate.getShooterDirection() == Direction.FORWARD) {
-            m_state = State.CLEAR;
-          }
-          else if(intermediate.getShooterDirection() == Direction.REVERSE){
-            m_state = State.SYSTEM;
-          }
-        }
-    }
-  }
-
-  public State getState() {
-    return m_state;
-  }
-  
   private void configureButtonBindings() {
     m_driverController.a().onTrue(new TurretMode(
       m_robotDrive, 
@@ -124,7 +68,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
-    //m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
+    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
     m_driverController.x().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
         
   }
