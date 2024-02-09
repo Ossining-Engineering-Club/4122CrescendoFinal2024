@@ -203,7 +203,7 @@ public void resetPose(Pose2d pose) {
     this.UpdateOdometry();
     m_field.setRobotPose(this.SwerveOdometryGetPose());
 
-    // adding vision measurements if the limelight has a target and it is a new measurement
+    /*// adding vision measurements if the limelight has a target and it is a new measurement
     if (m_shooterLimelight.hasTarget() &&
       doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
         odometry.addVisionMeasurement(m_shooterLimelight.getPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
@@ -213,7 +213,7 @@ public void resetPose(Pose2d pose) {
       doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
         odometry.addVisionMeasurement(m_elevatorLimelight.getPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
         v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
-    }
+    }*/
 
     SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
     SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);

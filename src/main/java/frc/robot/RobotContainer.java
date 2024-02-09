@@ -14,9 +14,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.TurretMode;
+import frc.robot.subsystems.Breakbeam;
 //import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.VortexTest;
+import frc.robot.JoystickMath;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -29,8 +32,11 @@ public class RobotContainer {
   private final Limelight m_elevatorLimelight = new Limelight("tochange");
   private final Limelight m_noteLimelight = new Limelight("limelight");
   private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
+  //private final VortexTest m_vortex = new VortexTest(20);
   //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   CommandXboxController m_driverController = new CommandXboxController(0);
+
+  private final Breakbeam m_testbreakbeam = new Breakbeam(3);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -40,17 +46,24 @@ public class RobotContainer {
     m_noteLimelight.setPipeline(0);
     // Configure the button bindings
     configureButtonBindings();
+    /*m_vortex.setDefaultCommand(
+      new RunCommand(
+        () -> 
+          m_vortex.drive(
+            MathUtil.applyDeadband(-m_driverController.getLeftY(), 0.05)),
+      m_vortex)
+    );*/
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getLeftY(), constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getLeftY())*constants.kMaxSpeed,
-                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getLeftX(),constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getLeftX())*constants.kMaxSpeed,
-                    0.4*Math.pow(MathUtil.applyDeadband(-m_driverController.getRightX(),constants.kControllerDeadband), 2)*Math.signum(-m_driverController.getRightX())*constants.kMaxAngularSpeed,
+                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
                     true),
-            m_robotDrive));    
+            m_robotDrive));
   }
 
   /*
