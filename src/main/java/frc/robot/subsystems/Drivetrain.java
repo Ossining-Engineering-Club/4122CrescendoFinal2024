@@ -203,31 +203,35 @@ public void resetPose(Pose2d pose) {
     this.UpdateOdometry();
     m_field.setRobotPose(this.SwerveOdometryGetPose());
 
-    /*// adding vision measurements if the limelight has a target and it is a new measurement
+    // adding vision measurements if the limelight has a target and it is a new measurement
     if (m_shooterLimelight.hasTarget() &&
-      doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
-        odometry.addVisionMeasurement(m_shooterLimelight.getPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+      !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
+        //System.out.println("adding vision measurement: " + m_shooterLimelight.getWPILibBluePose());
+        //System.out.println("previous pose: " + SwerveOdometryGetPose());
+        odometry.addVisionMeasurement(m_shooterLimelight.getWPILibBluePose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
         v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;
-    }
+        //System.out.println("new pose: " + SwerveOdometryGetPose());
+        
+    }/*
     if (m_elevatorLimelight.hasTarget() &&
       doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
-        odometry.addVisionMeasurement(m_elevatorLimelight.getPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
+        odometry.addVisionMeasurement(m_elevatorLimelight.getWPILibBluePose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
         v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
     }*/
 
     SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
-    SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
     SmartDashboard.putNumber("y", this.SwerveOdometryGetPose().getY());
     SmartDashboard.putNumber("Swerve Angle", this.SwerveOdometryGetPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GyroAngle", this.getAngle().getDegrees());
 
-    SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
     
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("RobotPose", SwerveOdometryGetPose());

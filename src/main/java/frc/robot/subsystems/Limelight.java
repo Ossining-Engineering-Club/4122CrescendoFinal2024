@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 public class Limelight extends SubsystemBase {
     private final String m_name;
     private double[] m_botpose = new double[7];
+    private double[] m_wpilibBlueBotpose = new double[7];
 
     public Limelight(String name) {
         m_name = name;
@@ -20,8 +21,9 @@ public class Limelight extends SubsystemBase {
     @Override
     public void periodic() {
         m_botpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose").getDoubleArray(new double[7]);
+        m_wpilibBlueBotpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
         
-        SmartDashboard.putNumber("Screenspace X", getScreenspaceX());
+        //SmartDashboard.putNumber("Screenspace X", getScreenspaceX());
     }
 
     public boolean hasTarget() {
@@ -60,8 +62,8 @@ public class Limelight extends SubsystemBase {
         return m_botpose[6];
     }
 
-    public Pose2d getPose() {
-        return new Pose2d(getBotX(), getBotY(), Rotation2d.fromDegrees(getBotYaw()));
+    public Pose2d getWPILibBluePose() {
+        return new Pose2d(m_wpilibBlueBotpose[0], m_wpilibBlueBotpose[1], Rotation2d.fromDegrees(m_wpilibBlueBotpose[5]));
     }
 
     public double getTX() {

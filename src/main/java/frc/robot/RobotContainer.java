@@ -59,9 +59,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
-                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
-                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
+                    0.2*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
+                    0.2*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
+                    0.2*JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
                     true),
             m_robotDrive));
   }
