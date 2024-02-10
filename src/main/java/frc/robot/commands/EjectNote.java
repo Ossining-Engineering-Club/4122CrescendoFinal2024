@@ -18,12 +18,12 @@ public class EjectNote extends Command {
     private final Shooter m_Shooter;
 
     private final Runnable updateState;
-    private final Supplier getState;
+    private final Supplier<constants.State> getState;
 
     private boolean statebool;
     private final int RPM = 100;
 
-    public EjectNote(Intermediate intermediate, Elevator elevator, Intake intake, Shooter shooter, Runnable updateState, Supplier getState) {
+    public EjectNote(Intermediate intermediate, Elevator elevator, Intake intake, Shooter shooter, Runnable updateState, Supplier<constants.State> getState) {
         m_Intermediate = intermediate;
         m_Elevator = elevator;
         m_Intake = intake;
