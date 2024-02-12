@@ -13,11 +13,11 @@ public class IntermediateToShooter extends Command {
 
     private final Intermediate m_moveNote;
     private final Runnable updateState;
-    private final Supplier getState;
+    private final Supplier<constants.State> getState;
 
     private boolean statebool;
 
-    public IntermediateToShooter(Intermediate moveNote, Runnable updateState, Supplier getState) {
+    public IntermediateToShooter(Intermediate moveNote, Runnable updateState, Supplier<constants.State> getState) {
         m_moveNote = moveNote;
         this.updateState = updateState;
         this.getState = getState;

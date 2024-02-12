@@ -76,13 +76,15 @@ public class GoToNote extends Command {
         }
         else {
             transAngle = prevTransAngle;
+            SmartDashboard.putNumber("tx", -9999999);
         }
         
         double xSpeed = overallSpeed*Math.cos(transAngle);
         double ySpeed = overallSpeed*Math.sin(transAngle);
 
         m_rotPIDController.setGoal(m_rotFilter.calculate(transAngle));
-        SmartDashboard.putNumber("GoToNote rot setpoint", m_rotPIDController.getSetpoint().position);
+        //SmartDashboard.putNumber("GoToNote rot setpoint", m_rotPIDController.getSetpoint().position);
+        //SmartDashboard.putNumber("GoToNote angle", m_drive.getAngle().getRadians());
 
         double rotSpeed = MathUtil.clamp(
             m_rotPIDController.calculate(m_drive.getAngle().getRadians())+m_rotPIDController.getSetpoint().velocity,

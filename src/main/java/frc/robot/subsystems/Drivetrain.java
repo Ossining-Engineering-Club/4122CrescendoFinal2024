@@ -3,25 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-import frc.robot.constants;
-import frc.robot.subsystems.SwerveMod;
-import frc.robot.subsystems.OECPigeionIMU;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.geometry.Rotation2d;
-
-import org.littletonrobotics.junction.LogFileUtil;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -29,11 +10,22 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Robot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
+import frc.robot.constants;
+import frc.robot.subsystems.Limelight;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -52,11 +44,17 @@ public class Drivetrain extends SubsystemBase {
 
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation); 
   OECPigeionIMU gyro;
-  SwerveDriveOdometry odometry;
+  SwerveDrivePoseEstimator odometry;
   Trajectory trajectory;
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
 
-  public Drivetrain(int gyroport){
+  private final Limelight m_shooterLimelight;
+  private final Limelight m_elevatorLimelight;
+
+  private double v_prevShooterLLTimestamp = -1;
+  private double v_prevElevatorLLTimestamp = -1;
+
+  public Drivetrain(int gyroport, Limelight shooterLimelight, Limelight elevatorLimelight){
       //Motor process:
       /*Decide front back, left and right and assign locations/module names accordingly
         Find the encoder offsets by reading the absolute encoders when all the wheels are lined up in a direction parallel to front
@@ -68,8 +66,12 @@ public class Drivetrain extends SubsystemBase {
       gyro = new OECPigeionIMU(gyroport);  
       //gyro.BootCalibrate();
       gyro.ResetYaw();
+
+      m_shooterLimelight = shooterLimelight;
+      m_elevatorLimelight = elevatorLimelight;
+
       //Odometry Initialization
-      odometry =  new SwerveDriveOdometry(
+      odometry =  new SwerveDrivePoseEstimator(
             kinematics,
             this.getAngle(),
             new SwerveModulePosition[] {
@@ -77,7 +79,8 @@ public class Drivetrain extends SubsystemBase {
               RFMod.GetPosition(),
               LBMod.GetPosition(),
               RBMod.GetPosition()
-            });
+            },
+            new Pose2d(0, 0, new Rotation2d(0)));
 
           AutoBuilder.configureHolonomic(
             this::SwerveOdometryGetPose, // Robot pose supplier
@@ -150,7 +153,8 @@ public class Drivetrain extends SubsystemBase {
 
   public void UpdateOdometry() {
       //Wheel states as order declared in kinematics constructor
-      odometry.update(this.getAngle(),
+      odometry.updateWithTime(Timer.getFPGATimestamp(),
+                        this.getAngle(),
                         new SwerveModulePosition[]{
                         LFMod.GetPosition(), 
                         RFMod.GetPosition(),
@@ -158,7 +162,7 @@ public class Drivetrain extends SubsystemBase {
                         RBMod.GetPosition()});
   }  
   public Pose2d SwerveOdometryGetPose(){
-      return odometry.getPoseMeters();
+      return odometry.getEstimatedPosition();
   }
   public Rotation2d getAngle(){
       return Rotation2d.fromRadians(((gyro.GetYaw()*((constants.k_PI)/(180.0)))));
@@ -198,19 +202,40 @@ public void resetPose(Pose2d pose) {
     // This method will be called once per scheduler run
     this.UpdateOdometry();
     m_field.setRobotPose(this.SwerveOdometryGetPose());
+
+    // adding vision measurements if the limelight has a target and it is a new measurement
+    if (m_shooterLimelight.hasTarget() &&
+      !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
+        //System.out.println("adding vision measurement: " + m_shooterLimelight.getWPILibBluePose());
+        //System.out.println("previous pose: " + SwerveOdometryGetPose());
+        odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+        v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;
+        //System.out.println("new pose: " + SwerveOdometryGetPose());
+        
+    }/*
+    if (m_elevatorLimelight.hasTarget() &&
+      doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
+        odometry.addVisionMeasurement(m_elevatorLimelight.getWPILibBluePose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
+        v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
+    }*/
+
+    //SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
+    //SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
     SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
-    SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
     SmartDashboard.putNumber("y", this.SwerveOdometryGetPose().getY());
     SmartDashboard.putNumber("Swerve Angle", this.SwerveOdometryGetPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GyroAngle", this.getAngle().getDegrees());
 
-    SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
+    SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
+    SmartDashboard.putNumber("vision yaw", m_shooterLimelight.getBotYaw());
+
+    // SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
     
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
@@ -219,5 +244,9 @@ public void resetPose(Pose2d pose) {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  boolean doublesAreEqual(double d1, double d2) {
+    return (Math.abs(d1-d2) < 0.00001);
   }
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.DoubleSupplier;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
@@ -51,7 +52,8 @@ public class TurretMode extends Command {
 
     @Override
     public void initialize() {
-        m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
     }
 
     @Override
@@ -61,8 +63,11 @@ public class TurretMode extends Command {
         final double rotation = m_rotLimiter.calculate(constants.kMaxAngularSpeed*MathUtil.applyDeadband(m_StickYaw.getAsDouble(), constants.kControllerDeadband));
 
         if (m_limelight.hasTarget()) {
-            double rotPos = m_limelight.getBotYaw()/180*Math.PI;
-            double rotGoal = Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX()));
+            Pose2d robotPose = m_drive.SwerveOdometryGetPose();
+            //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
+            //double rotGoal = Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX()));
+            double rotPos = robotPose.getRotation().getRadians();
+            double rotGoal = Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX()));
 
             SmartDashboard.putNumber("rotPos", rotPos);
             SmartDashboard.putNumber("rotGoal", rotGoal);
