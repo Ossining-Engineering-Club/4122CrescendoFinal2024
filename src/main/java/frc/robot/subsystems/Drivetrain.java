@@ -229,8 +229,8 @@ public void resetPose(Pose2d pose) {
     SmartDashboard.putNumber("GyroAngle", this.getAngle().getDegrees());
 
     SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
-    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotX());
-    SmartDashboard.putNumber("vision yaw", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
+    SmartDashboard.putNumber("vision yaw", m_shooterLimelight.getBotYaw());
 
     // SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
     // SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());

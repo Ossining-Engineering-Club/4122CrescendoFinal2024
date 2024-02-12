@@ -12,6 +12,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.math.geometry.Pose2d;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.TurretMode;
 import frc.robot.subsystems.Breakbeam;
@@ -82,6 +86,14 @@ public class RobotContainer {
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
     m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
+    /*m_driverController.y().onTrue(AutoBuilder.pathfindToPose(
+      new Pose2d(4.441, 4.441, Rotation2d.fromDegrees(180)),
+      new PathConstraints(
+        2.0, 4.0,
+        constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
+      0.0,
+      0.0
+    ));*/
     m_driverController.x().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
         
   }
