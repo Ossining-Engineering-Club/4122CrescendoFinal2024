@@ -52,7 +52,8 @@ public class TurretMode extends Command {
 
     @Override
     public void initialize() {
-        m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
     }
 
     @Override
@@ -62,9 +63,11 @@ public class TurretMode extends Command {
         final double rotation = m_rotLimiter.calculate(constants.kMaxAngularSpeed*MathUtil.applyDeadband(m_StickYaw.getAsDouble(), constants.kControllerDeadband));
 
         if (m_limelight.hasTarget()) {
-            //Pose2d robotPose = m_drive.SwerveOdometryGetPose();
-            double rotPos = m_limelight.getBotYaw()/180*Math.PI;
-            double rotGoal = Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX()));
+            Pose2d robotPose = m_drive.SwerveOdometryGetPose();
+            //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
+            //double rotGoal = Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX()));
+            double rotPos = robotPose.getRotation().getRadians();
+            double rotGoal = Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX()));
 
             SmartDashboard.putNumber("rotPos", rotPos);
             SmartDashboard.putNumber("rotGoal", rotGoal);
