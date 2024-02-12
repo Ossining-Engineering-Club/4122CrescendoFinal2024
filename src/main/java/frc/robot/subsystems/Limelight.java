@@ -1,13 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.PIDController;
 
 public class Limelight extends SubsystemBase {
     private final String m_name;
@@ -19,9 +15,7 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_botpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose_wpiblue").getDoubleArray(new double[7]);
-        
-        //SmartDashboard.putNumber("Screenspace X", getScreenspaceX());
+        m_botpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose_wpiblue").getDoubleArray(new double[7]);        
     }
 
     public boolean hasTarget() {

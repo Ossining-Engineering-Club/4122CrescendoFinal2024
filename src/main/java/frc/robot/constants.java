@@ -18,7 +18,7 @@ public final class constants {
 
 
     public static final double k_PI = 3.141592653589793238462643383279502884197169399;
-
+    //SwerveModule constants
     public static final double DrivingMotorGearRatio = (1.0/6.75);
     public static final double WheelDiameterInMeters = 0.0967;
     public static final double TurningMotorGearRatio = (7.0/150.0);
@@ -26,11 +26,26 @@ public final class constants {
     public static final double k_DriveEncoderVelocityFactor = (k_DriveEncoderPosFactor / 60.0);
     public static final double k_TurnEncoderPosFactor = (TurningMotorGearRatio * k_PI * 2.0);
     public static final double k_TurnEncoderVelocityFactor = (k_TurnEncoderPosFactor / 60.0);
-
+    //Auto drivebase radius for holonomic controller
+    public static final double k_DriveBaseRadius = 0.404510451;
+    //PID constants for motor rotation
     public static final double k_KRP = .45;
     public static final double k_KRI = 0.0;
     public static final double k_KRD = 0.00025;
-
+    //Auto Translational PID
+    public static final double k_AutoXYP = 5.0;
+    public static final double k_AutoXYI = 0.0;
+    public static final double k_AutoXYD = 0.0;
+    //Auto Rotational PID
+    public static final double k_AutoRotP = 5.0;
+    public static final double k_AutoRotI = 0.0;
+    public static final double k_AutoRotD = 0.0;
+    //Odometry at setpoint condition meters and radians
+    public static final double k_OdometryToleranceX = 0.1;
+    public static final double k_OdometryToleranceY = 0.1;
+    public static final double k_OdometryToleranceRot = 0.1;
+    //breakbeam threshold and code in volts
+    public static final double k_BreakbeamVoltageThreshold = 3.0;
     public static final double kMaxSpeed = 4.441; // also remember to change in pathplanner
     public static final double kMaxAcceleration = 4.441; // 4.441
     
@@ -134,13 +149,10 @@ public final class constants {
     public static final double kNoteLimelightRightOffset = 0.0;
 
     // Intake
-    public static final double kIntakeGearing = 1.0;
-    public static final double kIntakePivotGearing = 1.0;
-    public static final double kIntakeMaxSpeed = 1.0;
-    public static final double kIntakeDefaultSpeed = 1000.0; // RPM
-    public static final double kIntakePivotMaxVelocity = 1.0;
-    public static final double kIntakePivotMaxAcceleration = 1.0;
-    public static final double[] kIntakePivotPIDGains = {1.0, 0.0, 0.0};
+    public static final double kIntakePower = 1.0;
+
+    // Intermediate
+    public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
     public static final double[] kShooter1PIDGains = {1.0, 0.0, 0.0};
@@ -174,7 +186,9 @@ public final class constants {
     }
 
     //Climber
-
     public static final double[] kClimberPIDGains = {1.0, 0.0, 0.0};
+    public static final double kClimberMaxSpeed = 1.0; // m/s
+    public static final double kClimberMaxAcceleration = 1.0; // m/s^2
+    public static final double kClimberGearing = 1.0;
 
 }

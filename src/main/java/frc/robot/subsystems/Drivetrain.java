@@ -1,3 +1,5 @@
+
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -28,7 +30,6 @@ import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 
 public class Drivetrain extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
   private final Field2d m_field = new Field2d();
   private SwerveMod RFMod = new SwerveMod(5,6,11,false, constants.k_RFZERO,false,true);
   private SwerveMod RBMod = new SwerveMod(8,7,12,false,constants.k_RBZERO,true,true);
@@ -63,15 +64,16 @@ public class Drivetrain extends SubsystemBase {
         Utilize the DriveReverse parameter in the module constructors to ensure that each module is spinning in the correct direction
        * 
        */
+      //Gyro intialization process
       gyro = new OECPigeionIMU(gyroport);  
-      //gyro.BootCalibrate();
       gyro.ResetYaw();
 
-      m_shooterLimelight = shooterLimelight;
-      m_elevatorLimelight = elevatorLimelight;
+      //initialize limelight variables
+      this.m_shooterLimelight = shooterLimelight;
+      this.m_elevatorLimelight = elevatorLimelight;
 
       //Odometry Initialization
-      odometry =  new SwerveDrivePoseEstimator(
+      this.odometry =  new SwerveDrivePoseEstimator(
             kinematics,
             this.getAngle(),
             new SwerveModulePosition[] {
@@ -81,31 +83,28 @@ public class Drivetrain extends SubsystemBase {
               RBMod.GetPosition()
             },
             new Pose2d(0, 0, new Rotation2d(0)));
-
-          AutoBuilder.configureHolonomic(
-            this::SwerveOdometryGetPose, // Robot pose supplier
-            this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-            this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                    constants.kMaxSpeed, // Max module speed, in m/s
-                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-                    new ReplanningConfig() // Default path replanning config. See the API for the options here
-            ),
-            () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-              },this);
-      //Add reset Code
+      //Auto Holonomic controller configuration sets
+      AutoBuilder.configureHolonomic(
+        this::SwerveOdometryGetPose, // Robot pose supplier
+        this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+        this::getSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                new PIDConstants(constants.k_AutoXYP, constants.k_AutoXYI, constants.k_AutoXYD), // Translation PID constants
+                new PIDConstants(constants.k_AutoRotP, constants.k_AutoRotI, constants.k_AutoRotD), // Rotation PID constants
+                constants.kMaxSpeed, // Max module speed, in m/s
+                constants.k_DriveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+                new ReplanningConfig() // Default path replanning config. See the API for the options here
+        ),
+        () -> {
+            var alliance = DriverStation.getAlliance();
+            if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+            }
+            return false;
+          },this);
   }
   public void Drive(double xSpeed,double ySpeed,double rot, boolean fieldRelative){
-
-
       SwerveModuleState[] states = kinematics.toSwerveModuleStates(
           fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                               xSpeed, ySpeed, rot, this.getAngle())
@@ -113,29 +112,29 @@ public class Drivetrain extends SubsystemBase {
     
       SwerveDriveKinematics.desaturateWheelSpeeds(states, constants.kMaxSpeed);
         //Wheel states as order declared in kinematics constructor
-        RFMod.SetDesiredState(states[1]);//3]);
-        RBMod.SetDesiredState(states[3]);//1]);
-        LBMod.SetDesiredState(states[2]);//0]);
-        LFMod.SetDesiredState(states[0]);//2]);
+        RFMod.SetDesiredState(states[1]);
+        RBMod.SetDesiredState(states[3]);
+        LBMod.SetDesiredState(states[2]);
+        LFMod.SetDesiredState(states[0]);
   }
   public ChassisSpeeds getSpeeds() {
     return kinematics.toChassisSpeeds(getModuleStates());
   }
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
     ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
-
     SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(targetStates, constants.kMaxSpeed);
     //Wheel states as order declared in kinematics constructor
-    RFMod.SetDesiredState(targetStates[1]);//3]);
-    RBMod.SetDesiredState(targetStates[3]);//1]);
-    LBMod.SetDesiredState(targetStates[2]);//0]);
-    LFMod.SetDesiredState(targetStates[0]);//2]);
+    RFMod.SetDesiredState(targetStates[1]);
+    RBMod.SetDesiredState(targetStates[3]);
+    LBMod.SetDesiredState(targetStates[2]);
+    LFMod.SetDesiredState(targetStates[0]);
   }
+  //Method to check if odometry setpoint is reached uses temp setpoint
   public boolean OdometryAtSetpoint(){
-    if(Math.abs(this.tempSetpoint.getX()-this.SwerveOdometryGetPose().getX())<0.1&&
-       Math.abs(this.tempSetpoint.getY()-this.SwerveOdometryGetPose().getY())<0.1 &&
-       Math.abs(this.tempSetpoint.getRotation().getRadians()-this.SwerveOdometryGetPose().getRotation().getRadians())<0.1){
+    if(Math.abs(this.tempSetpoint.getX()-this.SwerveOdometryGetPose().getX())<constants.k_OdometryToleranceX &&
+       Math.abs(this.tempSetpoint.getY()-this.SwerveOdometryGetPose().getY())<constants.k_OdometryToleranceY &&
+       Math.abs(this.tempSetpoint.getRotation().getRadians()-this.SwerveOdometryGetPose().getRotation().getRadians())<constants.k_OdometryToleranceRot){
       return true;
     }else{
       return false;
@@ -145,16 +144,14 @@ public class Drivetrain extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] states){
     SwerveDriveKinematics.desaturateWheelSpeeds(states, constants.kMaxSpeed);
     //Wheel states as order declared in kinematics constructor
-        RFMod.SetDesiredState(states[1]);//3]);
-        RBMod.SetDesiredState(states[3]);//1]);
-        LBMod.SetDesiredState(states[2]);//0]);
-        LFMod.SetDesiredState(states[0]);//2]);
+        RFMod.SetDesiredState(states[1]);
+        RBMod.SetDesiredState(states[3]);
+        LBMod.SetDesiredState(states[2]);
+        LFMod.SetDesiredState(states[0]);
   }
-
   public void UpdateOdometry() {
       //Wheel states as order declared in kinematics constructor
-      odometry.updateWithTime(Timer.getFPGATimestamp(),
-                        this.getAngle(),
+      odometry.update(this.getAngle(),
                         new SwerveModulePosition[]{
                         LFMod.GetPosition(), 
                         RFMod.GetPosition(),
@@ -179,7 +176,6 @@ public class Drivetrain extends SubsystemBase {
       RFMod.ResetEncoder();
       RBMod.ResetEncoder();
   }
-
 public SwerveModulePosition[] getModulePositions(){
   return new SwerveModulePosition[] {
                                   LFMod.GetPosition(),
@@ -197,46 +193,23 @@ public SwerveModuleState[] getModuleStates(){
 public void resetPose(Pose2d pose) {
   odometry.resetPosition(this.getAngle(),this.getModulePositions(), pose);
 }
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    this.UpdateOdometry();
-    m_field.setRobotPose(this.SwerveOdometryGetPose());
+@Override
+public void periodic() {
+  // This method will be called once per scheduler run
+  this.UpdateOdometry();
+  m_field.setRobotPose(this.SwerveOdometryGetPose());
 
-    // adding vision measurements if the limelight has a target and it is a new measurement
-    if (m_shooterLimelight.hasTarget() &&
-      !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
-        //System.out.println("adding vision measurement: " + m_shooterLimelight.getWPILibBluePose());
-        //System.out.println("previous pose: " + SwerveOdometryGetPose());
-        odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
-        v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;
-        //System.out.println("new pose: " + SwerveOdometryGetPose());
-        
-    }/*
-    if (m_elevatorLimelight.hasTarget() &&
-      doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
-        odometry.addVisionMeasurement(m_elevatorLimelight.getWPILibBluePose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
-        v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
-    }*/
-
-    //SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
-    //SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
-    //SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
-    //SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
-    SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
-    SmartDashboard.putNumber("y", this.SwerveOdometryGetPose().getY());
-    SmartDashboard.putNumber("Swerve Angle", this.SwerveOdometryGetPose().getRotation().getDegrees());
-    SmartDashboard.putNumber("GyroAngle", this.getAngle().getDegrees());
-
-    SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
-    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
-    SmartDashboard.putNumber("vision yaw", m_shooterLimelight.getBotYaw());
-
-    // SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("LB", LBMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("RB", RBMod.GetAbsEncoderAngle());
-    
+  // adding vision measurements if the limelight has a target and it is a new measurement
+  if (m_shooterLimelight.hasTarget() &&
+    !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
+      odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+      v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
+  }
+  if (m_elevatorLimelight.hasTarget() &&
+    doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
+      odometry.addVisionMeasurement(m_elevatorLimelight.getBotPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
+      v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
+  }
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
   }

@@ -15,17 +15,18 @@ public class Climber extends SubsystemBase {
     private final CANSparkMax m_climberMotor;
     private final RelativeEncoder e_climberMotorEnc;
 
-    private final ProfiledPIDController m_pid = new ProfiledPIDController(
-        constants.kClimberPIDGains[0],
-        constants.kClimberPIDGains[1],
-        constants.kClimberPIDGains[2],
-        new TrapezoidProfile.Constraints(constants.kElevatorMaxSpeed, constants.kElevatorMaxAcceleration)
-    );
-
     public Climber(int ClimberID) {
         m_climberMotor = new CANSparkMax(ClimberID, MotorType.kBrushless);
         e_climberMotorEnc = m_climberMotor.getEncoder();
+        e_climberMotorEnc.setPositionConversionFactor(1.0 / constants.kClimberGearing);
     }
 
+    public void setSpeed(double climberSpeed) {
+        m_climberMotor.set(climberSpeed);
+    }
+
+    public double getPosition() {
+        return e_climberMotorEnc.getPosition();
+    }
 
 }

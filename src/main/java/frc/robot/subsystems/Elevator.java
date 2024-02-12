@@ -74,11 +74,6 @@ public class Elevator extends SubsystemBase {
         return m_dumperReleaseEnc.getPosition();
     }
 
-    @Override
-    public void periodic(){
-       
-    }
-
 }
 
 
