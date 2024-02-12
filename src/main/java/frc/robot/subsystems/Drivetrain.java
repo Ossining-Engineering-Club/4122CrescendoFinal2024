@@ -219,14 +219,18 @@ public void resetPose(Pose2d pose) {
         v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
     }*/
 
-    SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
     //SmartDashboard.putNumber("LFwheeltravel_dist", LFMod.GetPosition().distanceMeters);
     //SmartDashboard.putNumber("LBwheeltravel_dist", LBMod.GetPosition().distanceMeters);
     //SmartDashboard.putNumber("RFwheeltravel_dist", RFMod.GetPosition().distanceMeters);
     //SmartDashboard.putNumber("RBwheeltravel_dist", RBMod.GetPosition().distanceMeters);
+    SmartDashboard.putNumber("x", this.SwerveOdometryGetPose().getX());
     SmartDashboard.putNumber("y", this.SwerveOdometryGetPose().getY());
     SmartDashboard.putNumber("Swerve Angle", this.SwerveOdometryGetPose().getRotation().getDegrees());
     SmartDashboard.putNumber("GyroAngle", this.getAngle().getDegrees());
+
+    SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("vision yaw", m_shooterLimelight.getBotX());
 
     // SmartDashboard.putNumber("LF", LFMod.GetAbsEncoderAngle());
     // SmartDashboard.putNumber("RF", RFMod.GetAbsEncoderAngle());
