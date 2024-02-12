@@ -208,7 +208,7 @@ public void resetPose(Pose2d pose) {
       !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
         //System.out.println("adding vision measurement: " + m_shooterLimelight.getWPILibBluePose());
         //System.out.println("previous pose: " + SwerveOdometryGetPose());
-        odometry.addVisionMeasurement(m_shooterLimelight.getWPILibBluePose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+        odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
         v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;
         //System.out.println("new pose: " + SwerveOdometryGetPose());
         

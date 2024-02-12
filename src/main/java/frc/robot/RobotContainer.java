@@ -76,8 +76,8 @@ public class RobotContainer {
     m_driverController.a().onTrue(new TurretMode(
       m_robotDrive, 
       m_shooterLimelight, 
-      -8.308975,
-      1.442593, 
+      -0.0381,
+      5.5479, 
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
