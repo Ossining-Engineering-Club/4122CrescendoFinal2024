@@ -56,12 +56,6 @@ public class Shooter extends SubsystemBase{
         Shooter1PIDController.setSetpoint(targetRPM);
         Shooter2PIDController.setSetpoint(targetRPM);
 
-        double adjustmentvalS1 = Shooter1PIDController.calculate(currentRPMS1);
-        double adjustmentvalS2 = Shooter2PIDController.calculate(currentRPMS2);
-
-        m_Shooter1.set(m_Shooter1.get()+adjustmentvalS1);
-        m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);
-
         if(Math.abs(targetRPM-currentRPMS1) < constants.kRPMTolerance && 
             Math.abs(targetRPM-currentRPMS2) < constants.kRPMTolerance){
             return true;
@@ -84,6 +78,14 @@ public class Shooter extends SubsystemBase{
 
     @Override
     public void periodic() {
+        // angle pid
         m_Angle.set(AnglePIDController.calculate(e_Angle.getPosition()));
+
+        // shooter pid
+        double adjustmentvalS1 = Shooter1PIDController.calculate(e_Shooter1.getVelocity());
+        double adjustmentvalS2 = Shooter2PIDController.calculate(e_Shooter2.getVelocity());
+
+        m_Shooter1.set(m_Shooter1.get()+adjustmentvalS1);
+        m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);
     }
 }
