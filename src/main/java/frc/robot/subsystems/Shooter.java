@@ -70,18 +70,16 @@ public class Shooter extends SubsystemBase{
         }
 
     }
+    
     //returns true if setpoint is reached false otherwise
-    public boolean setAngle(double Angle){
-
-        double currentangle = e_Angle.getPosition();
+    public boolean setAngle(double Angle) {
         AnglePIDController.setSetpoint(Angle);
+        return isAngleReached();
+    }
 
-        if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
-            return true;
-        }
-        else{
-            return false;
-        }
+    //returns true if setpoint is reached false otherwise
+    public boolean isAngleReached() {
+        return Math.abs(AnglePIDController.getSetpoint()-e_Angle.getPosition()) < constants.kangleTolerance;
     }
 
     @Override
