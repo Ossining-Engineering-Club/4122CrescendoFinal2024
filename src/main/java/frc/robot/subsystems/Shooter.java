@@ -74,10 +74,7 @@ public class Shooter extends SubsystemBase{
     public boolean setAngle(double Angle){
 
         double currentangle = e_Angle.getPosition();
-
-        AnglePIDController.setSetpoint(currentangle);
-        double adjustmentval = AnglePIDController.calculate(Angle);
-        m_Angle.set(adjustmentval);
+        AnglePIDController.setSetpoint(Angle);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;
@@ -85,5 +82,10 @@ public class Shooter extends SubsystemBase{
         else{
             return false;
         }
+    }
+
+    @Override
+    public void periodic() {
+        m_Angle.set(AnglePIDController.calculate(e_Angle.getPosition()));
     }
 }
