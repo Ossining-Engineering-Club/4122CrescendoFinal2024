@@ -162,6 +162,8 @@ public final class constants {
     public static final double kRPMTolerance = 5.0;
     public static final double kangleTolerance = .2;
     public static final double kAngleRatio = 1.0/1.0;
+    public static final double kShooterAngleMaxVelocity = 1.0;
+    public static final double kShooterAngleMaxAcceleration = 1.0;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
