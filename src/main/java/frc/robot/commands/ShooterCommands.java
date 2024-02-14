@@ -7,58 +7,50 @@ import frc.robot.subsystems.Shooter;
 
 public class ShooterCommands {
 
+    // ONLY USE FOR TESTING
+    public class SetShooterAngle extends Command {
+        private final Shooter m_shooter;
+        private final double angle;
 
-    public class AngleShooter extends Command {
+        public SetShooterAngle(Shooter shooter, double angle) {
+            this.angle = angle;
+            m_shooter = shooter;
+            addRequirements(m_shooter);
+        }
 
-    private final Shooter m_shooter;
-    private final double angle;
-    private boolean isdone;
+        @Override
+        public void initialize() { //set position
+            m_shooter.setAngle(this.angle);
+        }
 
-    public AngleShooter(Shooter shooter, double angle) {
-        this.angle = angle;
-        this.isdone = false;
-        m_shooter = shooter;
-        addRequirements(m_shooter);
-
-    }
-    @Override
-    public void execute() { //set position
-        this.isdone=m_shooter.setAngle(this.angle);
-    }
-
-    @Override 
-    public boolean isFinished() { // set  position
-        return this.isdone;
-    }
-}
-
-public class SetRPMShooter extends Command {
-
-    public final Shooter m_shooter;
-
-    public SetRPMShooter(Shooter shooter) {
-        m_shooter = shooter;
-
-        addRequirements(m_shooter);
+        @Override 
+        public boolean isFinished() {
+            return m_shooter.isAngleReached();
+        }
     }
 
-    @Override
-    public void initialize() {
+    public class SetShooterRPM extends Command {
+        public final Shooter m_shooter;
+        public final double m_RPM;
+
+        public SetShooterRPM(Shooter shooter, double RPM) {
+            m_shooter = shooter;
+            m_RPM = RPM;
+
+            addRequirements(m_shooter);
+        }
+
+        @Override
+        public void initialize() {
+            m_shooter.setRPM(m_RPM);
+        }
+
+        @Override 
+        public boolean isFinished(){
+            return m_shooter.isRPMReached();
+        }
 
     }
-
-    @Override
-    public void execute() {
-        
-    }
-
-    @Override 
-    public boolean isFinished(){
-
-        return true;
-    }
-
-}
 }
 
 
