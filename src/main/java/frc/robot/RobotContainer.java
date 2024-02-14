@@ -25,6 +25,7 @@ import frc.robot.constants.State;
 import frc.robot.constants.Direction;
 import frc.robot.subsystems.Intermediate;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.JoystickMath;
 
 public class RobotContainer {
@@ -36,6 +37,7 @@ public class RobotContainer {
 
   private Intermediate intermediate;
   private Intake intake;
+  private Shooter m_shooter;
   public State m_state;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -65,6 +67,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_driverController.a().onTrue(new TurretMode(
       m_robotDrive, 
+      m_shooter,
       m_shooterLimelight, 
       -0.0381,
       5.5479, 

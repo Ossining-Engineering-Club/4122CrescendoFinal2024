@@ -8,7 +8,7 @@ import frc.robot.subsystems.Shooter;
 public class ShooterCommands {
 
     // ONLY USE FOR TESTING
-    public class SetShooterAngle extends Command {
+    public static class SetShooterAngle extends Command {
         private final Shooter m_shooter;
         private final double angle;
 
@@ -29,7 +29,7 @@ public class ShooterCommands {
         }
     }
 
-    public class SetShooterRPM extends Command {
+    public static class SetShooterRPM extends Command {
         public final Shooter m_shooter;
         public final double m_RPM;
 
@@ -50,6 +50,14 @@ public class ShooterCommands {
             return m_shooter.isRPMReached();
         }
 
+    }
+
+    // TO DO
+    // idk which motors are feeding
+    public static class FeedToShooter extends Command {
+        public FeedToShooter() {
+
+        }
     }
 }
 
