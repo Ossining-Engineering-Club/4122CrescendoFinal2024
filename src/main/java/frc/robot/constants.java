@@ -198,4 +198,7 @@ public final class constants {
     public static final double kClimberGearing = 1.0;
     public static final double kClimberHighDefault = 1.0;
 
+    // Note Searching
+    public static final double kNoteSearchingSpeed = 1.0;
+
 }
