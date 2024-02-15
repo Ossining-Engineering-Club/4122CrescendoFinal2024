@@ -60,8 +60,8 @@ public class Shooter extends SubsystemBase{
         double adjustmentvalS1 = Shooter1PIDController.calculate(currentRPMS1);
         double adjustmentvalS2 = Shooter2PIDController.calculate(currentRPMS2);
 
-        m_Shooter1.set(adjustmentvalS1);
-        m_Shooter1.set(adjustmentvalS2);
+        m_Shooter1.set(m_Shooter1.get()+adjustmentvalS1);
+        m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);
 
         if(Math.abs(targetRPM-currentRPMS1) < constants.kRPMTolerance && 
             Math.abs(targetRPM-currentRPMS2) < constants.kRPMTolerance){
@@ -76,8 +76,8 @@ public class Shooter extends SubsystemBase{
 
         double currentangle = e_Angle.getPosition();
 
-        AnglePIDController.setSetpoint(currentangle);
-        double adjustmentval = AnglePIDController.calculate(Angle);
+        AnglePIDController.setSetpoint(Angle);
+        double adjustmentval = AnglePIDController.calculate(currentangle);
         m_Angle.set(adjustmentval);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
