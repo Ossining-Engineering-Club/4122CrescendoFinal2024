@@ -88,6 +88,21 @@ public class Shooter extends SubsystemBase{
         }
     }
 
+    public boolean isRPMReached() {
+        double targetRPM = Shooter1PIDController.getSetpoint();
+        return Math.abs(targetRPM-e_Shooter1.getVelocity()) < constants.kRPMTolerance && 
+                Math.abs(targetRPM-e_Shooter2.getVelocity()) < constants.kRPMTolerance;
+    }
+
+    //returns true if setpoint is reached false otherwise
+    public boolean isAngleReached() {
+        return Math.abs(AnglePIDController.getSetpoint()-e_Angle.getPosition()) < constants.kangleTolerance;
+    }
+
+    public double getAngle() {
+        return e_Angle.getPosition();
+    }
+
 
     /*private CANSparkMax m_Shooter1;
     private CANSparkMax m_Shooter2;
