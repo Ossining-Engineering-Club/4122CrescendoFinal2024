@@ -38,6 +38,7 @@ import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.ElevatorManualControl;
 import frc.robot.commands.IntakeNote;
+import frc.robot.commands.Shoot;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -109,12 +110,14 @@ public class RobotContainer {
         this::getState));
 
     // secondary controller
-    m_secondaryController.a().onTrue(Commands.runOnce(() -> {})); // forwards/reverse
-    m_secondaryController.a().onFalse(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.a().onTrue(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.a().onFalse(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.x().onTrue(Commands.runOnce(() -> {})); // shooter/elevator
+    //m_secondaryController.x().onFalse(Commands.runOnce(() -> {})); // shooter/elevator
+    //m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {})); // automatic
+    //m_secondaryController.rightBumper().onFalse(Commands.runOnce(() -> {})); // manual
     m_secondaryController.b().onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
     m_secondaryController.b().onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
-    m_secondaryController.x().onTrue(Commands.runOnce(() -> {})); // shooter/elevator
-    m_secondaryController.x().onFalse(Commands.runOnce(() -> {})); // shooter/elevator
 
     m_secondaryController.y().onTrue(
       new ConditionalCommand(
@@ -140,8 +143,7 @@ public class RobotContainer {
         Commands.runOnce(() -> {}),
         m_secondaryController.rightBumper()::getAsBoolean)); // climber down
 
-    m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {})); // automatic
-    m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {}, m_climber)); // turn off manual climber control
+    m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
     m_secondaryController.rightBumper().onFalse(new ClimberManualControl(m_climber, m_secondaryController::getRightY)); // manual climber control
    
     m_secondaryController.rightBumper().onFalse(
@@ -150,7 +152,6 @@ public class RobotContainer {
         new ElevatorManualControl(m_elevator, m_secondaryController::getLeftY),
         m_secondaryController.x()::getAsBoolean)); // manual shooter/elevator control
 
-    m_secondaryController.rightBumper().onFalse(Commands.runOnce(() -> {})); // manual
     m_secondaryController.leftStick().onTrue(Commands.runOnce(() -> {})); // eject
   }
 

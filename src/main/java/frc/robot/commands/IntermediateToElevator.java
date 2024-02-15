@@ -6,14 +6,13 @@ import frc.robot.subsystems.Intermediate;
 import java.lang.Runnable;
 import java.util.function.Supplier;
 import frc.robot.constants;
+import frc.robot.constants.State;
 
 public class IntermediateToElevator extends Command {
 
     private final Intermediate m_moveNote;
     private final Runnable updateState;
     private final Supplier<constants.State> getState;
-
-    private boolean statebool;
 
     public IntermediateToElevator(Intermediate moveNote, Runnable updateState, Supplier<constants.State> getState) {
         m_moveNote = moveNote;
@@ -26,17 +25,8 @@ public class IntermediateToElevator extends Command {
 
     @Override
     public void initialize() {
-        if (getState.get() == constants.State.SYSTEM) {
-            statebool = true;
-        }
-        }
-
-    @Override
-    public void execute() {
-        if(statebool) {
-             m_moveNote.moveToElevator();
-        }
-        }
+        m_moveNote.moveToElevator();
+    }
 
     @Override 
     public void end(boolean interrupted){
@@ -47,8 +37,7 @@ public class IntermediateToElevator extends Command {
 
     @Override
     public boolean isFinished(){
-        statebool = false;
-        return true;
+        return getState.get() == State.ELEVATOR;
     }
 
 

@@ -6,8 +6,7 @@ import frc.robot.subsystems.Intermediate;
 import frc.robot.constants;
 import java.lang.Runnable;
 import java.util.function.Supplier;
-
-
+import frc.robot.constants.State;
 
 public class IntermediateToShooter extends Command {
 
@@ -15,30 +14,18 @@ public class IntermediateToShooter extends Command {
     private final Runnable updateState;
     private final Supplier<constants.State> getState;
 
-    private boolean statebool;
-
     public IntermediateToShooter(Intermediate moveNote, Runnable updateState, Supplier<constants.State> getState) {
         m_moveNote = moveNote;
         this.updateState = updateState;
         this.getState = getState;
 
         addRequirements(m_moveNote);
-
     }
 
     @Override
     public void initialize() {
-        if (getState.get() == constants.State.SYSTEM) {
-            statebool = true;
-        }
-        }
-
-    @Override
-    public void execute() {
-        if(statebool) {
-             m_moveNote.moveToShooter();
-        }
-        }
+        m_moveNote.moveToShooter();
+    }
 
     @Override 
     public void end(boolean interrupted){
@@ -49,8 +36,7 @@ public class IntermediateToShooter extends Command {
 
     @Override
     public boolean isFinished(){
-        statebool = false;
-        return true;
+        return getState.get() == State.SHOOTER;
     }
 
 }
