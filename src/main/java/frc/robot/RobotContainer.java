@@ -37,6 +37,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.ElevatorManualControl;
+import frc.robot.commands.IntakeNote;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -79,7 +80,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    m_driverController.a().onTrue(new TurretMode(
+    /*m_driverController.a().onTrue(new TurretMode(
       m_robotDrive, 
       m_shooter,
       m_shooterLimelight, 
@@ -88,7 +89,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
-    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));
+    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));*/
     /*m_driverController.y().onTrue(AutoBuilder.pathfindToPose(
       new Pose2d(4.441, 4.441, Rotation2d.fromDegrees(180)),
       new PathConstraints(
@@ -97,7 +98,15 @@ public class RobotContainer {
       0.0,
       0.0
     ));*/
-    m_driverController.x().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
+    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
+    m_driverController.a().onTrue(
+      new IntakeNote(
+        m_robotDrive,
+        m_noteLimelight,
+        intake, intermediate,
+        m_secondaryController.x()::getAsBoolean,
+        this::updateState,
+        this::getState));
 
     // secondary controller
     m_secondaryController.a().onTrue(Commands.runOnce(() -> {})); // forwards/reverse
