@@ -3,7 +3,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants;
 import frc.robot.subsystems.Shooter;
+import java.util.function.DoubleSupplier;
 
 public class ShooterCommands {
 
@@ -26,6 +28,27 @@ public class ShooterCommands {
         @Override 
         public boolean isFinished() {
             return m_shooter.isAngleReached();
+        }
+    }
+
+    public static class ShooterManualAngleControl extends Command {
+        private final Shooter m_shooter;
+        private final DoubleSupplier m_angleSupplier;
+
+        public ShooterManualAngleControl(Shooter shooter, DoubleSupplier angleSupplier) {
+            m_angleSupplier = angleSupplier;
+            m_shooter = shooter;
+            addRequirements(m_shooter);
+        }
+
+        @Override
+        public void execute() {
+            m_shooter.setAngle(m_shooter.getAngle()+m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
+        }
+
+        @Override 
+        public boolean isFinished() {
+            return false;
         }
     }
 

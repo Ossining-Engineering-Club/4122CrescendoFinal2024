@@ -72,6 +72,10 @@ public class Shooter extends SubsystemBase{
         return isAngleReached();
     }
 
+    public double getAngle() {
+        return e_Angle.getPosition();
+    }
+
     //returns true if setpoint is reached false otherwise
     public boolean isAngleReached() {
         return Math.abs(AnglePIDController.getGoal().position-e_Angle.getPosition()) < constants.kangleTolerance;

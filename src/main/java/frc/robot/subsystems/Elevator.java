@@ -20,6 +20,13 @@ public class Elevator extends SubsystemBase {
     private final RelativeEncoder m_noteElevatorEnc;
     private final RelativeEncoder m_dumperReleaseEnc;
 
+    private final ProfiledPIDController m_pid = new ProfiledPIDController(
+        constants.kElevatorPIDGains[0],
+        constants.kElevatorPIDGains[1],
+        constants.kElevatorPIDGains[2],
+        new TrapezoidProfile.Constraints(constants.kElevatorMaxSpeed, constants.kElevatorMaxAcceleration)
+    );
+
     public Elevator(int nElevatorID, int ElevatorRaiseID, int dumperReleaseMotorID){
         //creating motors and creating/resetting encoders
         m_noteElevatorMotor = new CANSparkMax(nElevatorID, MotorType.kBrushless);
@@ -33,7 +40,23 @@ public class Elevator extends SubsystemBase {
         m_elevatorRaisingMotor = new CANSparkMax(ElevatorRaiseID, MotorType.kBrushless);
         m_elevatorRaisingEnc = m_elevatorRaisingMotor.getEncoder();
         m_elevatorRaisingEnc.setPosition(0.0);
-    }  
+
+        m_pid.reset(0);
+        m_pid.setGoal(0);
+    }
+
+    @Override
+    public void periodic() {
+        ElevatorMove(m_pid.calculate(getHeight()));
+    }
+
+    public void setHeight(double height) {
+        m_pid.setGoal(height);
+    }
+
+    public double getHeight() {
+        return m_elevatorRaisingEnc.getPosition();
+    }
 
     //Resetting encoders
     public void resetElevatorEncoder(){

@@ -165,6 +165,7 @@ public final class constants {
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 100.0;
+    public static final double kShooterManualAngleControlSpeedMultiplier = 0.05;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
@@ -172,6 +173,8 @@ public final class constants {
     public static final double[] kElevatorPIDGains = {1.0, 0.0, 0.0};
     public static final double kElevatorMaxSpeed = 1.0;
     public static final double kElevatorMaxAcceleration = 1.0;
+    public static final double kElevatorHighDefault = 1.0;
+    public static final double kElevatorManualAngleControlSpeedMultiplier = 0.1;
 
     // Enums
     public static enum State {
@@ -193,5 +196,6 @@ public final class constants {
     public static final double kClimberMaxSpeed = 1.0; // m/s
     public static final double kClimberMaxAcceleration = 1.0; // m/s^2
     public static final double kClimberGearing = 1.0;
+    public static final double kClimberHighDefault = 1.0;
 
 }
