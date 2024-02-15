@@ -14,6 +14,7 @@ import frc.robot.constants.State;
 import java.util.function.BooleanSupplier;
 import java.lang.Runnable;
 import java.util.function.Supplier;
+import frc.robot.commands.IntakeRun;
 
 public class IntakeNote extends ParallelDeadlineGroup {
     public IntakeNote(
@@ -30,6 +31,6 @@ public class IntakeNote extends ParallelDeadlineGroup {
                     new IntermediateToElevator(intermediate, updateState, getState),
                     shooterOrElevatorSwitch),
                 new GoToNote(drivetrain, limelight),
-                Commands.runOnce(() -> {intake.start();}));
+                new IntakeRun(intake));
     }
 }
