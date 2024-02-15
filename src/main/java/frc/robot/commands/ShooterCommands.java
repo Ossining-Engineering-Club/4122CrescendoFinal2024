@@ -2,32 +2,36 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.subsystems.Shooter;
-import java.util.function.DoubleSupplier;
 
 public class ShooterCommands {
 
     // ONLY USE FOR TESTING
-    public static class SetShooterAngle extends Command {
+    public class AngleShooter extends Command {
+
         private final Shooter m_shooter;
         private final double angle;
+        private boolean isdone;
 
-        public SetShooterAngle(Shooter shooter, double angle) {
+        public AngleShooter(Shooter shooter, double angle) {
             this.angle = angle;
+            this.isdone = false;
             m_shooter = shooter;
             addRequirements(m_shooter);
-        }
 
+        }
         @Override
-        public void initialize() { //set position
-            m_shooter.setAngle(this.angle);
+        public void execute() { //set position
+            this.isdone=m_shooter.setAngle(this.angle);
         }
 
         @Override 
-        public boolean isFinished() {
-            return m_shooter.isAngleReached();
+        public boolean isFinished() { // set  position
+            return this.isdone;
         }
     }
 
