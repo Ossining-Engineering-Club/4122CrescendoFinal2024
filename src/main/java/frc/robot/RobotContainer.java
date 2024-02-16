@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.commands.ClimberMoveTo;
 import frc.robot.commands.ElevatorExtend;
@@ -46,7 +47,7 @@ public class RobotContainer {
   private final Limelight m_noteLimelight = new Limelight("limelight");
   private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandXboxController m_secondaryController = new CommandXboxController(1);
+  CommandGenericHID m_secondaryController = new CommandXboxController(1);
 
   private Intermediate intermediate;
   private Intake intake;
@@ -105,54 +106,54 @@ public class RobotContainer {
         m_robotDrive,
         m_noteLimelight,
         intake, intermediate,
-        m_secondaryController.x()::getAsBoolean,
+        m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
         this::updateState,
         this::getState));
 
     // secondary controller
-    //m_secondaryController.a().onTrue(Commands.runOnce(() -> {})); // forwards/reverse
-    //m_secondaryController.a().onFalse(Commands.runOnce(() -> {})); // forwards/reverse
-    //m_secondaryController.x().onTrue(Commands.runOnce(() -> {})); // shooter/elevator
-    //m_secondaryController.x().onFalse(Commands.runOnce(() -> {})); // shooter/elevator
-    //m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {})); // automatic
-    //m_secondaryController.rightBumper().onFalse(Commands.runOnce(() -> {})); // manual
-    m_secondaryController.b().onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
-    m_secondaryController.b().onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
+    //m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.button(constants.kShooterOrElevatorButton).onTrue(Commands.runOnce(() -> {})); // shooter/elevator
+    //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
+    //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
+    //m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(() -> {})); // manual
+    m_secondaryController.button(constants.kShooterButton).onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
+    m_secondaryController.button(constants.kShooterButton).onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
 
-    m_secondaryController.y().onTrue(
+    m_secondaryController.button(constants.kElevatorButton).onTrue(
       new ConditionalCommand(
         new ElevatorExtend(m_elevator, constants.kElevatorHighDefault),
         Commands.runOnce(() -> {}),
-        m_secondaryController.rightBumper()::getAsBoolean)); // elevator up
+        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator up
 
-    m_secondaryController.y().onFalse(
+    m_secondaryController.button(constants.kElevatorButton).onFalse(
       new ConditionalCommand(
         new ElevatorExtend(m_elevator, 0.0),
         Commands.runOnce(() -> {}),
-        m_secondaryController.rightBumper()::getAsBoolean)); // elevator down
+        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator down
 
-    m_secondaryController.leftBumper().onTrue(
+    m_secondaryController.button(constants.kClimberButton).onTrue(
       new ConditionalCommand(
         new ClimberMoveTo(m_climber, constants.kClimberHighDefault),
         Commands.runOnce(() -> {}),
-        m_secondaryController.rightBumper()::getAsBoolean)); // climber up
+        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber up
 
-    m_secondaryController.leftBumper().onFalse(
+    m_secondaryController.button(constants.kClimberButton).onFalse(
       new ConditionalCommand(
         new ClimberMoveTo(m_climber, 0.0),
         Commands.runOnce(() -> {}),
-        m_secondaryController.rightBumper()::getAsBoolean)); // climber down
+        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber down
 
-    m_secondaryController.rightBumper().onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
-    m_secondaryController.rightBumper().onFalse(new ClimberManualControl(m_climber, m_secondaryController::getRightY)); // manual climber control
+    m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
+    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(new ClimberManualControl(m_climber, () -> m_secondaryController.getRawAxis(constants.kClimberJoystickAxis))); // manual climber control
    
-    m_secondaryController.rightBumper().onFalse(
+    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(
       new ConditionalCommand(
-        new ShooterManualAngleControl(m_shooter, m_secondaryController::getLeftY),
-        new ElevatorManualControl(m_elevator, m_secondaryController::getLeftY),
-        m_secondaryController.x()::getAsBoolean)); // manual shooter/elevator control
+        new ShooterManualAngleControl(m_shooter, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
+        new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
+        m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
 
-    m_secondaryController.leftStick().onTrue(Commands.runOnce(() -> {})); // eject
+    m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {})); // eject
   }
 
   public void updateState(){

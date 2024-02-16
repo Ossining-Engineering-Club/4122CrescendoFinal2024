@@ -201,4 +201,14 @@ public final class constants {
     // Note Searching
     public static final double kNoteSearchingSpeed = 1.0;
 
+    // Secondary Controller
+    public static final int kForwardsOrReverseButton = 0;
+    public static final int kShooterOrElevatorButton = 1;
+    public static final int kAutomaticOrManualButton = 2;
+    public static final int kShooterButton = 3;
+    public static final int kElevatorButton = 4;
+    public static final int kClimberButton = 5;
+    public static final int kEjectButton = 6;
+    public static final int kShooterElevatorJoystickAxis = 0;
+    public static final int kClimberJoystickAxis = 1;
 }
