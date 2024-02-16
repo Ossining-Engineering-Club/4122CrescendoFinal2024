@@ -37,7 +37,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.ElevatorManualControl;
-import frc.robot.commands.IntakeNote;
+import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
 
 public class RobotContainer {
@@ -101,7 +101,7 @@ public class RobotContainer {
     ));*/
     m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
     m_driverController.a().onTrue(
-      new IntakeNote(
+      new GoToAndIntakeNote(
         m_robotDrive,
         m_noteLimelight,
         intake, intermediate,

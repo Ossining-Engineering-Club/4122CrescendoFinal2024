@@ -16,8 +16,8 @@ import java.lang.Runnable;
 import java.util.function.Supplier;
 import frc.robot.commands.IntakeRun;
 
-public class IntakeNote extends ParallelDeadlineGroup {
-    public IntakeNote(
+public class GoToAndIntakeNote extends ParallelDeadlineGroup {
+    public GoToAndIntakeNote(
         Drivetrain drivetrain,
         Limelight limelight,
         Intake intake,
