@@ -19,7 +19,7 @@ public class SearchForAndGoToAndIntakeNote extends SequentialCommandGroup {
     public SearchForAndGoToAndIntakeNote(
         Drivetrain drive,
         Limelight limelight,
-        double xLimit,
+        double yLimit,
         boolean isGoingPositive,
         Drivetrain drivetrain,
         Intake intake,
@@ -28,7 +28,7 @@ public class SearchForAndGoToAndIntakeNote extends SequentialCommandGroup {
         Runnable updateState,
         Supplier<State> getState) {
             addCommands(
-                new SearchForNote(drive, limelight, xLimit, isGoingPositive),
+                new SearchForNote(drive, limelight, yLimit, isGoingPositive),
                 new ConditionalCommand(
                     new GoToAndIntakeNote(drive, limelight, intake, intermediate, shooterOrElevatorSwitch, updateState, getState),
                     Commands.runOnce(() -> {}),
