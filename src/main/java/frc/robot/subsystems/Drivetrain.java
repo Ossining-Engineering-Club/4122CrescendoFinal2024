@@ -185,40 +185,40 @@ public class Drivetrain extends SubsystemBase {
       RFMod.ResetEncoder();
       RBMod.ResetEncoder();
   }
-public SwerveModulePosition[] getModulePositions(){
-  return new SwerveModulePosition[] {
-                                  LFMod.GetPosition(),
-                                  RFMod.GetPosition(),
-                                  LBMod.GetPosition(),
-                                  RBMod.GetPosition()};
-}
-public SwerveModuleState[] getModuleStates(){
-  return new SwerveModuleState[] {
-                                  LFMod.GetState(),
-                                  RFMod.GetState(),
-                                  LBMod.GetState(),
-                                  RBMod.GetState()};
-}
-public void resetPose(Pose2d pose) {
-  odometry.resetPosition(this.getAngle(),this.getModulePositions(), pose);
-}
-@Override
-public void periodic() {
-  // This method will be called once per scheduler run
-  this.UpdateOdometry();
-  m_field.setRobotPose(this.SwerveOdometryGetPose());
+  public SwerveModulePosition[] getModulePositions(){
+    return new SwerveModulePosition[] {
+                                    LFMod.GetPosition(),
+                                    RFMod.GetPosition(),
+                                    LBMod.GetPosition(),
+                                    RBMod.GetPosition()};
+  }
+  public SwerveModuleState[] getModuleStates(){
+    return new SwerveModuleState[] {
+                                    LFMod.GetState(),
+                                    RFMod.GetState(),
+                                    LBMod.GetState(),
+                                    RBMod.GetState()};
+  }
+  public void resetPose(Pose2d pose) {
+    odometry.resetPosition(this.getAngle(),this.getModulePositions(), pose);
+  }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+    this.UpdateOdometry();
+    m_field.setRobotPose(this.SwerveOdometryGetPose());
 
-  // adding vision measurements if the limelight has a target and it is a new measurement
-  if (m_shooterLimelight.hasTarget() &&
-    !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
-      odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
-      v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
-  }
-  if (m_elevatorLimelight.hasTarget() &&
-    doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
-      odometry.addVisionMeasurement(m_elevatorLimelight.getBotPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
-      v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
-  }
+    // adding vision measurements if the limelight has a target and it is a new measurement
+    if (m_shooterLimelight.hasTarget() &&
+      !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
+        odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+        v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
+    }
+    if (m_elevatorLimelight.hasTarget() &&
+      doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
+        odometry.addVisionMeasurement(m_elevatorLimelight.getBotPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
+        v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
+    }
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
   }
