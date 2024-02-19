@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.VecBuilder;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 
@@ -82,7 +83,15 @@ public class Drivetrain extends SubsystemBase {
               LBMod.GetPosition(),
               RBMod.GetPosition()
             },
-            new Pose2d(0, 0, new Rotation2d(0)));
+            new Pose2d(0, 0, new Rotation2d(0)),
+            VecBuilder.fill(
+              constants.kPoseEstimatorStateStdDevs[0],
+              constants.kPoseEstimatorStateStdDevs[1],
+              constants.kPoseEstimatorStateStdDevs[2]),
+            VecBuilder.fill(
+              constants.kPoseEstimatorVisionStdDevs[0],
+              constants.kPoseEstimatorVisionStdDevs[1],
+              constants.kPoseEstimatorVisionStdDevs[2]));
       //Auto Holonomic controller configuration sets
       AutoBuilder.configureHolonomic(
         this::SwerveOdometryGetPose, // Robot pose supplier

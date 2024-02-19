@@ -211,4 +211,8 @@ public final class constants {
     public static final int kEjectButton = 6;
     public static final int kShooterElevatorJoystickAxis = 0;
     public static final int kClimberJoystickAxis = 1;
+
+    // Pose estimator
+    public static final double[] kPoseEstimatorStateStdDevs = {0.1, 0.1, 0.1}; // {x meters, y meters, theta radians}
+    public static final double[] kPoseEstimatorVisionStdDevs = {0.9, 0.9, 0.9}; // {x meters, y meters, theta radians}
 }
