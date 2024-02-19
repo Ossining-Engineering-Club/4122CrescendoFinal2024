@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -56,6 +57,11 @@ public class Drivetrain extends SubsystemBase {
   private double v_prevShooterLLTimestamp = -1;
   private double v_prevElevatorLLTimestamp = -1;
 
+  private Pose2d v_prevPose;
+  private double v_xSpeed = 0; // m/s
+  private double v_ySpeed = 0; // m/s
+  private double v_rotSpeed = 0; // rad/s
+
   public Drivetrain(int gyroport, Limelight shooterLimelight, Limelight elevatorLimelight){
       //Motor process:
       /*Decide front back, left and right and assign locations/module names accordingly
@@ -92,6 +98,9 @@ public class Drivetrain extends SubsystemBase {
               constants.kPoseEstimatorVisionStdDevs[0],
               constants.kPoseEstimatorVisionStdDevs[1],
               constants.kPoseEstimatorVisionStdDevs[2]));
+      
+      v_prevPose = SwerveOdometryGetPose();
+
       //Auto Holonomic controller configuration sets
       AutoBuilder.configureHolonomic(
         this::SwerveOdometryGetPose, // Robot pose supplier
@@ -202,6 +211,18 @@ public class Drivetrain extends SubsystemBase {
   public void resetPose(Pose2d pose) {
     odometry.resetPosition(this.getAngle(),this.getModulePositions(), pose);
   }
+  public double getXSpeed() {
+    return v_xSpeed;
+  }
+  public double getYSpeed() {
+    return v_ySpeed;
+  }
+  public Rotation2d getRotSpeed() {
+    return Rotation2d.fromRadians(v_rotSpeed);
+  }
+  public double getTransSpeed() {
+    return Math.sqrt(Math.pow(getXSpeed(), 2) + Math.pow(getYSpeed(), 2));
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -219,6 +240,14 @@ public class Drivetrain extends SubsystemBase {
         odometry.addVisionMeasurement(m_elevatorLimelight.getBotPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
         v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
     }
+
+    // updating robot speeds
+    v_xSpeed = (SwerveOdometryGetPose().getX()-v_prevPose.getX())/0.02;
+    v_ySpeed = (SwerveOdometryGetPose().getY()-v_prevPose.getY())/0.02;
+    v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
+    v_prevPose = SwerveOdometryGetPose();
+
+    // AdvantageKit logging
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
     Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
   }
