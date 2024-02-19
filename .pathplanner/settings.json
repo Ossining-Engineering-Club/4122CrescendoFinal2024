@@ -3,6 +3,7 @@
   "robotLength": 0.91,
   "holonomicMode": true,
   "pathFolders": [
+    "Center Bottom Note Searching",
     "Note Detection"
   ],
   "autoFolders": [],

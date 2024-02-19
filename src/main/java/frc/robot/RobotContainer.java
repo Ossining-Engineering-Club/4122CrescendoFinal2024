@@ -40,6 +40,8 @@ import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.ElevatorManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.IntakeNote;
+import frc.robot.commands.SearchForAndGoToAndIntakeNote;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -60,6 +62,30 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(
+      intake,
+      intermediate,
+      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+      this::updateState,
+      this::getState));
+    NamedCommands.registerCommand("GoToAndIntakeNote", new GoToAndIntakeNote(
+      m_robotDrive,
+      m_noteLimelight,
+      intake, intermediate,
+      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+      this::updateState,
+      this::getState));
+    NamedCommands.registerCommand("SearchForAndGoToAndIntakeNote", new SearchForAndGoToAndIntakeNote(
+      m_robotDrive,
+      m_noteLimelight,
+      7.5,
+      true,
+      intake,
+      intermediate,
+      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+      this::updateState,
+      this::getState));
+    NamedCommands.registerCommand("Shoot", new Shoot(m_shooter));
 
     m_state = State.CLEAR;
 

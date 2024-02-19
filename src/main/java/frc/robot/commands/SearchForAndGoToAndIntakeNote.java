@@ -21,7 +21,6 @@ public class SearchForAndGoToAndIntakeNote extends SequentialCommandGroup {
         Limelight limelight,
         double yLimit,
         boolean isGoingPositive,
-        Drivetrain drivetrain,
         Intake intake,
         Intermediate intermediate,
         BooleanSupplier shooterOrElevatorSwitch,
