@@ -27,7 +27,7 @@ public class GoToAndIntakeNote extends ParallelCommandGroup {
         Supplier<State> getState) {
             addCommands(
                 new IntakeNote(intake, intermediate, shooterOrElevatorSwitch, updateState, getState),
-                new GoToNote(drivetrain, limelight)
+                new GoToNote(drivetrain, limelight, intake)
             );
     }
 }

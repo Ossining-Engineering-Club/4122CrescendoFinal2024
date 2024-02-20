@@ -63,7 +63,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight));
+    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, intake));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(
       intake,
       intermediate,
@@ -119,7 +119,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
-    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight));*/
+    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight, intake));*/
     /*m_driverController.y().onTrue(AutoBuilder.pathfindToPose(
       new Pose2d(4.441, 4.441, Rotation2d.fromDegrees(180)),
       new PathConstraints(

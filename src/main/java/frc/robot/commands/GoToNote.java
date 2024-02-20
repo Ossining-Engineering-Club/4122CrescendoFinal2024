@@ -7,13 +7,17 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Intake;
 
 public class GoToNote extends Command {
     private final Drivetrain m_drive;
     private final Limelight m_limelight;
+    private final Intake m_intake;
+    private final Timer m_timer = new Timer();
 
     private final ProfiledPIDController m_transPIDController = new ProfiledPIDController(
         constants.kVisionTransPIDGains[0],
@@ -34,9 +38,10 @@ public class GoToNote extends Command {
 
     private final LinearFilter m_rotFilter = LinearFilter.movingAverage(50);
 
-    public GoToNote(Drivetrain drive, Limelight limelight) {
+    public GoToNote(Drivetrain drive, Limelight limelight, Intake intake) {
         m_drive = drive;
         m_limelight = limelight;
+        m_intake = intake;
 
         addRequirements(m_drive);
     }
@@ -50,6 +55,7 @@ public class GoToNote extends Command {
         for (int i = 0; i < 50; i++) m_rotFilter.calculate(m_drive.getAngle().getRadians());
         prevTX = -m_limelight.getTX()/180*Math.PI;
         prevTransAngle = m_drive.getAngle().getRadians()-m_limelight.getTX()/180*Math.PI;
+        m_timer.restart();
     }
 
     @Override
@@ -72,11 +78,12 @@ public class GoToNote extends Command {
                 prevTX = tx;
                 prevTransAngle = transAngle;
             }
-            SmartDashboard.putNumber("tx", tx);
+
+            // restart timer if the limelight sees a target
+            m_timer.restart();
         }
         else {
             transAngle = prevTransAngle;
-            SmartDashboard.putNumber("tx", -9999999);
         }
         
         double xSpeed = overallSpeed*Math.cos(transAngle);
@@ -93,9 +100,9 @@ public class GoToNote extends Command {
 
         //SmartDashboard.putNumber("sqrt(ta)", Math.sqrt(ta));
         SmartDashboard.putNumber("transAngle", transAngle);
-        SmartDashboard.putNumber("xSpeed", xSpeed);
-        SmartDashboard.putNumber("ySpeed", ySpeed);
-        SmartDashboard.putNumber("rotSpeed", rotSpeed);
+        //SmartDashboard.putNumber("xSpeed", xSpeed);
+        //SmartDashboard.putNumber("ySpeed", ySpeed);
+        //SmartDashboard.putNumber("rotSpeed", rotSpeed);
             
         m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
 
@@ -104,6 +111,14 @@ public class GoToNote extends Command {
 
     @Override
     public boolean isFinished() {
+        if (m_intake.BBisTripped()) {
+            SmartDashboard.putString("GoToNote finish cause", "BB was tripped");
+            return true;
+        }
+        if (m_timer.get() > constants.kGoToNoteTimeout) {
+            SmartDashboard.putString("GoToNote finish cause", "timed out");
+            return true;
+        }
         return false;
     }
 
