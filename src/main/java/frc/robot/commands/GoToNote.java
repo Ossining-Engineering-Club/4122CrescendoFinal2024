@@ -63,7 +63,7 @@ public class GoToNote extends Command {
         SmartDashboard.putNumber("GoToNote gyro angle", m_drive.getAngle().getRadians());
 
         double transAngle;
-        double overallSpeed = 1.0/*m_transPIDController.calculate(Math.sqrt(ta))*/;
+        double overallSpeed = constants.kGoToNoteSpeed;
 
         if (m_limelight.hasTarget()) {
             double tx = -m_limelight.getTX()/180*Math.PI;
