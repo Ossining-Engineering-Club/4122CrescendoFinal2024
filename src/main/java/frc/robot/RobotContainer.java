@@ -51,7 +51,7 @@ public class RobotContainer {
   private final Limelight m_noteLimelight = new Limelight("limelight");
   private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandGenericHID m_secondaryController = new CommandXboxController(1);
+  CommandGenericHID m_secondaryController = new CommandGenericHID(1);
 
   private Intermediate intermediate;
   private Intake intake;
