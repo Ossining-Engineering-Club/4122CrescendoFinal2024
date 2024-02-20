@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -135,6 +137,15 @@ public class RobotContainer {
         m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
         this::updateState,
         this::getState));
+
+    // TEST AMP LINE UP
+    m_driverController.y().onTrue(
+      AutoBuilder.pathfindThenFollowPath(
+        PathPlannerPath.fromPathFile("AmpPath"),
+        new PathConstraints(
+          2.0, 0.4,
+          constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
+        0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
 
     // secondary controller
     //m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.runOnce(() -> {})); // forwards/reverse
