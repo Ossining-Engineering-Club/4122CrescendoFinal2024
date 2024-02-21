@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.util.Units;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 
@@ -223,6 +224,58 @@ public class Drivetrain extends SubsystemBase {
   public double getTransSpeed() {
     return Math.sqrt(Math.pow(getXSpeed(), 2) + Math.pow(getYSpeed(), 2));
   }
+  public Pose2d replaceRotWithGyro(Pose2d pose) {
+    return new Pose2d(pose.getX(), pose.getY(), getAngle());
+  }
+
+  public void updatePoseEstimatorWithVisionBotPose(Limelight limelight) {
+    Pose2d visionBotPose = limelight.getBotPose();
+    // invalid LL data
+    if (doublesAreEqual(visionBotPose.getX(), 0.0)) {
+      SmartDashboard.putBoolean("vision measurement added?", false);
+      return;
+    }
+
+    // distance from current pose to vision estimated pose
+    double poseDifference = odometry.getEstimatedPosition().getTranslation()
+        .getDistance(visionBotPose.getTranslation());
+
+    if (limelight.hasTarget()) {
+      double xyStds;
+      double degStds;
+      // multiple targets detected
+      if (limelight.getNumTargets() >= 2) {
+        xyStds = 0.5;
+        degStds = 6;
+      }
+      // 1 target with large area and close to estimated pose
+      else if (limelight.getTA() > 0.8 && poseDifference < 0.5) {
+        xyStds = 1.0;
+        degStds = 12;
+      }
+      // 1 target farther away and estimated pose is close
+      else if (limelight.getTA() > 0.1 && poseDifference < 0.3) {
+        xyStds = 2.0;
+        degStds = 30;
+      }
+      // conditions don't match to add a vision measurement
+      else {
+        SmartDashboard.putBoolean("vision measurement added?", false);
+        return;
+      }
+
+      SmartDashboard.putBoolean("vision measurement added?", true);
+      SmartDashboard.putNumber("xyStds", xyStds);
+      SmartDashboard.putNumber("degStds", degStds);
+
+      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+      odometry.addVisionMeasurement(visionBotPose, Timer.getFPGATimestamp() - limelight.getLatencyMilliseconds()/1000.0);
+    }
+    else {
+      SmartDashboard.putBoolean("vision measurement added?", false);
+    }
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -230,22 +283,34 @@ public class Drivetrain extends SubsystemBase {
     m_field.setRobotPose(this.SwerveOdometryGetPose());
 
     // adding vision measurements if the limelight has a target and it is a new measurement
-    if (m_shooterLimelight.hasTarget() &&
-      !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
-        odometry.addVisionMeasurement(m_shooterLimelight.getBotPose(), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
-        v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
-    }
-    if (m_elevatorLimelight.hasTarget() &&
-      doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
-        odometry.addVisionMeasurement(m_elevatorLimelight.getBotPose(), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
-        v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
-    }
+    // if (m_shooterLimelight.hasTarget() &&
+    //   !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
+    //     odometry.addVisionMeasurement(replaceRotWithGyro(m_shooterLimelight.getBotPose()), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
+    //     v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
+    // }
+    // if (m_elevatorLimelight.hasTarget() &&
+    //   doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
+    //     odometry.addVisionMeasurement(replaceRotWithGyro(m_elevatorLimelight.getBotPose()), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
+    //     v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
+    // }
+    updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
+    //updatePoseEstimatorWithVisionBotPose(m_elevatorLimelight);
 
     // updating robot speeds
     v_xSpeed = (SwerveOdometryGetPose().getX()-v_prevPose.getX())/0.02;
     v_ySpeed = (SwerveOdometryGetPose().getY()-v_prevPose.getY())/0.02;
     v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
     v_prevPose = SwerveOdometryGetPose();
+
+    SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
+    SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
+    SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());
+
+    SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
+    SmartDashboard.putNumber("vision rot deg", m_shooterLimelight.getBotYaw());
+
+    SmartDashboard.putNumber("shooter ll num targets detected", m_shooterLimelight.getNumTargets());
 
     // AdvantageKit logging
     Logger.recordOutput("SwerveModuleStates", getModuleStates());

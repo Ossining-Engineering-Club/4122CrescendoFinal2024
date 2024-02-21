@@ -51,7 +51,7 @@ public class RobotContainer {
   private final Limelight m_noteLimelight = new Limelight("limelight");
   private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandGenericHID m_secondaryController = new CommandGenericHID(1);
+  //CommandGenericHID m_secondaryController = new CommandGenericHID(1);
 
   private Intermediate intermediate;
   private Intake intake;
@@ -63,31 +63,31 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, intake));
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(
-      intake,
-      intermediate,
-      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
-      this::updateState,
-      this::getState));
-    NamedCommands.registerCommand("GoToAndIntakeNote", new GoToAndIntakeNote(
-      m_robotDrive,
-      m_noteLimelight,
-      intake, intermediate,
-      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
-      this::updateState,
-      this::getState));
-    NamedCommands.registerCommand("SearchForAndGoToAndIntakeNote", new SearchForAndGoToAndIntakeNote(
-      m_robotDrive,
-      m_noteLimelight,
-      7.5,
-      true,
-      intake,
-      intermediate,
-      m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
-      this::updateState,
-      this::getState));
-    NamedCommands.registerCommand("Shoot", new Shoot(m_shooter));
+    // NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, intake));
+    // NamedCommands.registerCommand("IntakeNote", new IntakeNote(
+    //   intake,
+    //   intermediate,
+    //   m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+    //   this::updateState,
+    //   this::getState));
+    // NamedCommands.registerCommand("GoToAndIntakeNote", new GoToAndIntakeNote(
+    //   m_robotDrive,
+    //   m_noteLimelight,
+    //   intake, intermediate,
+    //   m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+    //   this::updateState,
+    //   this::getState));
+    // NamedCommands.registerCommand("SearchForAndGoToAndIntakeNote", new SearchForAndGoToAndIntakeNote(
+    //   m_robotDrive,
+    //   m_noteLimelight,
+    //   7.5,
+    //   true,
+    //   intake,
+    //   intermediate,
+    //   m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+    //   this::updateState,
+    //   this::getState));
+    // NamedCommands.registerCommand("Shoot", new Shoot(m_shooter));
 
     m_state = State.CLEAR;
 
@@ -129,14 +129,14 @@ public class RobotContainer {
       0.0
     ));*/
     m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
-    m_driverController.a().onTrue(
-      new GoToAndIntakeNote(
-        m_robotDrive,
-        m_noteLimelight,
-        intake, intermediate,
-        m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
-        this::updateState,
-        this::getState));
+    // m_driverController.a().onTrue(
+    //   new GoToAndIntakeNote(
+    //     m_robotDrive,
+    //     m_noteLimelight,
+    //     intake, intermediate,
+    //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
+    //     this::updateState,
+    //     this::getState));
 
     // TEST AMP LINE UP
     m_driverController.y().onTrue(
@@ -154,87 +154,87 @@ public class RobotContainer {
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
     //m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(() -> {})); // manual
-    m_secondaryController.button(constants.kShooterButton).onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
-    m_secondaryController.button(constants.kShooterButton).onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
+    // m_secondaryController.button(constants.kShooterButton).onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
+    // m_secondaryController.button(constants.kShooterButton).onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
 
-    m_secondaryController.button(constants.kElevatorButton).onTrue(
-      new ConditionalCommand(
-        new ElevatorExtend(m_elevator, constants.kElevatorHighDefault),
-        Commands.runOnce(() -> {}),
-        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator up
+    // m_secondaryController.button(constants.kElevatorButton).onTrue(
+    //   new ConditionalCommand(
+    //     new ElevatorExtend(m_elevator, constants.kElevatorHighDefault),
+    //     Commands.runOnce(() -> {}),
+    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator up
 
-    m_secondaryController.button(constants.kElevatorButton).onFalse(
-      new ConditionalCommand(
-        new ElevatorExtend(m_elevator, 0.0),
-        Commands.runOnce(() -> {}),
-        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator down
+    // m_secondaryController.button(constants.kElevatorButton).onFalse(
+    //   new ConditionalCommand(
+    //     new ElevatorExtend(m_elevator, 0.0),
+    //     Commands.runOnce(() -> {}),
+    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator down
 
-    m_secondaryController.button(constants.kClimberButton).onTrue(
-      new ConditionalCommand(
-        new ClimberMoveTo(m_climber, constants.kClimberHighDefault),
-        Commands.runOnce(() -> {}),
-        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber up
+    // m_secondaryController.button(constants.kClimberButton).onTrue(
+    //   new ConditionalCommand(
+    //     new ClimberMoveTo(m_climber, constants.kClimberHighDefault),
+    //     Commands.runOnce(() -> {}),
+    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber up
 
-    m_secondaryController.button(constants.kClimberButton).onFalse(
-      new ConditionalCommand(
-        new ClimberMoveTo(m_climber, 0.0),
-        Commands.runOnce(() -> {}),
-        m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber down
+    // m_secondaryController.button(constants.kClimberButton).onFalse(
+    //   new ConditionalCommand(
+    //     new ClimberMoveTo(m_climber, 0.0),
+    //     Commands.runOnce(() -> {}),
+    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber down
 
-    m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
-    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(new ClimberManualControl(m_climber, () -> m_secondaryController.getRawAxis(constants.kClimberJoystickAxis))); // manual climber control
+    // m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
+    // m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(new ClimberManualControl(m_climber, () -> m_secondaryController.getRawAxis(constants.kClimberJoystickAxis))); // manual climber control
    
-    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(
-      new ConditionalCommand(
-        new ShooterManualAngleControl(m_shooter, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
-        new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
-        m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
+    // m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(
+    //   new ConditionalCommand(
+    //     new ShooterManualAngleControl(m_shooter, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
+    //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
+    //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
 
-    m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {})); // eject
+    // m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {})); // eject
   }
 
   public void updateState(){
-    if (intake.BBisTripped() ||
-        intermediate.ShooterBBisTripped() ||
-        intermediate.ElevatorBBisTripped() || m_state != State.CLEAR){
+    // if (intake.BBisTripped() ||
+    //     intermediate.ShooterBBisTripped() ||
+    //     intermediate.ElevatorBBisTripped() || m_state != State.CLEAR){
 
-        //Loadig Bay Conditions
-        if(intake.BBisTripped()){
-          m_state = State.INTAKE;
-        }
-        else if(intermediate.ElevatorBBisTripped()){
-          m_state = State.ELEVATOR;
-        }
-        else if(intermediate.ShooterBBisTripped()){
-          m_state = State.SHOOTER;
-        }
-        //Clear or SYS condition
-        else if (m_state == State.INTAKE && !intake.BBisTripped()) {
-          if (intake.getDirection() == Direction.FORWARD) {
-            m_state = State.SYSTEM;
-          } else if(intake.getDirection() == Direction.REVERSE){
-            m_state = State.CLEAR;
-          }
-          else m_state = State.CLEAR;
-        }
-        else if (m_state == State.ELEVATOR && !intermediate.ElevatorBBisTripped()) {
-          if (intermediate.getElevatorDirection() == Direction.FORWARD) {
-            m_state = State.CLEAR;
-          } else if(intermediate.getElevatorDirection() == Direction.REVERSE){
-            m_state = State.SYSTEM;
-          }
-          else m_state = State.CLEAR;
-        }
-        else if (m_state == State.SHOOTER && !intermediate.ShooterBBisTripped()) {
-          if (intermediate.getShooterDirection() == Direction.FORWARD) {
-            m_state = State.CLEAR;
-          }
-          else if(intermediate.getShooterDirection() == Direction.REVERSE){
-            m_state = State.SYSTEM;
-          }
-          else m_state = State.CLEAR;
-        }
-    }
+    //     //Loadig Bay Conditions
+    //     if(intake.BBisTripped()){
+    //       m_state = State.INTAKE;
+    //     }
+    //     else if(intermediate.ElevatorBBisTripped()){
+    //       m_state = State.ELEVATOR;
+    //     }
+    //     else if(intermediate.ShooterBBisTripped()){
+    //       m_state = State.SHOOTER;
+    //     }
+    //     //Clear or SYS condition
+    //     else if (m_state == State.INTAKE && !intake.BBisTripped()) {
+    //       if (intake.getDirection() == Direction.FORWARD) {
+    //         m_state = State.SYSTEM;
+    //       } else if(intake.getDirection() == Direction.REVERSE){
+    //         m_state = State.CLEAR;
+    //       }
+    //       else m_state = State.CLEAR;
+    //     }
+    //     else if (m_state == State.ELEVATOR && !intermediate.ElevatorBBisTripped()) {
+    //       if (intermediate.getElevatorDirection() == Direction.FORWARD) {
+    //         m_state = State.CLEAR;
+    //       } else if(intermediate.getElevatorDirection() == Direction.REVERSE){
+    //         m_state = State.SYSTEM;
+    //       }
+    //       else m_state = State.CLEAR;
+    //     }
+    //     else if (m_state == State.SHOOTER && !intermediate.ShooterBBisTripped()) {
+    //       if (intermediate.getShooterDirection() == Direction.FORWARD) {
+    //         m_state = State.CLEAR;
+    //       }
+    //       else if(intermediate.getShooterDirection() == Direction.REVERSE){
+    //         m_state = State.SYSTEM;
+    //       }
+    //       else m_state = State.CLEAR;
+    //     }
+    // }
   }
 
   public State getState() {
@@ -247,7 +247,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("note detection auto");
+      return new PathPlannerAuto("note detection auto");
+      /*return AutoBuilder.pathfindThenFollowPath(
+        PathPlannerPath.fromPathFile("AmpPath"),
+        new PathConstraints(
+          2.0, 0.4,
+          constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
+        0.0);*/
     }
 }
 

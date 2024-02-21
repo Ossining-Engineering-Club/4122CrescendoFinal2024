@@ -214,7 +214,7 @@ public final class constants {
 
     // Pose estimator
     public static final double[] kPoseEstimatorStateStdDevs = {0.1, 0.1, 0.1}; // {x meters, y meters, theta radians}
-    public static final double[] kPoseEstimatorVisionStdDevs = {0.9, 0.9, 0.9}; // {x meters, y meters, theta radians}
+    public static final double[] kPoseEstimatorVisionStdDevs = {5.0, 5.0, 5.0}; // {x meters, y meters, theta radians}
 
     // Go To Note
     public static final double kGoToNoteTimeout = 2.0; // seconds

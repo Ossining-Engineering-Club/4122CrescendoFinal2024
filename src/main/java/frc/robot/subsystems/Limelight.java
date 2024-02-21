@@ -58,6 +58,20 @@ public class Limelight extends SubsystemBase {
         return new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
     }
 
+    public int getNumTargets() {
+        return countStringOccurrences(NetworkTableInstance.getDefault().getTable(m_name).getEntry("json").getString(""), "pts");
+    }
+
+    private int countStringOccurrences(String str, String substr) {
+        int occurrences = 0;
+        for (int i = 0; i < str.length()-substr.length()+1; i++) {
+            if (str.substring(i, i+substr.length()).equals(substr)) {
+                occurrences++;
+            }
+        }
+        return occurrences;
+    }
+
     public double getTX() {
         return NetworkTableInstance.getDefault().getTable(m_name).getEntry("tx").getDouble(0.0);
     }
