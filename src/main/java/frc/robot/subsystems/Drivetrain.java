@@ -34,17 +34,17 @@ import frc.robot.subsystems.Limelight;
 
 public class Drivetrain extends SubsystemBase {
   private final Field2d m_field = new Field2d();
-  private SwerveMod RFMod = new SwerveMod(5,6,11,false, constants.k_RFZERO,false,true);
-  private SwerveMod RBMod = new SwerveMod(8,7,12,false,constants.k_RBZERO,true,true);
-  private SwerveMod LBMod = new SwerveMod(1,2,9,false, constants.k_LBZERO,false,true);
-  private SwerveMod LFMod = new SwerveMod(3,4,10,false, constants.k_LFZERO,true,true);
+  private SwerveMod RFMod = new SwerveMod(3,4,10,false, constants.k_RFZERO,false,true);
+  private SwerveMod RBMod = new SwerveMod(7,8,12,false,constants.k_RBZERO,false,true);
+  private SwerveMod LBMod = new SwerveMod(5,6,11,false, constants.k_LBZERO,false,true);
+  private SwerveMod LFMod = new SwerveMod(1,2,9,false, constants.k_LFZERO,false,true);
   //Robot Dimensions 27,305 by 29,845 (in inches)
   //Positions defined from a top down view
   public Pose2d tempSetpoint;
-  private Translation2d frontLeftLocation = new Translation2d(0.29845, 0.27305);
-  private Translation2d frontRightLocation = new Translation2d(0.29845, -0.27305);
-  private Translation2d backLeftLocation = new Translation2d(-0.29845, 0.27305);
-  private Translation2d backRightLocation = new Translation2d(-0.29845, -0.27304);
+  private Translation2d frontLeftLocation = new Translation2d(0.275, 0.2275);
+  private Translation2d frontRightLocation = new Translation2d(0.275, -0.2275);
+  private Translation2d backLeftLocation = new Translation2d(-0.275, 0.2275);
+  private Translation2d backRightLocation = new Translation2d(-0.275, -0.2275);
 
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation); 
   OECPigeionIMU gyro;
@@ -293,7 +293,7 @@ public class Drivetrain extends SubsystemBase {
     //     odometry.addVisionMeasurement(replaceRotWithGyro(m_elevatorLimelight.getBotPose()), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
     //     v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
     // }
-    updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
+    //updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
     //updatePoseEstimatorWithVisionBotPose(m_elevatorLimelight);
 
     // updating robot speeds
@@ -302,11 +302,18 @@ public class Drivetrain extends SubsystemBase {
     v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
     v_prevPose = SwerveOdometryGetPose();
 
+    SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
+    SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
+    SmartDashboard.putNumber("back left abs", LBMod.GetAbsEncoderAngle());
+    SmartDashboard.putNumber("back right abs", RBMod.GetAbsEncoderAngle());
+
     SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
     SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
     SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());
 
-    SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
+    SmartDashboard.putNumber("gyro angle", this.getAngle().getRadians());
+
+    /*SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
     SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
     SmartDashboard.putNumber("vision rot deg", m_shooterLimelight.getBotYaw());
 
@@ -314,7 +321,7 @@ public class Drivetrain extends SubsystemBase {
 
     // AdvantageKit logging
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
-    Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
+    Logger.recordOutput("RobotPose", SwerveOdometryGetPose());*/
   }
 
   @Override

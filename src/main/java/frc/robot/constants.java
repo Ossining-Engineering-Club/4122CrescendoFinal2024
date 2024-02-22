@@ -27,11 +27,12 @@ public final class constants {
     public static final double k_TurnEncoderPosFactor = (TurningMotorGearRatio * k_PI * 2.0);
     public static final double k_TurnEncoderVelocityFactor = (k_TurnEncoderPosFactor / 60.0);
     //Auto drivebase radius for holonomic controller
-    public static final double k_DriveBaseRadius = 0.404510451;
+    public static final double k_DriveBaseRadius = 0.356901;
     //PID constants for motor rotation
     public static final double k_KRP = .45;
     public static final double k_KRI = 0.0;
     public static final double k_KRD = 0.00025;
+    
     //Auto Translational PID
     public static final double k_AutoXYP = 5.0;
     public static final double k_AutoXYI = 0.0;
@@ -46,30 +47,11 @@ public final class constants {
     public static final double k_OdometryToleranceRot = 0.1;
     //breakbeam threshold and code in volts
     public static final double k_BreakbeamVoltageThreshold = 3.0;
-    public static final double kMaxSpeed = 4.441; // also remember to change in pathplanner
-    public static final double kMaxAcceleration = 4.441; // 4.441
+    public static final double kMaxSpeed = 5.0292; // also remember to change in pathplanner
+    public static final double kMaxAcceleration = 5.0292; // 4.441
     
     public static final double k_offsetadj = 1.0;
 
-    public static final double MedAlpha =20.928478;
-    public static final double MedBeta =-72.240211;
-    public static final double MedGamma =-35.64251;
-    
-    public static final double StowAlpha =0.476190;
-    public static final double StowBeta =-3.238093;
-    public static final double StowGamma =-1.976190;
-    
-    public static final double AutoStowAlpha =0.476190;
-    public static final double AutoStowBeta =-1.638093;
-    public static final double AutoStowGamma =-1.976190;
-    
-    public static final double HIAlpha =35.213959;
-    public static final double HIBeta =-160.423477;
-    public static final double HIGamma =-45.809055;
-    
-    public static final double FloorAlpha =31.8;
-    public static final double FloorBeta =-8.404788;
-    public static final double FloorGamma =-86.479698;
     
     public static final double[] kTranslationalPIDGains = {2, 0, 0.002}; // {kP, kI, kD}
     public static final double[] kRotationalPIDGains = {3.25, 0, 0.008}; // {kP, kI, kD}
@@ -101,15 +83,15 @@ public final class constants {
     // public static final double k_LBZERO =(5.787710-1.57079632)-3.1415926535 + 0.006;
     //
     //Offset values for motor604388
-    public static final double k_RFZERO =1.050776839701664;//1.055379;
-    public static final double k_RBZERO =0.796136028912648-3.141592653;//0.777728-3.1415926535;
-    public static final double k_LFZERO =1.810097329705057;//1.787;
-    public static final double k_LBZERO =0.196349540849362-3.141592653;//0.199418-3.1415926535;
+    public static final double k_RFZERO =2.141437-3.1415926535;//1.055379;
+    public static final double k_RBZERO =-1.6858448+3.1415926535;//0.777728-3.1415926535;
+    public static final double k_LFZERO =0.716369;//1.787;
+    public static final double k_LBZERO =-1.29467;//0.199418-3.1415926535;
 
     public static final double k_gyroOffset = -k_PI;
 
-    public static final double kMaxAngularSpeed = 9.89;
-    public static final double kMaxAngularAcceleration = 9.89; // change to 9.89 after testing
+    public static final double kMaxAngularSpeed = kMaxSpeed/k_DriveBaseRadius;
+    public static final double kMaxAngularAcceleration = kMaxAcceleration/k_DriveBaseRadius; // change to 9.89 after testing
 
     //Auto things
     //anglepid
@@ -155,17 +137,21 @@ public final class constants {
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double[] kShooter1PIDGains = {1.0, 0.0, 0.0};
-    public static final double[] kShooter2PIDGains = {1.0, 0.0, 0.0};
+    public static final double[] kShooter1PIDGains = {0.1, 0.0, 0.0};
+    public static final double[] kShooter2PIDGains = {0.1, 0.0, 0.0};
     public static final double[] kAnglePIDGains = {1.0, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 5.0;
     public static final double kangleTolerance = .2;
-    public static final double kAngleRatio = 1.0/1.0;
+    public static final double kAngleRatio = 44.0/1620.0/125.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
-    public static final double kShooterDefaultRPM = 100.0;
-    public static final double kShooterManualAngleControlSpeedMultiplier = 0.05;
+    public static final double kShooterDefaultRPM = 1000.0;
+    public static final double kShooterManualAngleControlSpeedMultiplier = 0.2;
+    public static final double kShooterFeederSpeed = 0.4;
+    public static final double kStartAngle = 55.0;//in degrees
+    public static final double kShooterMaxAngle = 90.0;
+    public static final double kShooterMinAngle = 10.0;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
@@ -202,15 +188,15 @@ public final class constants {
     public static final double kNoteSearchingSpeed = 1.0;
 
     // Secondary Controller
-    public static final int kForwardsOrReverseButton = 0;
-    public static final int kShooterOrElevatorButton = 1;
-    public static final int kAutomaticOrManualButton = 2;
+    public static final int kForwardsOrReverseButton = 1;
+    public static final int kShooterOrElevatorButton = 0;
+    public static final int kAutomaticOrManualButton = 4;
     public static final int kShooterButton = 3;
     public static final int kElevatorButton = 4;
     public static final int kClimberButton = 5;
     public static final int kEjectButton = 6;
     public static final int kShooterElevatorJoystickAxis = 0;
-    public static final int kClimberJoystickAxis = 1;
+    public static final int kClimberJoystickAxis = 2;
 
     // Pose estimator
     public static final double[] kPoseEstimatorStateStdDevs = {0.1, 0.1, 0.1}; // {x meters, y meters, theta radians}

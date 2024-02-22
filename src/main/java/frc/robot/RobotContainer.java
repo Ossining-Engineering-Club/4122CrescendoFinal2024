@@ -49,17 +49,17 @@ public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
   private final Limelight m_elevatorLimelight = new Limelight("tochange");
   private final Limelight m_noteLimelight = new Limelight("limelight");
-  private final Drivetrain m_robotDrive = new Drivetrain(13, m_shooterLimelight, m_elevatorLimelight);
+  private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight, m_elevatorLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  //CommandGenericHID m_secondaryController = new CommandGenericHID(1);
+  CommandXboxController m_secondaryController = new CommandXboxController(1);
 
-  private Intermediate intermediate;
-  private Intake intake;
-  private Shooter m_shooter;
-  private Elevator m_elevator;
-  private Climber m_climber;
+  // private Intermediate intermediate;
+  // private Intake intake;
+   private Shooter m_shooter = new Shooter(30,31,32,33,0,1,constants.kStartAngle,false);
+  // private Elevator m_elevator;
+  // private Climber m_climber;
 
-  public State m_state;
+  // public State m_state;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -89,7 +89,7 @@ public class RobotContainer {
     //   this::getState));
     // NamedCommands.registerCommand("Shoot", new Shoot(m_shooter));
 
-    m_state = State.CLEAR;
+    // m_state = State.CLEAR;
 
     m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
@@ -102,9 +102,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    0.2*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
-                    0.2*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
-                    0.2*JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
                     true),
             m_robotDrive));
   }
@@ -120,6 +120,7 @@ public class RobotContainer {
       () -> -m_driverController.getLeftX(), 
       () -> -m_driverController.getRightX()));
     m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight, intake));*/
+  
     /*m_driverController.y().onTrue(AutoBuilder.pathfindToPose(
       new Pose2d(4.441, 4.441, Rotation2d.fromDegrees(180)),
       new PathConstraints(
@@ -128,7 +129,7 @@ public class RobotContainer {
       0.0,
       0.0
     ));*/
-    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
+    // m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
     // m_driverController.a().onTrue(
     //   new GoToAndIntakeNote(
     //     m_robotDrive,
@@ -139,23 +140,26 @@ public class RobotContainer {
     //     this::getState));
 
     // TEST AMP LINE UP
-    m_driverController.y().onTrue(
-      AutoBuilder.pathfindThenFollowPath(
-        PathPlannerPath.fromPathFile("AmpPath"),
-        new PathConstraints(
-          2.0, 0.4,
-          constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
-        0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+    // m_driverController.y().onTrue(
+    //   AutoBuilder.pathfindThenFollowPath(
+    //     PathPlannerPath.fromPathFile("AmpPath"),
+    //     new PathConstraints(
+    //       2.0, 0.4,
+    //       constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
+    //     0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
 
     // secondary controller
-    //m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.runOnce(() -> {})); // forwards/reverse
-    //m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.runOnce(() -> {})); // forwards/reverse
+    //m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.run(() -> {m_shooter.setReverse(true);})); // forwards/reverse
+    //m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.run(() -> {m_shooter.setReverse(false);})); // forwards/reverse
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onTrue(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
-    //m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(() -> {})); // manual
-    // m_secondaryController.button(constants.kShooterButton).onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
-    // m_secondaryController.button(constants.kShooterButton).onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
+    m_secondaryController.a().onTrue(
+      new ShooterManualAngleControl(
+        m_shooter,
+        () -> MathUtil.applyDeadband(m_secondaryController.getLeftY(), 0.1))); // manual
+    m_secondaryController.x().onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
+    m_secondaryController.x().onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
 
     // m_secondaryController.button(constants.kElevatorButton).onTrue(
     //   new ConditionalCommand(
@@ -190,7 +194,8 @@ public class RobotContainer {
     //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
     //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
 
-    // m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {})); // eject
+    m_secondaryController.b().onTrue(Commands.run(() -> {m_shooter.enableFeeder();}));
+    m_secondaryController.b().onFalse(Commands.run(() -> {m_shooter.disableFeeder();})); // eject
   }
 
   public void updateState(){
@@ -237,9 +242,9 @@ public class RobotContainer {
     // }
   }
 
-  public State getState() {
-    return m_state;
-  }
+  // public State getState() {
+  //   return m_state;
+  // }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

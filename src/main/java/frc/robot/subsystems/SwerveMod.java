@@ -8,20 +8,22 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
-
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import frc.robot.constants;
 
 public class SwerveMod {
 
     private CANSparkMax m_Rotator;
-    private CANSparkMax m_Drive;
     private RelativeEncoder e_Rotator;
-    private RelativeEncoder e_Drive;
+    private TalonFX m_Drive;
     private double turningEncoderOffset;
     private double absEncoderOffset;
     private CANcoder absEncoder;
+  
+    TalonFXConfiguration configs = new TalonFXConfiguration();
     private double reversD = 1.0;
     public PIDController turningPIDController = new PIDController(constants.k_KRP, constants.k_KRI, constants.k_KRD);
     public SwerveModuleState optimizedState;
@@ -33,21 +35,15 @@ public class SwerveMod {
                             
         absEncoderOffset = AbsEncoderOffsetConstant;
         m_Rotator = new CANSparkMax(RotatorMotorNo,MotorType.kBrushless);
-        m_Drive = new CANSparkMax(DriveMotorNo,MotorType.kBrushless);
+        m_Drive = new TalonFX(DriveMotorNo, "rio");
         absEncoder = new CANcoder(CANCoderId);
-    
+        configs.Feedback.SensorToMechanismRatio=constants.k_DriveEncoderPosFactor;
         m_Drive.setInverted(DriveReverse);
         m_Rotator.setInverted(TurnReverse);
-
         e_Rotator = m_Rotator.getEncoder();
-        e_Drive = m_Drive.getEncoder();
-        
-        e_Drive.setPositionConversionFactor(constants.k_DriveEncoderPosFactor);
-        e_Drive.setVelocityConversionFactor(constants.k_DriveEncoderVelocityFactor);
         e_Rotator.setPositionConversionFactor(constants.k_TurnEncoderPosFactor);
         e_Rotator.setVelocityConversionFactor(constants.k_TurnEncoderVelocityFactor);
-        //e_Rotator.setInverted(TurnReverse);
-       
+        m_Drive.getConfigurator().apply(configs);
         turningPIDController.enableContinuousInput(
             -1.0*constants.k_PI, 1.0*constants.k_PI);
 
@@ -55,13 +51,13 @@ public class SwerveMod {
     }
     public SwerveModuleState GetState() {
         //Turning Encoder offset by addition of initial absolute encoder reading
-        return new SwerveModuleState(e_Drive.getVelocity(),Rotation2d.fromRadians(e_Rotator.getPosition() + turningEncoderOffset));
+        return new SwerveModuleState(m_Drive.getVelocity().getValue(),Rotation2d.fromRadians(e_Rotator.getPosition() + turningEncoderOffset));
       }
       
       // Get Position Method for Odometry
     public SwerveModulePosition GetPosition() {
         //Turning Encoder offset by addition of initial absolute encoder reading
-        return new SwerveModulePosition(e_Drive.getPosition(),Rotation2d.fromRadians(e_Rotator.getPosition() + turningEncoderOffset));
+        return new SwerveModulePosition(m_Drive.getPosition().getValue(),Rotation2d.fromRadians(e_Rotator.getPosition() + turningEncoderOffset));
     }
     public double GetAbsEncoderAngle(){
         double angle = absEncoder.getAbsolutePosition().getValue();
@@ -78,7 +74,7 @@ public class SwerveMod {
     }
     public void ResetEncoder(){
         turningEncoderOffset = this.GetAbsEncoderAngle();
-        e_Drive.setPosition(0.0);
+        m_Drive.setPosition(0.0);
         e_Rotator.setPosition(0.0);
     
     }
@@ -93,8 +89,8 @@ public class SwerveMod {
             else if(turningVal < -1.0) turningVal = -1.0;
     
     
-            m_Drive.set(optimizedState.speedMetersPerSecond*(1.0/constants.kMaxSpeed)); //Change to variable later
-            m_Rotator.set(turningVal);
+            m_Drive.set(0.8*optimizedState.speedMetersPerSecond*(1.0/constants.kMaxSpeed)); //Change to variable later
+            m_Rotator.set(0.8*turningVal);
         }
         else{
             m_Drive.set(0.0);

@@ -68,7 +68,7 @@ public class ShooterCommands {
         }
 
         @Override
-        public void initialize() {
+        public void execute() {
             m_shooter.setRPM(m_RPM);
         }
 
@@ -82,8 +82,18 @@ public class ShooterCommands {
     // TO DO
     // idk which motors are feeding
     public static class FeedToShooter extends Command {
-        public FeedToShooter() {
+        
+        public final Shooter m_Shooter;
 
+        public FeedToShooter(Shooter shooter) {
+            m_Shooter = shooter;
+
+            addRequirements(m_Shooter);
+        }
+
+        @Override
+        public void execute() {
+            m_Shooter.enableFeeder();
         }
     }
 }
