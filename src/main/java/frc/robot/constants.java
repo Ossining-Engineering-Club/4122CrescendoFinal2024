@@ -137,8 +137,8 @@ public final class constants {
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double[] kShooter1PIDGains = {0.1, 0.0, 0.0};
-    public static final double[] kShooter2PIDGains = {0.1, 0.0, 0.0};
+    public static final double[] kShooter1PIDGains = {0.000008, 0.0, 0.0};
+    public static final double[] kShooter2PIDGains = {0.000008, 0.0, 0.0};
     public static final double[] kAnglePIDGains = {1.0, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 5.0;
@@ -146,8 +146,8 @@ public final class constants {
     public static final double kAngleRatio = 44.0/1620.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
-    public static final double kShooterDefaultRPM = 1000.0;
-    public static final double kShooterManualAngleControlSpeedMultiplier = 0.2;
+    public static final double kShooterDefaultRPM = 5100.0;
+    public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
     public static final double kStartAngle = 55.0;//in degrees
     public static final double kShooterMaxAngle = 90.0;
@@ -188,13 +188,13 @@ public final class constants {
     public static final double kNoteSearchingSpeed = 1.0;
 
     // Secondary Controller
-    public static final int kForwardsOrReverseButton = 1;
+    public static final int kForwardsOrReverseButton = 2;
     public static final int kShooterOrElevatorButton = 0;
-    public static final int kAutomaticOrManualButton = 4;
-    public static final int kShooterButton = 3;
+    public static final int kAutomaticOrManualButton = 5;
+    public static final int kShooterButton = 4;
     public static final int kElevatorButton = 4;
     public static final int kClimberButton = 5;
-    public static final int kEjectButton = 6;
+    public static final int kEjectButton = 9;
     public static final int kShooterElevatorJoystickAxis = 0;
     public static final int kClimberJoystickAxis = 2;
 

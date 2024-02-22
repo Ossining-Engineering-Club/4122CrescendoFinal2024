@@ -19,6 +19,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.commands.ClimberMoveTo;
 import frc.robot.commands.ElevatorExtend;
@@ -51,7 +52,7 @@ public class RobotContainer {
   private final Limelight m_noteLimelight = new Limelight("limelight");
   private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight, m_elevatorLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandXboxController m_secondaryController = new CommandXboxController(1);
+  CommandJoystick m_secondaryController = new CommandJoystick(1);
 
   // private Intermediate intermediate;
   // private Intake intake;
@@ -107,6 +108,7 @@ public class RobotContainer {
                     JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
                     true),
             m_robotDrive));
+
   }
 
   private void configureButtonBindings() {
@@ -149,17 +151,20 @@ public class RobotContainer {
     //     0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
 
     // secondary controller
-    //m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.run(() -> {m_shooter.setReverse(true);})); // forwards/reverse
-    //m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.run(() -> {m_shooter.setReverse(false);})); // forwards/reverse
+    m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.runOnce(() -> {m_shooter.setReverse(true);})); // forwards/reverse
+    m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.runOnce(() -> {m_shooter.setReverse(false);})); // forwards/reverse
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onTrue(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
-    m_secondaryController.a().onTrue(
+    m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(
       new ShooterManualAngleControl(
         m_shooter,
-        () -> MathUtil.applyDeadband(m_secondaryController.getLeftY(), 0.1))); // manual
-    m_secondaryController.x().onTrue(new SetShooterRPM(m_shooter, constants.kShooterDefaultRPM)); // shooter on
-    m_secondaryController.x().onFalse(new SetShooterRPM(m_shooter, 0.0)); // shooter off
+        () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1))); 
+    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(()->{},m_shooter));// manual
+    m_secondaryController.button(constants.kShooterButton).whileTrue(Commands.run(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);})); // shooter on
+    m_secondaryController.button(constants.kShooterButton).whileFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+                                                                                          m_shooter.m_Shooter2.set(0.0);}));
+ // shooter off
 
     // m_secondaryController.button(constants.kElevatorButton).onTrue(
     //   new ConditionalCommand(
@@ -194,8 +199,8 @@ public class RobotContainer {
     //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
     //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
 
-    m_secondaryController.b().onTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
-    m_secondaryController.b().onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
+    m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
+    m_secondaryController.button(constants.kEjectButton).onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
   }
 
   public void updateState(){

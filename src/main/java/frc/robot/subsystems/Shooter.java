@@ -7,20 +7,25 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants;
 
 public class Shooter extends SubsystemBase{
 
-    private CANSparkFlex m_Shooter1;
-    private CANSparkFlex m_Shooter2;
+    public CANSparkFlex m_Shooter1;
+    public CANSparkFlex m_Shooter2;
     private CANSparkFlex m_Angle;
     private CANSparkMax m_Feeder;
     private Encoder e_Angle;
     private RelativeEncoder e_Shooter1;
     private RelativeEncoder e_Shooter2;
+    //No KA because very little
+    // public SimpleMotorFeedforward Shooter1PIDController = new SimpleMotorFeedforward(kS, kV);
+    // public SimpleMotorFeedforward Shooter2PIDController = new SimpleMotorFeedforward(kS, kV);
     public PIDController Shooter1PIDController = new PIDController(constants.kShooter1PIDGains[0],
                                                                    constants.kShooter1PIDGains[1],
                                                                    constants.kShooter1PIDGains[2]);
@@ -71,17 +76,20 @@ public class Shooter extends SubsystemBase{
         double currentRPMS1 = e_Shooter1.getVelocity();
         double currentRPMS2 = e_Shooter2.getVelocity();
 
-        /*Shooter1PIDController.setSetpoint(targetRPM);
+        Shooter1PIDController.setSetpoint(targetRPM);
         Shooter2PIDController.setSetpoint(targetRPM);
 
         double adjustmentvalS1 = Shooter1PIDController.calculate(currentRPMS1);
         double adjustmentvalS2 = Shooter2PIDController.calculate(currentRPMS2);
 
         m_Shooter1.set(m_Shooter1.get()+adjustmentvalS1);
-        m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);*/
+        m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);
 
-        m_Shooter1.set(targetRPM/6000);
-        m_Shooter2.set(targetRPM/6000);
+        SmartDashboard.putNumber("Shooter Setpoint", targetRPM);
+        SmartDashboard.putNumber("Shooter RPM", e_Shooter1.getVelocity());
+
+        // m_Shooter1.set(targetRPM/6000);
+        // m_Shooter2.set(targetRPM/6000);
 
         if(Math.abs(targetRPM-currentRPMS1) < constants.kRPMTolerance && 
             Math.abs(targetRPM-currentRPMS2) < constants.kRPMTolerance){
