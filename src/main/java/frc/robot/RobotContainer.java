@@ -194,8 +194,8 @@ public class RobotContainer {
     //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
     //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
 
-    m_secondaryController.b().onTrue(Commands.run(() -> {m_shooter.enableFeeder();}));
-    m_secondaryController.b().onFalse(Commands.run(() -> {m_shooter.disableFeeder();})); // eject
+    m_secondaryController.b().onTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
+    m_secondaryController.b().onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
   }
 
   public void updateState(){

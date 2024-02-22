@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -13,9 +14,9 @@ import frc.robot.constants;
 
 public class Shooter extends SubsystemBase{
 
-    private CANSparkMax m_Shooter1;
-    private CANSparkMax m_Shooter2;
-    private CANSparkMax m_Angle;
+    private CANSparkFlex m_Shooter1;
+    private CANSparkFlex m_Shooter2;
+    private CANSparkFlex m_Angle;
     private CANSparkMax m_Feeder;
     private Encoder e_Angle;
     private RelativeEncoder e_Shooter1;
@@ -43,9 +44,9 @@ public class Shooter extends SubsystemBase{
     int angleEncoderChannelB,
     double startangle,
     boolean isAngleInverted){
-        m_Shooter1 = new CANSparkMax(Flywheelport1,MotorType.kBrushless);
-        m_Shooter2 = new CANSparkMax(Flywheelport2,MotorType.kBrushless);
-        m_Angle = new CANSparkMax(motorAnglePort,MotorType.kBrushless);
+        m_Shooter1 = new CANSparkFlex(Flywheelport1,MotorType.kBrushless);
+        m_Shooter2 = new CANSparkFlex(Flywheelport2,MotorType.kBrushless);
+        m_Angle = new CANSparkFlex(motorAnglePort,MotorType.kBrushless);
         m_Feeder = new CANSparkMax(feederPort,MotorType.kBrushless);
         is_backward=false;
         e_Angle = new Encoder(angleEncoderChannelA, angleEncoderChannelB, isAngleInverted);
@@ -92,7 +93,8 @@ public class Shooter extends SubsystemBase{
     }
     //returns true if setpoint is reached false otherwise
     public boolean setAngle(double Angle){
-        if (Angle < constants.kShooterMinAngle || Angle > constants.kShooterMaxAngle) return true;
+        if (Angle < constants.kShooterMinAngle) Angle = constants.kShooterMinAngle;
+        else if (Angle > constants.kShooterMaxAngle) Angle = constants.kShooterMaxAngle;
 
         double currentangle = getAngle();
 

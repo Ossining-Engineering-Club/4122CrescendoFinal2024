@@ -143,7 +143,7 @@ public final class constants {
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 5.0;
     public static final double kangleTolerance = .2;
-    public static final double kAngleRatio = 44.0/1620.0/125.0;
+    public static final double kAngleRatio = 44.0/1620.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 1000.0;
