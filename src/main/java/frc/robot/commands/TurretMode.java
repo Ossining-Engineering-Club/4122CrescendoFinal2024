@@ -59,7 +59,7 @@ public class TurretMode extends Command {
         m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
 
         // turn on the shooter
-        m_shooter.setRPM(constants.kShooterDefaultRPM);
+        //m_shooter.setRPM(constants.kShooterDefaultRPM);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TurretMode extends Command {
 
         // setting shooter angle
         double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
-        m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+        //m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
     }
 
     // TO DO
@@ -95,4 +95,7 @@ public class TurretMode extends Command {
         return 0.0;
     }
 
+    public double wrapAngle(double angle) {
+        return (angle+Math.PI)%(2*Math.PI)-Math.PI;
+    }
 }

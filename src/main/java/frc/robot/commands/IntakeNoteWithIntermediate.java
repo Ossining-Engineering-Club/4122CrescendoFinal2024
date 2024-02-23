@@ -9,8 +9,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intermediate;
 import frc.robot.constants.State;
 
-public class IntakeNote extends ParallelDeadlineGroup {
-    public IntakeNote(
+public class IntakeNoteWithIntermediate extends ParallelDeadlineGroup {
+    public IntakeNoteWithIntermediate(
         Intake intake,
         Intermediate intermediate,
         BooleanSupplier shooterOrElevatorSwitch,

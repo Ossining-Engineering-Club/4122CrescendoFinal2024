@@ -43,8 +43,9 @@ import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.ElevatorManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.IntakeNote;
+import frc.robot.commands.IntakeNoteWithIntermediate;
 import frc.robot.commands.SearchForAndGoToAndIntakeNote;
+import frc.robot.commands.IntakeNoteToShooter;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -56,7 +57,7 @@ public class RobotContainer {
 
   // private Intermediate intermediate;
   // private Intake intake;
-   private Shooter m_shooter = new Shooter(30,31,32,33,0,1,constants.kStartAngle,false);
+   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
   // private Elevator m_elevator;
   // private Climber m_climber;
 
@@ -159,11 +160,12 @@ public class RobotContainer {
     m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(
       new ShooterManualAngleControl(
         m_shooter,
-        () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1))); 
+        () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1)));
     m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(()->{},m_shooter));// manual
     m_secondaryController.button(constants.kShooterButton).whileTrue(Commands.run(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);})); // shooter on
     m_secondaryController.button(constants.kShooterButton).whileFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
                                                                                           m_shooter.m_Shooter2.set(0.0);}));
+    m_secondaryController.button(constants.kIntakeToShooterButton).whileTrue(new IntakeNoteToShooter(m_shooter));
  // shooter off
 
     // m_secondaryController.button(constants.kElevatorButton).onTrue(

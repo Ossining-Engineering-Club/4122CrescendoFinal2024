@@ -14,7 +14,7 @@ import java.util.function.BooleanSupplier;
 import java.lang.Runnable;
 import java.util.function.Supplier;
 import frc.robot.commands.IntakeRun;
-import frc.robot.commands.IntakeNote;
+import frc.robot.commands.IntakeNoteWithIntermediate;
 
 public class GoToAndIntakeNote extends ParallelCommandGroup {
     public GoToAndIntakeNote(
@@ -26,7 +26,7 @@ public class GoToAndIntakeNote extends ParallelCommandGroup {
         Runnable updateState,
         Supplier<State> getState) {
             addCommands(
-                new IntakeNote(intake, intermediate, shooterOrElevatorSwitch, updateState, getState),
+                new IntakeNoteWithIntermediate(intake, intermediate, shooterOrElevatorSwitch, updateState, getState),
                 new GoToNote(drivetrain, limelight, intake)
             );
     }

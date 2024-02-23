@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants;
 
-public class Shooter extends SubsystemBase{
+public class Shooter extends SubsystemBase {
 
     public CANSparkFlex m_Shooter1;
     public CANSparkFlex m_Shooter2;
@@ -23,6 +23,7 @@ public class Shooter extends SubsystemBase{
     private Encoder e_Angle;
     private RelativeEncoder e_Shooter1;
     private RelativeEncoder e_Shooter2;
+    private Breakbeam m_breakbeam;
     //No KA because very little
     // public SimpleMotorFeedforward Shooter1PIDController = new SimpleMotorFeedforward(kS, kV);
     // public SimpleMotorFeedforward Shooter2PIDController = new SimpleMotorFeedforward(kS, kV);
@@ -45,6 +46,7 @@ public class Shooter extends SubsystemBase{
     int Flywheelport2,
     int motorAnglePort,
     int feederPort,
+    int breakbeamPin,
     int angleEncoderChannelA,
     int angleEncoderChannelB,
     double startangle,
@@ -53,6 +55,7 @@ public class Shooter extends SubsystemBase{
         m_Shooter2 = new CANSparkFlex(Flywheelport2,MotorType.kBrushless);
         m_Angle = new CANSparkFlex(motorAnglePort,MotorType.kBrushless);
         m_Feeder = new CANSparkMax(feederPort,MotorType.kBrushless);
+        m_breakbeam = new Breakbeam(breakbeamPin);
         is_backward=false;
         e_Angle = new Encoder(angleEncoderChannelA, angleEncoderChannelB, isAngleInverted);
         e_Shooter1 = m_Shooter1.getEncoder();
@@ -65,6 +68,12 @@ public class Shooter extends SubsystemBase{
 
         this.resetEncoders(startangle);
     }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("shooter breakbeam", BBisTripped());
+    }
+
     public void resetEncoders(double startangle){
         v_startAngle = startangle;
         e_Angle.reset();
@@ -87,6 +96,7 @@ public class Shooter extends SubsystemBase{
 
         SmartDashboard.putNumber("Shooter Setpoint", targetRPM);
         SmartDashboard.putNumber("Shooter RPM", e_Shooter1.getVelocity());
+        SmartDashboard.putNumber("Shooter Angle", getAngle());
 
         // m_Shooter1.set(targetRPM/6000);
         // m_Shooter2.set(targetRPM/6000);
@@ -97,8 +107,13 @@ public class Shooter extends SubsystemBase{
         }else{
             return false;
         }
-
     }
+
+    public void stopFlywheels() {
+        m_Shooter1.set(0);
+        m_Shooter2.set(0);
+    }
+
     //returns true if setpoint is reached false otherwise
     public boolean setAngle(double Angle){
         if (Angle < constants.kShooterMinAngle) Angle = constants.kShooterMinAngle;
@@ -143,6 +158,10 @@ public class Shooter extends SubsystemBase{
 
     public double getAngle() {
         return e_Angle.getDistance()+v_startAngle;
+    }
+
+    public boolean BBisTripped() {
+        return m_breakbeam.isTripped();
     }
 
 

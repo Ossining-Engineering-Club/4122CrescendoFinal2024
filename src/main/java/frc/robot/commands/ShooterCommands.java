@@ -69,7 +69,8 @@ public class ShooterCommands {
 
         @Override
         public void execute() {
-            m_shooter.setRPM(m_RPM);
+            if (m_RPM == 0.0) m_shooter.stopFlywheels();
+            else m_shooter.setRPM(m_RPM);
         }
 
         @Override 
