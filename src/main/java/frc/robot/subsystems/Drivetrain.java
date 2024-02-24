@@ -263,9 +263,9 @@ public class Drivetrain extends SubsystemBase {
 
       SmartDashboard.putBoolean("vision measurement added?", true);
       SmartDashboard.putNumber("xyStds", xyStds);
-      SmartDashboard.putNumber("degStds", degStds);
+      //SmartDashboard.putNumber("degStds", degStds);
 
-      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, 9999999));
       odometry.addVisionMeasurement(visionBotPose, Timer.getFPGATimestamp() - limelight.getLatencyMilliseconds()/1000.0);
     }
     else {
