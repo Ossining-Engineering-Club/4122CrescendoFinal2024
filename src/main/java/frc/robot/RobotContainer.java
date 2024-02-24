@@ -31,6 +31,7 @@ import frc.robot.commands.ShooterCommands.SetShooterRPM;
 import frc.robot.subsystems.Breakbeam;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.OECTrigger;
 import frc.robot.constants.State;
 import frc.robot.constants.Direction;
 import frc.robot.subsystems.Intermediate;
@@ -152,20 +153,66 @@ public class RobotContainer {
     //     0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
 
     // secondary controller
-    m_secondaryController.button(constants.kForwardsOrReverseButton).onTrue(Commands.runOnce(() -> {m_shooter.setReverse(true);})); // forwards/reverse
-    m_secondaryController.button(constants.kForwardsOrReverseButton).onFalse(Commands.runOnce(() -> {m_shooter.setReverse(false);})); // forwards/reverse
+
+    // manual forwards/reverse
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .everyTimeItsTrue(
+        new ConditionalCommand(
+          Commands.runOnce(() -> m_shooter.setReverse(true)),
+          Commands.runOnce(() -> m_shooter.setReverse(false)),
+          m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
+
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onTrue(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
     //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
-    m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(
-      new ShooterManualAngleControl(
-        m_shooter,
-        () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1)));
-    m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(Commands.runOnce(()->{},m_shooter));// manual
-    m_secondaryController.button(constants.kShooterButton).whileTrue(Commands.run(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);})); // shooter on
-    m_secondaryController.button(constants.kShooterButton).whileFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
-                                                                                          m_shooter.m_Shooter2.set(0.0);}));
-    m_secondaryController.button(constants.kIntakeToShooterButton).whileTrue(new IntakeNoteToShooter(m_shooter));
+    // manual shooter angle control
+    Command shooterManualAngleCommand = new ShooterManualAngleControl(
+                                          m_shooter,
+                                          () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1));
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(() -> !shooterManualAngleCommand.isScheduled())
+        .everyTimeItsTrue(shooterManualAngleCommand);
+
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
+      .and(() -> m_shooter.getCurrentCommand() == null)
+        .everyTimeItsFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+                                                    m_shooter.m_Shooter2.set(0.0);}));
+    
+    // manual shooter flywheel control
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(m_secondaryController.button(constants.kShooterButton)::getAsBoolean)
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);}));
+
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(() -> !m_secondaryController.button(constants.kShooterButton).getAsBoolean())
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+                                                    m_shooter.m_Shooter2.set(0.0);}));
+
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
+      .and(() -> m_shooter.getCurrentCommand() == null)
+        .everyTimeItsFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+                                                    m_shooter.m_Shooter2.set(0.0);}));
+    
+    // intake note to shooter
+    Command intakeNoteToShooter = new IntakeNoteToShooter(m_shooter);
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean)
+        .whileTrue(intakeNoteToShooter);
+    
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(() -> !intakeNoteToShooter.isScheduled() && !m_secondaryController.button(constants.kEjectButton).getAsBoolean())
+        .everyTimeItsTrue(Commands.runOnce(() -> m_shooter.disableFeeder()));
+
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
+      .and(() -> m_shooter.getCurrentCommand() == null)
+        .everyTimeItsFalse(Commands.runOnce(() -> m_shooter.disableFeeder()));
+    
+    // manual shooter feeder control
+    (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(m_secondaryController.button(constants.kEjectButton)::getAsBoolean)
+        .everyTimeItsTrue((Commands.runOnce(() -> {m_shooter.enableFeeder();})));
+
+    //m_secondaryController.button(constants.kEjectButton).onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
  // shooter off
 
     // m_secondaryController.button(constants.kElevatorButton).onTrue(
@@ -200,9 +247,6 @@ public class RobotContainer {
     //     new ShooterManualAngleControl(m_shooter, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
     //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
     //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
-
-    m_secondaryController.button(constants.kEjectButton).onTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
-    m_secondaryController.button(constants.kEjectButton).onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
   }
 
   public void updateState(){

@@ -133,6 +133,10 @@ public class Shooter extends SubsystemBase {
         }
     }
 
+    public void setAngleMotor(double power) {
+        m_Angle.set(power);
+    }
+
     public void enableFeeder() {
         if(this.is_backward)
             m_Feeder.set(-constants.kShooterFeederSpeed);
