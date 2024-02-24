@@ -241,7 +241,7 @@ public class Drivetrain extends SubsystemBase {
       double xyStds;
       double degStds;
       // multiple targets detected
-      if (limelight.getNumTargets() >= 2) {
+      if (limelight.getTagCount() >= 2) {
         xyStds = 0.5;
         degStds = 6;
       }
