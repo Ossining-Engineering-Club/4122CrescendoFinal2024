@@ -75,18 +75,17 @@ public class ShooterCommands {
 
         @Override 
         public boolean isFinished(){
+            if (m_RPM == 0.0) return true;
             return m_shooter.isRPMReached();
         }
 
     }
 
-    // TO DO
-    // idk which motors are feeding
-    public static class FeedToShooter extends Command {
+    public static class FeedToFlywheels extends Command {
         
         public final Shooter m_Shooter;
 
-        public FeedToShooter(Shooter shooter) {
+        public FeedToFlywheels(Shooter shooter) {
             m_Shooter = shooter;
 
             addRequirements(m_Shooter);
@@ -95,6 +94,11 @@ public class ShooterCommands {
         @Override
         public void execute() {
             m_Shooter.enableFeeder();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return !m_Shooter.BBisTripped();
         }
     }
 }

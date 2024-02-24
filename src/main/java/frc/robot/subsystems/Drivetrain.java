@@ -53,17 +53,15 @@ public class Drivetrain extends SubsystemBase {
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
 
   private final Limelight m_shooterLimelight;
-  private final Limelight m_elevatorLimelight;
 
   private double v_prevShooterLLTimestamp = -1;
-  private double v_prevElevatorLLTimestamp = -1;
 
   private Pose2d v_prevPose;
   private double v_xSpeed = 0; // m/s
   private double v_ySpeed = 0; // m/s
   private double v_rotSpeed = 0; // rad/s
 
-  public Drivetrain(int gyroport, Limelight shooterLimelight, Limelight elevatorLimelight){
+  public Drivetrain(int gyroport, Limelight shooterLimelight){
       //Motor process:
       /*Decide front back, left and right and assign locations/module names accordingly
         Find the encoder offsets by reading the absolute encoders when all the wheels are lined up in a direction parallel to front
@@ -78,7 +76,6 @@ public class Drivetrain extends SubsystemBase {
 
       //initialize limelight variables
       this.m_shooterLimelight = shooterLimelight;
-      this.m_elevatorLimelight = elevatorLimelight;
 
       //Odometry Initialization
       this.odometry =  new SwerveDrivePoseEstimator(
@@ -288,13 +285,7 @@ public class Drivetrain extends SubsystemBase {
     //     odometry.addVisionMeasurement(replaceRotWithGyro(m_shooterLimelight.getBotPose()), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
     //     v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
     // }
-    // if (m_elevatorLimelight.hasTarget() &&
-    //   doublesAreEqual(Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0, v_prevElevatorLLTimestamp)) {
-    //     odometry.addVisionMeasurement(replaceRotWithGyro(m_elevatorLimelight.getBotPose()), Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0);
-    //     v_prevElevatorLLTimestamp = Timer.getFPGATimestamp()-m_elevatorLimelight.getLatencyMilliseconds()/1000.0;
-    // }
     //updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
-    //updatePoseEstimatorWithVisionBotPose(m_elevatorLimelight);
 
     // updating robot speeds
     v_xSpeed = (SwerveOdometryGetPose().getX()-v_prevPose.getX())/0.02;

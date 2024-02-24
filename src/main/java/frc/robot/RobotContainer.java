@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.commands.ClimberMoveTo;
-import frc.robot.commands.ElevatorExtend;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretMode;
@@ -34,32 +33,25 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.OECTrigger;
 import frc.robot.constants.State;
 import frc.robot.constants.Direction;
-import frc.robot.subsystems.Intermediate;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Climber;
 import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
-import frc.robot.commands.ElevatorManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.IntakeNoteWithIntermediate;
 import frc.robot.commands.SearchForAndGoToAndIntakeNote;
 import frc.robot.commands.IntakeNoteToShooter;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
-  private final Limelight m_elevatorLimelight = new Limelight("tochange");
   private final Limelight m_noteLimelight = new Limelight("limelight");
-  private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight, m_elevatorLimelight);
+  private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandJoystick m_secondaryController = new CommandJoystick(1);
 
-  // private Intermediate intermediate;
   // private Intake intake;
    private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
-  // private Elevator m_elevator;
   // private Climber m_climber;
 
   // public State m_state;
@@ -122,26 +114,15 @@ public class RobotContainer {
       5.5479, 
       () -> -m_driverController.getLeftY(), 
       () -> -m_driverController.getLeftX(), 
-      () -> -m_driverController.getRightX()));
-    m_driverController.b().onTrue(new GoToNote(m_robotDrive, m_noteLimelight, intake));*/
+      () -> -m_driverController.getRightX()));*/
   
-    /*m_driverController.y().onTrue(AutoBuilder.pathfindToPose(
-      new Pose2d(4.441, 4.441, Rotation2d.fromDegrees(180)),
-      new PathConstraints(
-        2.0, 4.0,
-        constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
-      0.0,
-      0.0
-    ));*/
     // m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
-    // m_driverController.a().onTrue(
+    // m_driverController.x().onTrue(
     //   new GoToAndIntakeNote(
     //     m_robotDrive,
     //     m_noteLimelight,
-    //     intake, intermediate,
-    //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
-    //     this::updateState,
-    //     this::getState));
+    //     intake,
+    //     m_shooter);
 
     // TEST AMP LINE UP
     // m_driverController.y().onTrue(
@@ -151,6 +132,10 @@ public class RobotContainer {
     //       2.0, 0.4,
     //       constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
     //     0.0)); // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
+
+    // m_driverController.rightBumper().onTrue(
+    //   new Shoot(
+    //     );
 
     // secondary controller
 
@@ -162,9 +147,6 @@ public class RobotContainer {
           Commands.runOnce(() -> m_shooter.setReverse(false)),
           m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
 
-    //m_secondaryController.button(constants.kShooterOrElevatorButton).onTrue(Commands.runOnce(() -> {})); // shooter/elevator
-    //m_secondaryController.button(constants.kShooterOrElevatorButton).onFalse(Commands.runOnce(() -> {})); // shooter/elevator
-    //m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {})); // automatic
     // manual shooter angle control
     Command shooterManualAngleCommand = new ShooterManualAngleControl(
                                           m_shooter,
@@ -212,21 +194,6 @@ public class RobotContainer {
       .and(m_secondaryController.button(constants.kEjectButton)::getAsBoolean)
         .everyTimeItsTrue((Commands.runOnce(() -> {m_shooter.enableFeeder();})));
 
-    //m_secondaryController.button(constants.kEjectButton).onFalse(Commands.runOnce(() -> {m_shooter.disableFeeder();})); // eject
- // shooter off
-
-    // m_secondaryController.button(constants.kElevatorButton).onTrue(
-    //   new ConditionalCommand(
-    //     new ElevatorExtend(m_elevator, constants.kElevatorHighDefault),
-    //     Commands.runOnce(() -> {}),
-    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator up
-
-    // m_secondaryController.button(constants.kElevatorButton).onFalse(
-    //   new ConditionalCommand(
-    //     new ElevatorExtend(m_elevator, 0.0),
-    //     Commands.runOnce(() -> {}),
-    //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // elevator down
-
     // m_secondaryController.button(constants.kClimberButton).onTrue(
     //   new ConditionalCommand(
     //     new ClimberMoveTo(m_climber, constants.kClimberHighDefault),
@@ -239,29 +206,20 @@ public class RobotContainer {
     //     Commands.runOnce(() -> {}),
     //     m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)); // climber down
 
-    // m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {}, m_climber, m_shooter, m_elevator)); // turn off manual climber, shooter, and elevator control
+    // m_secondaryController.button(constants.kAutomaticOrManualButton).onTrue(Commands.runOnce(() -> {}, m_climber)); // turn off manual climber control
     // m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(new ClimberManualControl(m_climber, () -> m_secondaryController.getRawAxis(constants.kClimberJoystickAxis))); // manual climber control
-   
-    // m_secondaryController.button(constants.kAutomaticOrManualButton).onFalse(
-    //   new ConditionalCommand(
-    //     new ShooterManualAngleControl(m_shooter, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
-    //     new ElevatorManualControl(m_elevator, () -> m_secondaryController.getRawAxis(constants.kShooterElevatorJoystickAxis)),
-    //     m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean)); // manual shooter/elevator control
   }
 
   public void updateState(){
     // if (intake.BBisTripped() ||
-    //     intermediate.ShooterBBisTripped() ||
-    //     intermediate.ElevatorBBisTripped() || m_state != State.CLEAR){
+    //     m_shooter.BBisTripped() ||
+    //     m_state != State.CLEAR){
 
     //     //Loadig Bay Conditions
     //     if(intake.BBisTripped()){
     //       m_state = State.INTAKE;
     //     }
-    //     else if(intermediate.ElevatorBBisTripped()){
-    //       m_state = State.ELEVATOR;
-    //     }
-    //     else if(intermediate.ShooterBBisTripped()){
+    //     else if(m_shooter.BBisTripped()){
     //       m_state = State.SHOOTER;
     //     }
     //     //Clear or SYS condition
@@ -273,19 +231,11 @@ public class RobotContainer {
     //       }
     //       else m_state = State.CLEAR;
     //     }
-    //     else if (m_state == State.ELEVATOR && !intermediate.ElevatorBBisTripped()) {
-    //       if (intermediate.getElevatorDirection() == Direction.FORWARD) {
-    //         m_state = State.CLEAR;
-    //       } else if(intermediate.getElevatorDirection() == Direction.REVERSE){
-    //         m_state = State.SYSTEM;
-    //       }
-    //       else m_state = State.CLEAR;
-    //     }
-    //     else if (m_state == State.SHOOTER && !intermediate.ShooterBBisTripped()) {
-    //       if (intermediate.getShooterDirection() == Direction.FORWARD) {
+    //     else if (m_state == State.SHOOTER && !m_shooter.BBisTripped()) {
+    //       if (m_shooter.getDirection() == Direction.FORWARD) {
     //         m_state = State.CLEAR;
     //       }
-    //       else if(intermediate.getShooterDirection() == Direction.REVERSE){
+    //       else if(m_shooter.getDirection() == Direction.REVERSE){
     //         m_state = State.SYSTEM;
     //       }
     //       else m_state = State.CLEAR;
@@ -304,12 +254,6 @@ public class RobotContainer {
    */
     public Command getAutonomousCommand() {
       return new PathPlannerAuto("note detection auto");
-      /*return AutoBuilder.pathfindThenFollowPath(
-        PathPlannerPath.fromPathFile("AmpPath"),
-        new PathConstraints(
-          2.0, 0.4,
-          constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration),
-        0.0);*/
     }
 }
 

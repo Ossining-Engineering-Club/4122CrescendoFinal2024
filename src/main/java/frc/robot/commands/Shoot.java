@@ -9,7 +9,7 @@ public class Shoot extends SequentialCommandGroup {
     public Shoot(Shooter shooter) {
         addCommands(
             new ShooterCommands.SetShooterRPM(shooter, constants.kShooterDefaultRPM),
-            new ShooterCommands.FeedToShooter(shooter),
+            new ShooterCommands.FeedToFlywheels(shooter),
             new WaitCommand(2),
             new ShooterCommands.SetShooterRPM(shooter, 0.0)
         );

@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.constants.State;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intermediate;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Limelight;
 import frc.robot.commands.SearchForNote;
 import frc.robot.commands.GoToAndIntakeNote;
@@ -19,17 +19,14 @@ public class SearchForAndGoToAndIntakeNote extends SequentialCommandGroup {
     public SearchForAndGoToAndIntakeNote(
         Drivetrain drive,
         Limelight limelight,
-        double yLimit,
-        boolean isGoingPositive,
         Intake intake,
-        Intermediate intermediate,
-        BooleanSupplier shooterOrElevatorSwitch,
-        Runnable updateState,
-        Supplier<State> getState) {
+        Shooter shooter,
+        double yLimit,
+        boolean isGoingPositive) {
             addCommands(
                 new SearchForNote(drive, limelight, yLimit, isGoingPositive),
                 new ConditionalCommand(
-                    new GoToAndIntakeNote(drive, limelight, intake, intermediate, shooterOrElevatorSwitch, updateState, getState),
+                    new GoToAndIntakeNote(drive, limelight, intake, shooter),
                     Commands.runOnce(() -> {}),
                     limelight::hasTarget
                 )
