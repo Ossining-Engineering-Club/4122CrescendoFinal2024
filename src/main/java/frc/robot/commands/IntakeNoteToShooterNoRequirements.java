@@ -4,14 +4,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class IntakeNoteToShooter extends Command {
+public class IntakeNoteToShooterNoRequirements extends Command {
     private final Intake m_intake;
     private final Shooter m_shooter;
 
-    public IntakeNoteToShooter(Intake intake, Shooter shooter) {
+    public IntakeNoteToShooterNoRequirements(Intake intake, Shooter shooter) {
         m_intake = intake;
         m_shooter = shooter;
-        addRequirements(intake, shooter);
     }
 
     @Override

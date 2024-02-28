@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -18,7 +19,7 @@ public class SwerveMod {
 
     private CANSparkMax m_Rotator;
     private RelativeEncoder e_Rotator;
-    private TalonFX m_Drive;
+    public TalonFX m_Drive;
     private double turningEncoderOffset;
     private double absEncoderOffset;
     private CANcoder absEncoder;
@@ -37,13 +38,14 @@ public class SwerveMod {
         m_Rotator = new CANSparkMax(RotatorMotorNo,MotorType.kBrushless);
         m_Drive = new TalonFX(DriveMotorNo, "rio");
         absEncoder = new CANcoder(CANCoderId);
-        configs.Feedback.SensorToMechanismRatio=constants.k_DriveEncoderPosFactor;
+        configs.Feedback.SensorToMechanismRatio=1.0/constants.k_DriveEncoderPosFactor;
         m_Drive.setInverted(DriveReverse);
         m_Rotator.setInverted(TurnReverse);
         e_Rotator = m_Rotator.getEncoder();
         e_Rotator.setPositionConversionFactor(constants.k_TurnEncoderPosFactor);
         e_Rotator.setVelocityConversionFactor(constants.k_TurnEncoderVelocityFactor);
         m_Drive.getConfigurator().apply(configs);
+        m_Drive.setNeutralMode(NeutralModeValue.Brake);
         turningPIDController.enableContinuousInput(
             -1.0*constants.k_PI, 1.0*constants.k_PI);
 

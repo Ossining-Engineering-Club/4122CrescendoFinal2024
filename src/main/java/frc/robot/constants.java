@@ -131,7 +131,9 @@ public final class constants {
     public static final double kNoteLimelightRightOffset = 0.0;
 
     // Intake
-    public static final double kIntakePower = 1.0;
+    public static final double kIntakePower = 0.4;
+    public static final int kIntakeMotorTopID = 20;
+    public static final int kIntakeMotorBottomID = 21;
 
     // Intermediate
     public static final int kIntermediateMotorPower = 1;
@@ -146,9 +148,9 @@ public final class constants {
     public static final double kAngleRatio = 44.0/1620.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
-    public static final double kShooterDefaultRPM = 3000.0;//5100.0;
+    public static final double kShooterDefaultRPM = 3500;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
-    public static final double kShooterFeederSpeed = 0.4;
+    public static final double kShooterFeederSpeed = 0.2;
     public static final double kStartAngle = 55.0;//in degrees
     public static final double kShooterMaxAngle = 90.0;
     public static final double kShooterMinAngle = 10.0;
@@ -192,6 +194,7 @@ public final class constants {
     public static final int kShooterOrElevatorButton = 0;
     public static final int kAutomaticOrManualButton = 5;
     public static final int kShooterButton = 4;
+    public static final int kLightShooterButton = 1;
     public static final int kElevatorButton = 4;
     public static final int kClimberButton = 5;
     public static final int kEjectButton = 9;

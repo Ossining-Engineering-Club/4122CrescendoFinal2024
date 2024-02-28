@@ -297,7 +297,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
     SmartDashboard.putNumber("back left abs", LBMod.GetAbsEncoderAngle());
     SmartDashboard.putNumber("back right abs", RBMod.GetAbsEncoderAngle());
-
+    SmartDashboard.putNumber("motor positionofamotoer", RBMod.m_Drive.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
     SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
     SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());

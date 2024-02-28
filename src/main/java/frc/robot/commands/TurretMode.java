@@ -55,8 +55,8 @@ public class TurretMode extends Command {
 
     @Override
     public void initialize() {
-        //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
-        m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
+        m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        //m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
 
         // turn on the shooter
         //m_shooter.setRPM(constants.kShooterDefaultRPM);
@@ -67,27 +67,30 @@ public class TurretMode extends Command {
         final double xSpeed = m_xSpeedLimiter.calculate(constants.kMaxSpeed*MathUtil.applyDeadband(m_StickX.getAsDouble(), constants.kControllerDeadband));
         final double ySpeed = m_ySpeedLimiter.calculate(constants.kMaxSpeed*MathUtil.applyDeadband(m_StickY.getAsDouble(), constants.kControllerDeadband));
         final double rotation = m_rotLimiter.calculate(constants.kMaxAngularSpeed*MathUtil.applyDeadband(m_StickYaw.getAsDouble(), constants.kControllerDeadband));
-
-        Pose2d robotPose = m_drive.SwerveOdometryGetPose();
-        //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
-        //double rotGoal = Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX()));
-        double rotPos = robotPose.getRotation().getRadians();
-        double rotGoal = Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX()));
-
-        SmartDashboard.putNumber("rotPos", rotPos);
-        SmartDashboard.putNumber("rotGoal", rotGoal);
-
-        if (Math.abs(rotPos-rotGoal) < constants.kVisTurretToleranceRadians) rotPos = rotGoal;
-
-        m_rotPIDController.setGoal(rotGoal);
-        double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
-        SmartDashboard.putNumber("rotSpeed", rotSpeed);
         
-        m_drive.Drive(0.4*xSpeed, 0.4*ySpeed, rotSpeed, true);
+        if (m_limelight.hasTarget()) {
+            //Pose2d robotPose = m_drive.SwerveOdometryGetPose();
+            double rotPos = m_limelight.getBotYaw()/180*Math.PI;
+            double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX())));
+            //double rotPos = robotPose.getRotation().getRadians();
+            //double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX())));
 
-        // setting shooter angle
-        double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
-        //m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+            SmartDashboard.putNumber("rotPos", rotPos);
+            SmartDashboard.putNumber("rotGoal", rotGoal);
+
+            if (Math.abs(rotPos-rotGoal) < constants.kVisTurretToleranceRadians) rotPos = rotGoal;
+
+            m_rotPIDController.setGoal(rotGoal);
+            double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
+            SmartDashboard.putNumber("rotSpeed", rotSpeed);
+            
+            m_drive.Drive(0.4*xSpeed, 0.4*ySpeed, rotSpeed, true);
+
+            // setting shooter angle
+            double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
+            //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
+            //m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+        }
     }
 
     // TO DO

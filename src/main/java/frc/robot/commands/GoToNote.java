@@ -111,7 +111,7 @@ public class GoToNote extends Command {
 
     @Override
     public boolean isFinished() {
-        if (m_intake.BBisTripped()) {
+        /*if (m_intake.BBisTripped()) {
             SmartDashboard.putString("GoToNote finish cause", "BB was tripped");
             return true;
         }
@@ -119,7 +119,8 @@ public class GoToNote extends Command {
             SmartDashboard.putString("GoToNote finish cause", "timed out");
             return true;
         }
-        return false;
+        return false;*/
+        return !m_limelight.hasTarget();
     }
 
     public double wrapAngle(double angle) {

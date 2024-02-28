@@ -42,16 +42,17 @@ import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SearchForAndGoToAndIntakeNote;
 import frc.robot.commands.IntakeNoteToShooter;
+import frc.robot.commands.IntakeNoteToShooterNoRequirements;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
-  private final Limelight m_noteLimelight = new Limelight("limelight");
+  private final Limelight m_noteLimelight = new Limelight("limelight-note");
   private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandJoystick m_secondaryController = new CommandJoystick(1);
 
-  // private Intake intake;
-   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
+  private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID);
+  private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
   // private Climber m_climber;
 
   // public State m_state;
@@ -97,32 +98,41 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.1, 1),
-                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.1, 1),
-                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.1, 1),
+                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
                     true),
             m_robotDrive));
 
   }
 
   private void configureButtonBindings() {
-    /*m_driverController.a().onTrue(new TurretMode(
-      m_robotDrive, 
-      m_shooter,
-      m_shooterLimelight, 
-      -0.0381,
-      5.5479, 
-      () -> -m_driverController.getLeftY(), 
-      () -> -m_driverController.getLeftX(), 
-      () -> -m_driverController.getRightX()));*/
+    m_driverController.a()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(new TurretMode(
+                    m_robotDrive, 
+                    m_shooter,
+                    m_shooterLimelight, 
+                    -0.0381,
+                    5.5479, 
+                    () -> -m_driverController.getLeftY(), 
+                    () -> -m_driverController.getLeftX(), 
+                    () -> -m_driverController.getRightX()));
   
-    // m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
-    // m_driverController.x().onTrue(
-    //   new GoToAndIntakeNote(
-    //     m_robotDrive,
-    //     m_noteLimelight,
-    //     intake,
-    //     m_shooter);
+    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
+    /*m_driverController.x()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+          new GoToAndIntakeNote(
+            m_robotDrive,
+            m_noteLimelight,
+            m_intake,
+            m_shooter));*/
+
+    m_driverController.x()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+          new GoToNote(m_robotDrive, m_noteLimelight, m_intake));
 
     // TEST AMP LINE UP
     // m_driverController.y().onTrue(
@@ -157,10 +167,18 @@ public class RobotContainer {
 
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
       .and(() -> m_shooter.getCurrentCommand() == null)
-        .everyTimeItsFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
                                                     m_shooter.m_Shooter2.set(0.0);}));
     
     // manual shooter flywheel control
+    /*(new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(m_secondaryController.button(constants.kShooterButton)::getAsBoolean)
+      (new OECTrigger(m_secondaryController.button(constants.kShooterButton)::getAsBoolean))
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);}));
+
+      (new OECTrigger(m_secondaryController.button(constants.kLightShooterButton)::getAsBoolean))
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.setRPM(600.0);}));*/
+
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .and(m_secondaryController.button(constants.kShooterButton)::getAsBoolean)
         .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.setRPM(constants.kShooterDefaultRPM);}));
@@ -170,16 +188,27 @@ public class RobotContainer {
         .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
                                                     m_shooter.m_Shooter2.set(0.0);}));
 
+    /*(new OECTrigger(() -> !m_secondaryController.button(constants.kShooterButton).getAsBoolean()))
+      .and(() -> !m_secondaryController.button(constants.kLightShooterButton).getAsBoolean())
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+                                                    m_shooter.m_Shooter2.set(0.0);}));*/
+
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
       .and(() -> m_shooter.getCurrentCommand() == null)
-        .everyTimeItsFalse(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Shooter1.set(0.0);
                                                     m_shooter.m_Shooter2.set(0.0);}));
     
     // intake note to shooter
-    Command intakeNoteToShooter = new IntakeNoteToShooter(m_shooter);
+    Command intakeNoteToShooter = new IntakeNoteToShooterNoRequirements(m_intake, m_shooter);
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .and(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean)
         .whileTrue(intakeNoteToShooter);
+
+    /*(new OECTrigger(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean))
+      .whileTrue(new IntakeNoteToShooterNoRequirements(m_intake, m_shooter));
+
+    (new OECTrigger(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean))
+      .everyTimeItsFalse(Commands.runOnce(() -> m_shooter.disableFeeder()));*/
     
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .and(() -> !intakeNoteToShooter.isScheduled() && !m_secondaryController.button(constants.kEjectButton).getAsBoolean())
@@ -187,12 +216,23 @@ public class RobotContainer {
 
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
       .and(() -> m_shooter.getCurrentCommand() == null)
-        .everyTimeItsFalse(Commands.runOnce(() -> m_shooter.disableFeeder()));
+        .everyTimeItsTrue(Commands.runOnce(() -> m_shooter.disableFeeder()));
     
     // manual shooter feeder control
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .and(m_secondaryController.button(constants.kEjectButton)::getAsBoolean)
-        .everyTimeItsTrue((Commands.runOnce(() -> {m_shooter.enableFeeder();})));
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
+
+    /*(new OECTrigger(m_secondaryController.button(constants.kEjectButton)::getAsBoolean))
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.enableFeeder();}));
+
+    (new OECTrigger(() -> !m_secondaryController.button(constants.kEjectButton).getAsBoolean()))
+      .and(() -> !m_secondaryController.button(constants.kIntakeToShooterButton).getAsBoolean())
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.disableFeeder();}));*/
+
+    /*(new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
+      .and(m_secondaryController.button(constants.kEjectButton)::getAsBoolean)
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_intake.start();}));*/
 
     // m_secondaryController.button(constants.kClimberButton).onTrue(
     //   new ConditionalCommand(
