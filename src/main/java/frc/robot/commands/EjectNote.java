@@ -40,7 +40,8 @@ public class EjectNote extends Command {
     @Override
     public void execute() {
         if(statebool && getState.get() == constants.State.SHOOTER) {
-            m_Intake.reverse();
+            m_Intake.setReverse(true);
+            m_Intake.start();
             m_Shooter.setRPM(-RPM);
         }    
     }

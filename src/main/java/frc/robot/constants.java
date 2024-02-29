@@ -131,7 +131,7 @@ public final class constants {
     public static final double kNoteLimelightRightOffset = 0.0;
 
     // Intake
-    public static final double kIntakePower = 0.4;
+    public static final double kIntakePower = 1.0;
     public static final int kIntakeMotorTopID = 20;
     public static final int kIntakeMotorBottomID = 21;
 
@@ -150,7 +150,7 @@ public final class constants {
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 3500;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
-    public static final double kShooterFeederSpeed = 0.2;
+    public static final double kShooterFeederSpeed = 0.4;
     public static final double kStartAngle = 55.0;//in degrees
     public static final double kShooterMaxAngle = 90.0;
     public static final double kShooterMinAngle = 10.0;

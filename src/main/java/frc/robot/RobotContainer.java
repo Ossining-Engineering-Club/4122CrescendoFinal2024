@@ -120,19 +120,19 @@ public class RobotContainer {
                     () -> -m_driverController.getRightX()));
   
     m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
-    /*m_driverController.x()
+    m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
           new GoToAndIntakeNote(
             m_robotDrive,
             m_noteLimelight,
             m_intake,
-            m_shooter));*/
+            m_shooter));
 
-    m_driverController.x()
+    /*m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
-          new GoToNote(m_robotDrive, m_noteLimelight, m_intake));
+          new GoToNote(m_robotDrive, m_noteLimelight, m_intake));*/
 
     // TEST AMP LINE UP
     // m_driverController.y().onTrue(
@@ -153,8 +153,8 @@ public class RobotContainer {
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .everyTimeItsTrue(
         new ConditionalCommand(
-          Commands.runOnce(() -> m_shooter.setReverse(true)),
-          Commands.runOnce(() -> m_shooter.setReverse(false)),
+          Commands.runOnce(() -> {m_shooter.setReverse(true); m_intake.setReverse(true);}),
+          Commands.runOnce(() -> {m_shooter.setReverse(false); m_intake.setReverse(false);}),
           m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
 
     // manual shooter angle control

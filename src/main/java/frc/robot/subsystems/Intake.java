@@ -12,6 +12,7 @@ public class Intake extends SubsystemBase {
     private final CANSparkMax m_intakeMotorBottom;
     // /private final Breakbeam m_breakbeam;
     private Direction m_direction = Direction.STOPPED;
+    private boolean m_isReversed = false;
     public Intake(int intakeMotorTopID, int intakeMotorBottomID/*, int breakbeamReceiverPin*/) {
         m_intakeMotorTop = new CANSparkMax(intakeMotorTopID, MotorType.kBrushless);
         m_intakeMotorBottom = new CANSparkMax(intakeMotorBottomID, MotorType.kBrushless);
@@ -22,18 +23,28 @@ public class Intake extends SubsystemBase {
         m_intakeMotorBottom.set(power);
     }
     public void start() {
-        setVelocity(constants.kIntakePower);
-        m_direction = Direction.FORWARD;
+        if (!m_isReversed) {
+            setVelocity(constants.kIntakePower);
+            m_direction = Direction.FORWARD;
+        }
+        else {
+            setVelocity(-constants.kIntakePower);
+            m_direction = Direction.REVERSE;
+        }
     }
     public void stop() {
         setVelocity(0);
         m_direction = Direction.STOPPED;
     }
 
-    public void reverse() {
+    public void setReverse(boolean isOn) {
+        m_isReversed = isOn;
+    }
+
+    /*public void reverse() {
         setVelocity(-constants.kIntakePower);
         m_direction = Direction.REVERSE;
-    }
+    }*/
     public boolean BBisTripped() {
         //return m_breakbeam.isTripped();
         return false;
