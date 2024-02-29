@@ -3,14 +3,17 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Leds;
 
 public class IntakeNoteToShooter extends Command {
     private final Intake m_intake;
     private final Shooter m_shooter;
+    public final Leds m_leds;
 
-    public IntakeNoteToShooter(Intake intake, Shooter shooter) {
+    public IntakeNoteToShooter(Intake intake, Shooter shooter, Leds led) {
         m_intake = intake;
         m_shooter = shooter;
+        m_leds = led;
         addRequirements(intake, shooter);
     }
 
@@ -24,6 +27,7 @@ public class IntakeNoteToShooter extends Command {
     public void end(boolean interrupted) {
         m_shooter.disableFeeder();
         m_intake.stop();
+        m_leds.setGreen();
     }
 
     @Override

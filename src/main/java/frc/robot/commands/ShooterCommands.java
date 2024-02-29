@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterCommands {
@@ -84,11 +85,14 @@ public class ShooterCommands {
     public static class FeedToFlywheels extends Command {
         
         public final Shooter m_Shooter;
+        public final Leds m_Leds;
 
-        public FeedToFlywheels(Shooter shooter) {
+        public FeedToFlywheels(Shooter shooter, Leds leds) {
             m_Shooter = shooter;
+            m_Leds = leds;
 
             addRequirements(m_Shooter);
+            addRequirements(m_Leds);
         }
 
         @Override
@@ -99,6 +103,11 @@ public class ShooterCommands {
         @Override
         public boolean isFinished() {
             return !m_Shooter.BBisTripped();
+        }
+
+        @Override
+        public void end(boolean isInterrupted) {
+            m_Leds.setRed();
         }
     }
 }
