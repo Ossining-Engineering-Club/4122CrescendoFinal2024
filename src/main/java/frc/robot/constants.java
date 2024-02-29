@@ -164,6 +164,9 @@ public final class constants {
     public static final double kElevatorHighDefault = 1.0;
     public static final double kElevatorManualAngleControlSpeedMultiplier = 0.1;
 
+    // Led
+    public static final int kPWMLedPin = 9;
+
     // Enums
     public static enum State {
         CLEAR,

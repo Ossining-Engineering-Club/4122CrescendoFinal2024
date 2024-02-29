@@ -34,8 +34,10 @@ import frc.robot.subsystems.OECTrigger;
 import frc.robot.constants.State;
 import frc.robot.constants.Direction;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Leds;
 import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
@@ -50,6 +52,8 @@ public class RobotContainer {
   private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandJoystick m_secondaryController = new CommandJoystick(1);
+
+  private Leds m_led = new Leds(constants.kPWMLedPin);
 
   private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID);
   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
@@ -89,6 +93,10 @@ public class RobotContainer {
 
     m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
+
+    // Start robot with red LEDS
+    m_led.setRed(); 
+
     // Configure the button bindings
     configureButtonBindings();
 
@@ -132,7 +140,7 @@ public class RobotContainer {
     m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
-          new GoToNote(m_robotDrive, m_noteLimelight, m_intake));
+          new GoToNote(m_robotDrive, m_noteLimelight, m_intake, m_led));
 
     // TEST AMP LINE UP
     // m_driverController.y().onTrue(
@@ -199,7 +207,7 @@ public class RobotContainer {
                                                     m_shooter.m_Shooter2.set(0.0);}));
     
     // intake note to shooter
-    Command intakeNoteToShooter = new IntakeNoteToShooterNoRequirements(m_intake, m_shooter);
+    Command intakeNoteToShooter = new IntakeNoteToShooterNoRequirements(m_intake, m_shooter, m_led);
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))
       .and(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean)
         .whileTrue(intakeNoteToShooter);

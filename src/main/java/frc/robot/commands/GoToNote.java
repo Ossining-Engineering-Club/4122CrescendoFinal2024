@@ -12,11 +12,13 @@ import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Leds;
 
 public class GoToNote extends Command {
     private final Drivetrain m_drive;
     private final Limelight m_limelight;
     private final Intake m_intake;
+    private final Leds m_led;
     private final Timer m_timer = new Timer();
 
     private final ProfiledPIDController m_transPIDController = new ProfiledPIDController(
@@ -38,10 +40,11 @@ public class GoToNote extends Command {
 
     private final LinearFilter m_rotFilter = LinearFilter.movingAverage(50);
 
-    public GoToNote(Drivetrain drive, Limelight limelight, Intake intake) {
+    public GoToNote(Drivetrain drive, Limelight limelight, Intake intake, Leds led) {
         m_drive = drive;
         m_limelight = limelight;
         m_intake = intake;
+        m_led = led;
 
         addRequirements(m_drive);
     }
@@ -66,6 +69,7 @@ public class GoToNote extends Command {
         double overallSpeed = constants.kGoToNoteSpeed;
 
         if (m_limelight.hasTarget()) {
+            m_led.setOrange();
             double tx = -m_limelight.getTX()/180*Math.PI;
             double ta = m_limelight.getTA()/100;
 
@@ -121,6 +125,12 @@ public class GoToNote extends Command {
         }
         return false;*/
         return !m_limelight.hasTarget();
+        
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        m_led.setGreen();
     }
 
     public double wrapAngle(double angle) {

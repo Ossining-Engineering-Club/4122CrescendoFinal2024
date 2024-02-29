@@ -5,9 +5,11 @@ import frc.robot.constants.State;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.Limelight;
 import frc.robot.commands.SearchForNote;
 import frc.robot.commands.GoToAndIntakeNote;
+
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -21,12 +23,13 @@ public class SearchForAndGoToAndIntakeNote extends SequentialCommandGroup {
         Limelight limelight,
         Intake intake,
         Shooter shooter,
+        Leds led,
         double yLimit,
         boolean isGoingPositive) {
             addCommands(
                 new SearchForNote(drive, limelight, yLimit, isGoingPositive),
                 new ConditionalCommand(
-                    new GoToAndIntakeNote(drive, limelight, intake, shooter),
+                    new GoToAndIntakeNote(drive, limelight, intake, led, shooter),
                     Commands.runOnce(() -> {}),
                     limelight::hasTarget
                 )
