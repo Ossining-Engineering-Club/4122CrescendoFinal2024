@@ -19,7 +19,7 @@ public class Shooter extends SubsystemBase {
 
     public CANSparkFlex m_Shooter1;
     public CANSparkFlex m_Shooter2;
-    private CANSparkFlex m_Angle;
+    public CANSparkFlex m_Angle;
     private CANSparkMax m_Feeder;
     private Encoder e_Angle;
     private RelativeEncoder e_Shooter1;
