@@ -148,7 +148,7 @@ public final class constants {
     public static final double kAngleRatio = 44.0/1620.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
-    public static final double kShooterDefaultRPM = 3500;//3000.0;//5100.0;
+    public static final double kShooterDefaultRPM = 3500.0;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
     public static final double kStartAngle = 55.0;//in degrees

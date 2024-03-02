@@ -87,7 +87,7 @@ public class Shooter extends SubsystemBase {
         double currentRPMS2 = e_Shooter2.getVelocity();
 
         Shooter1PIDController.setSetpoint(targetRPM);
-        Shooter2PIDController.setSetpoint(targetRPM);
+        Shooter2PIDController.setSetpoint(1.10*targetRPM);
 
         double adjustmentvalS1 = Shooter1PIDController.calculate(currentRPMS1);
         double adjustmentvalS2 = Shooter2PIDController.calculate(currentRPMS2);
@@ -102,8 +102,8 @@ public class Shooter extends SubsystemBase {
         // m_Shooter1.set(targetRPM/6000);
         // m_Shooter2.set(targetRPM/6000);
 
-        if(Math.abs(targetRPM-currentRPMS1) < constants.kRPMTolerance && 
-            Math.abs(targetRPM-currentRPMS2) < constants.kRPMTolerance){
+        if(Math.abs(Shooter1PIDController.getSetpoint()-currentRPMS1) < constants.kRPMTolerance && 
+            Math.abs(Shooter2PIDController.getSetpoint()-currentRPMS2) < constants.kRPMTolerance){
             return true;
         }else{
             return false;
@@ -152,8 +152,8 @@ public class Shooter extends SubsystemBase {
     }
     public boolean isRPMReached() {
         double targetRPM = Shooter1PIDController.getSetpoint();
-        return Math.abs(targetRPM-e_Shooter1.getVelocity()) < constants.kRPMTolerance && 
-                Math.abs(targetRPM-e_Shooter2.getVelocity()) < constants.kRPMTolerance;
+        return Math.abs(Shooter1PIDController.getSetpoint()-e_Shooter1.getVelocity()) < constants.kRPMTolerance && 
+                Math.abs(Shooter2PIDController.getSetpoint()-e_Shooter2.getVelocity()) < constants.kRPMTolerance;
     }
 
     //returns true if setpoint is reached false otherwise
