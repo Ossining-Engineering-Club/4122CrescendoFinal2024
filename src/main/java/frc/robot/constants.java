@@ -214,5 +214,5 @@ public final class constants {
 
     // Go To Note
     public static final double kGoToNoteTimeout = 2.0; // seconds
-    public static final double kGoToNoteSpeed = 1.25;
+    public static final double kGoToNoteSpeed = 1.00;
 }
