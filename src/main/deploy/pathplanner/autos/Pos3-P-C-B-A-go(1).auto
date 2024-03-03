@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.73,
+      "y": 4.41
+    },
+    "rotation": -60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pos3-C"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.75
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C-B"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.75
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-A"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.75
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A-go(1)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

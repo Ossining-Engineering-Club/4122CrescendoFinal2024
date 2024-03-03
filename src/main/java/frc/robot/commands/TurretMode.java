@@ -48,7 +48,7 @@ public class TurretMode extends Command {
         m_GoalX = goalx;
         m_GoalY = goaly;
 
-        addRequirements(m_drive);
+        addRequirements(m_drive, m_shooter);
 
         m_rotPIDController.enableContinuousInput(-Math.PI, Math.PI);
     }
@@ -89,13 +89,22 @@ public class TurretMode extends Command {
             // setting shooter angle
             double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
             //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
-            //m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+            SmartDashboard.putNumber("distance from speaker", distFromTarget);
+            m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
         }
+        else{m_drive.Drive(0.4*xSpeed, 0.4*ySpeed, 0.0, true);
+            m_shooter.setAngleMotor(0.0);}
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        m_drive.Drive(0.0, 0.0, 0.0, true);
+        m_shooter.stopAngle();
     }
 
     // TO DO
     public double convertDistanceToShooterAngle(double dist) {
-        return 0.0;
+        return 3.1574 * Math.pow(dist,2) - 28.635*dist + 84.562;
     }
 
     public double wrapAngle(double angle) {

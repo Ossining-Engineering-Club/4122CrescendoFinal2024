@@ -80,7 +80,7 @@ public class Drivetrain extends SubsystemBase {
       //Odometry Initialization
       this.odometry =  new SwerveDrivePoseEstimator(
             kinematics,
-            this.getAngle(),
+            Rotation2d.fromDegrees(gyro.GetYaw()),
             new SwerveModulePosition[] {
               LFMod.GetPosition(),
               RFMod.GetPosition(),
@@ -167,7 +167,7 @@ public class Drivetrain extends SubsystemBase {
   }
   public void UpdateOdometry() {
       //Wheel states as order declared in kinematics constructor
-      odometry.update(this.getAngle(),
+      odometry.update(Rotation2d.fromDegrees(gyro.GetYaw()),
                         new SwerveModulePosition[]{
                         LFMod.GetPosition(), 
                         RFMod.GetPosition(),
@@ -178,7 +178,8 @@ public class Drivetrain extends SubsystemBase {
       return odometry.getEstimatedPosition();
   }
   public Rotation2d getAngle(){
-      return Rotation2d.fromRadians(((gyro.GetYaw()*((constants.k_PI)/(180.0)))));
+      //return Rotation2d.fromRadians(((gyro.GetYaw()*((constants.k_PI)/(180.0)))));
+      return SwerveOdometryGetPose().getRotation();
   }
   public Rotation2d getPitchRad(){
       return new Rotation2d((gyro.GetPitch()*((constants.k_PI)/(180.0))));

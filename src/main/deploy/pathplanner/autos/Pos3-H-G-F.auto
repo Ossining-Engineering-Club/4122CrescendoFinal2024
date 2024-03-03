@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.36,
-      "y": 5.5479
+      "x": 0.73,
+      "y": 4.41
     },
-    "rotation": 0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
@@ -14,73 +14,67 @@
         {
           "type": "path",
           "data": {
-            "pathName": "No Pivot P-1-2-3 1"
+            "pathName": "Pos3-H"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GoToAndIntakeNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "No Pivot P-1-2-3 2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "waitTime": 0.75
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "No Pivot P-1-2-3 3"
+            "pathName": "H-Shoot"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GoToAndIntakeNote"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "No Pivot P-1-2-3 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "waitTime": 0.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "No Pivot P-1-2-3 5"
+            "pathName": "Shoot-G"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "GoToAndIntakeNote"
+            "waitTime": 0.75
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "No Pivot P-1-2-3 6"
+            "pathName": "G-Shoot"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Shoot"
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot-F"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.75
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F-Shoot"
           }
         }
       ]

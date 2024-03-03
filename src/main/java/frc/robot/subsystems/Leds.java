@@ -18,8 +18,13 @@ public class Leds extends SubsystemBase {
     public void setRed() {
         m_Led.set(0.61);
     }
-    public void setOrange() {
+
+    public void setOrange(){
         m_Led.set(0.65);
     }
+    public void setYellow() {
+        m_Led.set(0.69);
+    }
+
     
 }

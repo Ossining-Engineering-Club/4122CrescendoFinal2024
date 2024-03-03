@@ -32,6 +32,6 @@ public class IntakeNoteToShooterNoRequirements extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;//m_shooter.BBisTripped();
+        return m_shooter.BBisTripped();
     }
 }

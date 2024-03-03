@@ -38,7 +38,7 @@ public class Shooter extends SubsystemBase {
                                                                 constants.kAnglePIDGains[1],
                                                                 constants.kAnglePIDGains[2]);
 
-    public double v_startAngle = 0;
+    public double v_startAngle = 58.0;
     private boolean is_backward;
 
 
@@ -62,7 +62,7 @@ public class Shooter extends SubsystemBase {
         e_Shooter1 = m_Shooter1.getEncoder();
         e_Shooter2 = m_Shooter2.getEncoder();
         
-        e_Angle.setDistancePerPulse(constants.kAngleRatio / 8192.0);
+        e_Angle.setDistancePerPulse(constants.kAngleRatio/2048.0);
         e_Shooter1.setVelocityConversionFactor(constants.kShooterGearRatio);
         e_Shooter2.setVelocityConversionFactor(constants.kShooterGearRatio);
         
@@ -72,7 +72,11 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("shooter breakbeam", BBisTripped());
+        SmartDashboard.putNumber("shooter beambreak voltage", m_breakbeam.getVoltage());
+        SmartDashboard.putBoolean("shooter beambreak isTripped", m_breakbeam.isTripped());
+        SmartDashboard.putNumber("shooter angle",this.getAngle());
+        SmartDashboard.putNumber("shooter angle setpoint", AnglePIDController.getSetpoint());
+        SmartDashboard.putNumber("shooter RPM", e_Shooter2.getVelocity());
     }
 
     public void resetEncoders(double startangle){
@@ -87,7 +91,7 @@ public class Shooter extends SubsystemBase {
         double currentRPMS2 = e_Shooter2.getVelocity();
 
         Shooter1PIDController.setSetpoint(targetRPM);
-        Shooter2PIDController.setSetpoint(1.10*targetRPM);
+        Shooter2PIDController.setSetpoint(targetRPM);
 
         double adjustmentvalS1 = Shooter1PIDController.calculate(currentRPMS1);
         double adjustmentvalS2 = Shooter2PIDController.calculate(currentRPMS2);
@@ -95,9 +99,9 @@ public class Shooter extends SubsystemBase {
         m_Shooter1.set(m_Shooter1.get()+adjustmentvalS1);
         m_Shooter2.set(m_Shooter2.get()+adjustmentvalS2);
 
-        SmartDashboard.putNumber("Shooter Setpoint", targetRPM);
-        SmartDashboard.putNumber("Shooter RPM", e_Shooter1.getVelocity());
-        SmartDashboard.putNumber("Shooter Angle", getAngle());
+        // SmartDashboard.putNumber("Shooter Setpoint", targetRPM);
+        // SmartDashboard.putNumber("Shooter RPM", e_Shooter1.getVelocity());
+        // SmartDashboard.putNumber("Shooter Angle", getAngle());
 
         // m_Shooter1.set(targetRPM/6000);
         // m_Shooter2.set(targetRPM/6000);
@@ -163,6 +167,10 @@ public class Shooter extends SubsystemBase {
 
     public double getAngle() {
         return e_Angle.getDistance()+v_startAngle;
+    }
+
+    public void stopAngle() {
+        m_Angle.set(0.0);
     }
 
     public boolean BBisTripped() {

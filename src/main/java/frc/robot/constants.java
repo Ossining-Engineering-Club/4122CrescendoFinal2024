@@ -46,7 +46,9 @@ public final class constants {
     public static final double k_OdometryToleranceY = 0.1;
     public static final double k_OdometryToleranceRot = 0.1;
     //breakbeam threshold and code in volts
-    public static final double k_BreakbeamVoltageThreshold = 3.0;
+    public static final double k_BreakbeamVoltageThreshold = 2.5;
+    public static final int k_BreakbeamSamplingWindow = 2;
+
     public static final double kMaxSpeed = 5.0292; // also remember to change in pathplanner
     public static final double kMaxAcceleration = 5.0292; // 4.441
     
@@ -125,7 +127,7 @@ public final class constants {
     public static final double[] kVisionTransPIDGains = {0.5, 0.0, 0.0}; // {kP, kI, kD}
     public static final double[] kVisionRotPIDGains = {1.0, 0.0, 0.0}; // {kP, kI, kD}
     public static final double[] kVisTurretPID = {1.0, 0.0, 0.0}; // {kP, kI, kD}
-    public static final double kVisTurretToleranceRadians = 0.1;
+    public static final double kVisTurretToleranceRadians = 0.262;
     // Limelight
     public static final double kNoteLimelightForwardOffset = 0.0;
     public static final double kNoteLimelightRightOffset = 0.0;
@@ -134,26 +136,27 @@ public final class constants {
     public static final double kIntakePower = 1.0;
     public static final int kIntakeMotorTopID = 20;
     public static final int kIntakeMotorBottomID = 21;
+    public static final int kIntakeBreakbeamPin = 1;
 
     // Intermediate
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double[] kShooter1PIDGains = {0.000008, 0.0, 0.0};
-    public static final double[] kShooter2PIDGains = {0.000008, 0.0, 0.0};
-    public static final double[] kAnglePIDGains = {1.0, 0.0, 0.0};
+    public static final double[] kShooter1PIDGains = {0.000003, 0.0, 0.0};
+    public static final double[] kShooter2PIDGains = {0.000003, 0.0, 0.0};
+    public static final double[] kAnglePIDGains = {.8, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
-    public static final double kRPMTolerance = 5.0;
-    public static final double kangleTolerance = .2;
-    public static final double kAngleRatio = 44.0/1620.0;
+    public static final double kRPMTolerance = 150.0;
+    public static final double kangleTolerance = 1.0;
+    public static final double kAngleRatio = 18.0/48.0*90.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
-    public static final double kShooterDefaultRPM = 3500.0;//3000.0;//5100.0;
+    public static final double kShooterDefaultRPM = 4500.0;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
-    public static final double kStartAngle = 55.0;//in degrees
-    public static final double kShooterMaxAngle = 90.0;
-    public static final double kShooterMinAngle = 10.0;
+    public static final double kStartAngle = 58.0;//in degrees
+    public static final double kShooterMaxAngle = 62.0;
+    public static final double kShooterMinAngle = 21.9;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
@@ -211,5 +214,5 @@ public final class constants {
 
     // Go To Note
     public static final double kGoToNoteTimeout = 2.0; // seconds
-    public static final double kGoToNoteSpeed = 1.0;
+    public static final double kGoToNoteSpeed = 1.25;
 }

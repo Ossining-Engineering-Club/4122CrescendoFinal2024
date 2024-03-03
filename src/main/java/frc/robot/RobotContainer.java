@@ -21,9 +21,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.commands.ClimberMoveTo;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.ShooterCommands;
+import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretMode;
 import frc.robot.commands.ShooterCommands.ShooterManualAngleControl;
 import frc.robot.commands.ShooterCommands.SetShooterRPM;
@@ -42,6 +44,7 @@ import frc.robot.JoystickMath;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootAuto;
 import frc.robot.commands.SearchForAndGoToAndIntakeNote;
 import frc.robot.commands.IntakeNoteToShooter;
 import frc.robot.commands.IntakeNoteToShooterNoRequirements;
@@ -55,7 +58,7 @@ public class RobotContainer {
 
   private Leds m_led = new Leds(constants.kPWMLedPin);
 
-  private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID);
+  private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID, constants.kIntakeBreakbeamPin);
   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
   // private Climber m_climber;
 
@@ -63,7 +66,10 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, intake));
+    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, m_intake, m_led));
+    NamedCommands.registerCommand("Shoot", new ShootAuto(m_shooter, m_led));
+    NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooter, m_shooterLimelight, -0.0381, 5.5479));
+    NamedCommands.registerCommand("IntakeNoteToShooter", new IntakeNoteToShooter(m_intake, m_shooter, m_led));
     // NamedCommands.registerCommand("IntakeNote", new IntakeNote(
     //   intake,
     //   intermediate,
@@ -87,7 +93,6 @@ public class RobotContainer {
     //   m_secondaryController.button(constants.kShooterOrElevatorButton)::getAsBoolean,
     //   this::updateState,
     //   this::getState));
-    // NamedCommands.registerCommand("Shoot", new Shoot(m_shooter));
 
     // m_state = State.CLEAR;
 
@@ -127,16 +132,23 @@ public class RobotContainer {
                     () -> -m_driverController.getLeftX(), 
                     () -> -m_driverController.getRightX()));
   
-    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive));
+    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive,m_intake));
     m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
-          new GoToAndIntakeNote(
-            m_robotDrive,
-            m_noteLimelight,
-            m_intake,
-            m_led,
-            m_shooter));
+              new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led)
+  
+              );
+    m_driverController.x()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+              new IntakeNoteToShooter(m_intake, m_shooter, m_led)
+              );
+
+    m_driverController.rightBumper()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+          new Shoot(m_shooter, m_led));
 
     /*m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
@@ -309,7 +321,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
-      return new PathPlannerAuto("note detection auto");
+      return new PathPlannerAuto("Pos2-P-A-B-C");
     }
 
     public void enabledInit() {
