@@ -224,4 +224,10 @@ public final class constants {
     // Go To Note
     public static final double kGoToNoteTimeout = 2.0; // seconds
     public static final double kGoToNoteSpeed = 1.00;
+
+    // Auto Switch Box
+    public static final int kAutoSwitch0Pin = 3;
+    public static final int kAutoSwitch1Pin = 4;
+    public static final int kAutoSwitch2Pin = 5;
+    public static final int kAutoSwitch3Pin = 6;
 }

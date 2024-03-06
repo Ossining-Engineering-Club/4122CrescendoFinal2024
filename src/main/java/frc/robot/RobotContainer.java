@@ -18,7 +18,9 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -65,6 +67,11 @@ public class RobotContainer {
   private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID, constants.kIntakeBreakbeamPin);
   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
   // private Climber m_climber;
+
+  private DigitalInput m_autoSwitch0 = new DigitalInput(constants.kAutoSwitch0Pin);
+  private DigitalInput m_autoSwitch1 = new DigitalInput(constants.kAutoSwitch1Pin);
+  private DigitalInput m_autoSwitch2 = new DigitalInput(constants.kAutoSwitch2Pin);
+  private DigitalInput m_autoSwitch3 = new DigitalInput(constants.kAutoSwitch3Pin);
 
   // public State m_state;
 
@@ -352,6 +359,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
+      if (m_autoSwitch0.get() && !m_autoSwitch1.get() && !m_autoSwitch2.get() && !m_autoSwitch3.get())  {
+        // 4 note auto
+      }
+      else if (!m_autoSwitch0.get() && m_autoSwitch1.get() && !m_autoSwitch2.get() && !m_autoSwitch3.get())  {
+        // shoot preloaded pos1
+      }
+      else if (!m_autoSwitch0.get() && !m_autoSwitch1.get() && m_autoSwitch2.get() && !m_autoSwitch3.get())  {
+        // shoot preloaded pos2
+      }
+      else if (!m_autoSwitch0.get() && !m_autoSwitch1.get() && !m_autoSwitch2.get() && m_autoSwitch3.get())  {
+        // shoot preloaded pos3
+      }
+      else {
+        // return nothing auto
+      }
+
       return new PathPlannerAuto("Pos2-P-A-B-C");
     }
 
@@ -361,6 +384,13 @@ public class RobotContainer {
       m_shooter.m_Shooter2.set(0.0);
       m_shooter.disableFeeder();
       m_intake.stop();
+    }
+
+    public void periodic() {
+      SmartDashboard.putBoolean("Auto Switch 0", m_autoSwitch0.get());
+      SmartDashboard.putBoolean("Auto Switch 1", m_autoSwitch1.get());
+      SmartDashboard.putBoolean("Auto Switch 2", m_autoSwitch2.get());
+      SmartDashboard.putBoolean("Auto Switch 3", m_autoSwitch3.get());
     }
 }
 
