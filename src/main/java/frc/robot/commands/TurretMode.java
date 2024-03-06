@@ -57,9 +57,6 @@ public class TurretMode extends Command {
     public void initialize() {
         m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
         //m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
-
-        // turn on the shooter
-        //m_shooter.setRPM(constants.kShooterDefaultRPM);
     }
 
     @Override
@@ -67,6 +64,9 @@ public class TurretMode extends Command {
         final double xSpeed = m_xSpeedLimiter.calculate(constants.kMaxSpeed*MathUtil.applyDeadband(m_StickX.getAsDouble(), constants.kControllerDeadband));
         final double ySpeed = m_ySpeedLimiter.calculate(constants.kMaxSpeed*MathUtil.applyDeadband(m_StickY.getAsDouble(), constants.kControllerDeadband));
         final double rotation = m_rotLimiter.calculate(constants.kMaxAngularSpeed*MathUtil.applyDeadband(m_StickYaw.getAsDouble(), constants.kControllerDeadband));
+
+        // turn on the shooter
+        m_shooter.setRPM(constants.kShooterDefaultRPM);
         
         if (m_limelight.hasTarget()) {
             //Pose2d robotPose = m_drive.SwerveOdometryGetPose();

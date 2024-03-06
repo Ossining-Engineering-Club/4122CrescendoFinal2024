@@ -12,7 +12,7 @@ import frc.robot.subsystems.Shooter;
 public class ShooterCommands {
 
     // ONLY USE FOR TESTING
-    public class AngleShooter extends Command {
+    public static class AngleShooter extends Command {
 
         private final Shooter m_shooter;
         private final double angle;
@@ -33,6 +33,11 @@ public class ShooterCommands {
         @Override 
         public boolean isFinished() { // set  position
             return this.isdone;
+        }
+        
+        @Override 
+        public void end(boolean interrupted) { // set  position
+            m_shooter.m_Angle.set(0.0);
         }
     }
 

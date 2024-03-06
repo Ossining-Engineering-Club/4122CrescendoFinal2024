@@ -18,6 +18,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -28,6 +29,7 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretAlign;
 import frc.robot.commands.TurretMode;
 import frc.robot.commands.ShooterCommands.ShooterManualAngleControl;
+import frc.robot.commands.ShooterCommands.AngleShooter;
 import frc.robot.commands.ShooterCommands.SetShooterRPM;
 import frc.robot.subsystems.Breakbeam;
 import frc.robot.subsystems.Drivetrain;
@@ -48,6 +50,7 @@ import frc.robot.commands.ShootAuto;
 import frc.robot.commands.SearchForAndGoToAndIntakeNote;
 import frc.robot.commands.IntakeNoteToShooter;
 import frc.robot.commands.IntakeNoteToShooterNoRequirements;
+import frc.robot.commands.SlowShoot;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -57,7 +60,8 @@ public class RobotContainer {
   CommandJoystick m_secondaryController = new CommandJoystick(1);
 
   private Leds m_led = new Leds(constants.kPWMLedPin);
-
+  private double SpeakerTagsX = 0.0;
+  private double SpeakerTagsY = 0.0;
   private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID, constants.kIntakeBreakbeamPin);
   private Shooter m_shooter = new Shooter(30,31,32,33,0,0,1,constants.kStartAngle,false);
   // private Climber m_climber;
@@ -99,6 +103,18 @@ public class RobotContainer {
     m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
 
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        if(alliance.get() == DriverStation.Alliance.Red){
+          SpeakerTagsX = constants.redSpeakerX;
+          SpeakerTagsY = constants.redSpeakerY;
+        }else{
+          SpeakerTagsX =constants.blueSpeakerX;
+          SpeakerTagsY =constants.blueSpeakerY;
+        };
+    }
+  
+
     // Start robot with red LEDS
     m_led.setRed(); 
 
@@ -126,13 +142,13 @@ public class RobotContainer {
                     m_robotDrive, 
                     m_shooter,
                     m_shooterLimelight, 
-                    -0.0381,
-                    5.5479, 
+                    this.SpeakerTagsX,
+                    this.SpeakerTagsY, 
                     () -> -m_driverController.getLeftY(), 
                     () -> -m_driverController.getLeftX(), 
                     () -> -m_driverController.getRightX()));
   
-    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive,m_intake));
+    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive,m_intake,m_shooter));
     m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
@@ -145,10 +161,21 @@ public class RobotContainer {
               new IntakeNoteToShooter(m_intake, m_shooter, m_led)
               );
 
+    m_driverController.y()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+              new AngleShooter(m_shooter, constants.kAmpAngle)
+              );
+
     m_driverController.rightBumper()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
         .onTrue(
           new Shoot(m_shooter, m_led));
+
+    m_driverController.leftBumper()
+      .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
+        .onTrue(
+          new SlowShoot(m_shooter, m_led));
 
     /*m_driverController.x()
       .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())
@@ -186,9 +213,13 @@ public class RobotContainer {
       .and(() -> !shooterManualAngleCommand.isScheduled())
         .everyTimeItsTrue(shooterManualAngleCommand);
 
+    /*(new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
+      .and(() -> m_shooter.getCurrentCommand() == null)
+        .onTrue(new AngleShooter(m_shooter, constants.kDefaultAngle));*/
+
     (new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean)).negate()
       .and(() -> m_shooter.getCurrentCommand() == null)
-        .everyTimeItsTrue(Commands.runOnce(() -> m_shooter.m_Angle.set(0.0)));
+        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooter.m_Angle.set(0.0);}));
     
     // manual shooter flywheel control
     /*(new OECTrigger(m_secondaryController.button(constants.kAutomaticOrManualButton)::getAsBoolean))

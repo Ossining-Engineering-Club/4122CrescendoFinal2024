@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -16,6 +17,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
  */
 public final class constants {
 
+
+    public static final double redSpeakerX =Units.inchesToMeters(652.73);
+    public static final double redSpeakerY = Units.inchesToMeters(218.42);
+    public static final double blueSpeakerX = Units.inchesToMeters(-1.50);
+    public static final double blueSpeakerY =Units.inchesToMeters(218.42);
 
     public static final double k_PI = 3.141592653589793238462643383279502884197169399;
     //SwerveModule constants
@@ -155,8 +161,11 @@ public final class constants {
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
     public static final double kStartAngle = 58.0;//in degrees
+    public static final double kDefaultAngle = 58.0;//in degrees
     public static final double kShooterMaxAngle = 62.0;
     public static final double kShooterMinAngle = 21.9;
+    public static final double kAmpAngle = 54.36215;
+    public static final double kAmpRPM = 1100.0;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
