@@ -10,7 +10,7 @@
   "autoFolders": [
     "New Folder"
   ],
-  "defaultMaxVel": 5.0,
+  "defaultMaxVel": 4.0,
   "defaultMaxAccel": 6.2,
   "defaultMaxAngVel": 566.66,
   "defaultMaxAngAccel": 566.66,

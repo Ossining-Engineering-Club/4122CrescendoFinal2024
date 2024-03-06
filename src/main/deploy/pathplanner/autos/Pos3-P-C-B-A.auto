@@ -2,15 +2,21 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.29,
-      "y": 5.55
+      "x": 0.7023114046228107,
+      "y": 4.4795920361071495
     },
-    "rotation": 0.0
+    "rotation": -60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Pos3-C"
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -21,12 +27,6 @@
           "type": "named",
           "data": {
             "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Pos2-A"
           }
         },
         {
@@ -46,7 +46,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "A-B"
+                        "pathName": "C-B"
                       }
                     }
                   ]
@@ -107,7 +107,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-C"
+            "pathName": "B-A"
           }
         },
         {
@@ -144,6 +144,6 @@
       ]
     }
   },
-  "folder": "Working Autos",
+  "folder": "Autos in Progress",
   "choreoAuto": false
 }

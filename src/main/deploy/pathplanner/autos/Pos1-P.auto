@@ -2,31 +2,25 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.5237829142324952,
-      "y": 4.118431970197274
+      "x": 0.7023114046228107,
+      "y": 6.610851683241828
     },
-    "rotation": 0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "CenterBottomNoteSearching1"
+            "name": "Pos1or3Shoot"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CenterBottomNoteSearching2"
           }
         }
       ]

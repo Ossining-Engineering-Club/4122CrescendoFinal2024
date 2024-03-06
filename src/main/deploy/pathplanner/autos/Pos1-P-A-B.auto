@@ -2,15 +2,65 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.29,
-      "y": 5.55
+      "x": 0.61,
+      "y": 6.66
     },
-    "rotation": 0.0
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Pos1-A"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetDefaultRPM"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "TurretAlign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNoteToShooter"
+                }
+              }
+            ]
+          }
+        },
         {
           "type": "named",
           "data": {
@@ -26,7 +76,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pos2-A"
+            "pathName": "A~B"
           }
         },
         {
@@ -46,78 +96,10 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "A-B"
+                        "pathName": "B1"
                       }
                     }
                   ]
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNoteToShooter"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "TurretAlign"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToNote"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeNoteToShooter"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "TurretAlign"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "B-C"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToNote"
                 }
               },
               {
@@ -144,6 +126,6 @@
       ]
     }
   },
-  "folder": "Working Autos",
+  "folder": "Autos in Progress",
   "choreoAuto": false
 }

@@ -33,7 +33,7 @@ import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 
 public class Drivetrain extends SubsystemBase {
-  private final Field2d m_field = new Field2d();
+  private Field2d m_field = new Field2d();
   private SwerveMod RFMod = new SwerveMod(3,4,10,false, constants.k_RFZERO,false,true);
   private SwerveMod RBMod = new SwerveMod(7,8,12,false,constants.k_RBZERO,false,true);
   private SwerveMod LBMod = new SwerveMod(5,6,11,false, constants.k_LBZERO,false,true);
@@ -278,6 +278,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     this.UpdateOdometry();
+    SmartDashboard.putData("Field", m_field);
     m_field.setRobotPose(this.SwerveOdometryGetPose());
 
     // adding vision measurements if the limelight has a target and it is a new measurement

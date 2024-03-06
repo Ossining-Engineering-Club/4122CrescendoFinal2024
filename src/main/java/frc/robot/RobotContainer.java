@@ -77,10 +77,22 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        if(alliance.get() == DriverStation.Alliance.Red){
+          SpeakerTagsX = constants.redSpeakerX;
+          SpeakerTagsY = constants.redSpeakerY;
+        }else{
+          SpeakerTagsX =constants.blueSpeakerX;
+          SpeakerTagsY =constants.blueSpeakerY;
+        };
+    }
+
     NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, m_intake, m_led));
     NamedCommands.registerCommand("Shoot", new ShootAuto(m_shooter, m_led));
-    NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooter, m_shooterLimelight, -0.0381, 5.5479));
+    NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooter, m_shooterLimelight, this.SpeakerTagsX, this.SpeakerTagsY));
     NamedCommands.registerCommand("IntakeNoteToShooter", new IntakeNoteToShooter(m_intake, m_shooter, m_led));
+    NamedCommands.registerCommand("Pos1or3Shoot", new AngleShooter(m_shooter, constants.kPos1or3Angle));
     // NamedCommands.registerCommand("IntakeNote", new IntakeNote(
     //   intake,
     //   intermediate,
@@ -110,35 +122,41 @@ public class RobotContainer {
     m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
 
-    var alliance = DriverStation.getAlliance();
-    if (alliance.isPresent()) {
-        if(alliance.get() == DriverStation.Alliance.Red){
-          SpeakerTagsX = constants.redSpeakerX;
-          SpeakerTagsY = constants.redSpeakerY;
-        }else{
-          SpeakerTagsX =constants.blueSpeakerX;
-          SpeakerTagsY =constants.blueSpeakerY;
-        };
-    }
-  
-
     // Start robot with red LEDS
     m_led.setRed(); 
 
     // Configure the button bindings
     configureButtonBindings();
 
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> 
-                m_robotDrive.Drive(
-                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
-                    true),
-            m_robotDrive));
+    if (alliance.isPresent()) {
+      if (alliance.get() == DriverStation.Alliance.Blue) {
+        m_robotDrive.setDefaultCommand(
+            // The left stick controls translation of the robot.
+            // Turning is controlled by the X axis of the right stick.
+            new RunCommand(
+                () -> 
+                    m_robotDrive.Drive(
+                        JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                        JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                        JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                        true),
+                m_robotDrive));
+      }
+      else {
+        m_robotDrive.setDefaultCommand(
+            // The left stick controls translation of the robot.
+            // Turning is controlled by the X axis of the right stick.
+            new RunCommand(
+                () -> 
+                    m_robotDrive.Drive(
+                        -JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                        -JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                        JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                        true),
+                m_robotDrive));
+      }
+    }
+    
 
   }
 
@@ -361,21 +379,27 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
       if (m_autoSwitch0.get() && !m_autoSwitch1.get() && !m_autoSwitch2.get() && !m_autoSwitch3.get())  {
         // 4 note auto
+        return new PathPlannerAuto("Pos2-P-A-B-C");
       }
       else if (!m_autoSwitch0.get() && m_autoSwitch1.get() && !m_autoSwitch2.get() && !m_autoSwitch3.get())  {
         // shoot preloaded pos1
+        return new PathPlannerAuto("Pos1-P");
       }
       else if (!m_autoSwitch0.get() && !m_autoSwitch1.get() && m_autoSwitch2.get() && !m_autoSwitch3.get())  {
         // shoot preloaded pos2
+        return new PathPlannerAuto("Pos2-P");
       }
       else if (!m_autoSwitch0.get() && !m_autoSwitch1.get() && !m_autoSwitch2.get() && m_autoSwitch3.get())  {
         // shoot preloaded pos3
+        return new PathPlannerAuto("Pos3-P-Taxi");
       }
       else {
         // return nothing auto
+        return new PathPlannerAuto("Forward-Nothing");
       }
 
-      return new PathPlannerAuto("Pos2-P-A-B-C");
+      //return new PathPlannerAuto("Pos1-P");
+      //return new PathPlannerAuto("New Auto");
     }
 
     public void enabledInit() {

@@ -166,6 +166,7 @@ public final class constants {
     public static final double kShooterMinAngle = 21.9;
     public static final double kAmpAngle = 54.36215;
     public static final double kAmpRPM = 1100.0;
+    public static final double kPos1or3Angle = 48.47;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
