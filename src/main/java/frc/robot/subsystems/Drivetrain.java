@@ -208,7 +208,7 @@ public class Drivetrain extends SubsystemBase {
                                     RBMod.GetState()};
   }
   public void resetPose(Pose2d pose) {
-    odometry.resetPosition(this.getAngle(),this.getModulePositions(), pose);
+    odometry.resetPosition(Rotation2d.fromDegrees(gyro.GetYaw()),this.getModulePositions(), pose);
   }
   public double getXSpeed() {
     return v_xSpeed;
