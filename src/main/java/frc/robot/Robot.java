@@ -11,7 +11,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-
+import frc.robot.constants;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -63,7 +64,15 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     m_robotContainer.enabledInit();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        if(alliance.get() == DriverStation.Alliance.Red){
+          constants.k_isRed = true;
+        }else{
+          constants.k_isRed = false;
+        }
+        
+    }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -77,6 +86,15 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance.isPresent()) {
+        if(alliance.get() == DriverStation.Alliance.Red){
+          constants.k_isRed = true;
+        }else{
+          constants.k_isRed = false;
+        }
+        
+      }
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

@@ -55,7 +55,7 @@ public class Drivetrain extends SubsystemBase {
   private final Limelight m_shooterLimelight;
 
   private double v_prevShooterLLTimestamp = -1;
-
+  public static boolean is_red;
   private Pose2d v_prevPose;
   private double v_xSpeed = 0; // m/s
   private double v_ySpeed = 0; // m/s
@@ -121,6 +121,10 @@ public class Drivetrain extends SubsystemBase {
           },this);
   }
   public void Drive(double xSpeed,double ySpeed,double rot, boolean fieldRelative){
+    if(constants.k_isRed){
+      xSpeed = -xSpeed;
+      ySpeed = -ySpeed;
+    }
       SwerveModuleState[] states = kinematics.toSwerveModuleStates(
           fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                               xSpeed, ySpeed, rot, this.getAngle())
@@ -294,26 +298,26 @@ public class Drivetrain extends SubsystemBase {
     v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
     v_prevPose = SwerveOdometryGetPose();
 
-    SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("back left abs", LBMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("back right abs", RBMod.GetAbsEncoderAngle());
-    SmartDashboard.putNumber("motor positionofamotoer", RBMod.m_Drive.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
-    SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
-    SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());
+    // SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("back left abs", LBMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("back right abs", RBMod.GetAbsEncoderAngle());
+    // SmartDashboard.putNumber("motor positionofamotoer", RBMod.m_Drive.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
+    // SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
+    // SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());
 
-    SmartDashboard.putNumber("gyro angle", this.getAngle().getRadians());
+    // SmartDashboard.putNumber("gyro angle", this.getAngle().getRadians());
 
     /*SmartDashboard.putNumber("vision x", m_shooterLimelight.getBotX());
     SmartDashboard.putNumber("vision y", m_shooterLimelight.getBotY());
     SmartDashboard.putNumber("vision rot deg", m_shooterLimelight.getBotYaw());
 
     SmartDashboard.putNumber("shooter ll num targets detected", m_shooterLimelight.getNumTargets());
-
+      */
     // AdvantageKit logging
     Logger.recordOutput("SwerveModuleStates", getModuleStates());
-    Logger.recordOutput("RobotPose", SwerveOdometryGetPose());*/
+    Logger.recordOutput("RobotPose", SwerveOdometryGetPose());
   }
 
   @Override

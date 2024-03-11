@@ -8,7 +8,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.commands.GoToNote;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterFeeder;
 import frc.robot.subsystems.Leds;
 
 public class GoToAndIntakeNote extends ParallelDeadlineGroup {
@@ -17,7 +17,7 @@ public class GoToAndIntakeNote extends ParallelDeadlineGroup {
         Limelight limelight,
         Intake intake,
         Leds leds,
-        Shooter shooter) {
+        ShooterFeeder shooter) {
             super(
                 new IntakeNoteToShooter(intake, shooter, leds),
                 new GoToNote(drivetrain, limelight, intake, leds)

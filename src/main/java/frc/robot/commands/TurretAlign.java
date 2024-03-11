@@ -13,15 +13,15 @@ import java.util.function.DoubleSupplier;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterPivot;
 import java.lang.Math;
 
 public class TurretAlign extends Command {
     private final Drivetrain m_drive;
-    private final Shooter m_shooter;
+    private final ShooterPivot m_shooter;
     private final Limelight m_limelight;
-    private final double m_GoalX;
-    private final double m_GoalY;
+    private double m_GoalX;
+    private double m_GoalY;
     private boolean m_isDone = false;
 
     private final ProfiledPIDController m_rotPIDController = new ProfiledPIDController(
@@ -31,12 +31,11 @@ public class TurretAlign extends Command {
         new TrapezoidProfile.Constraints(constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration)
     );
 
-    public TurretAlign(Drivetrain drive, Shooter shooter, Limelight limelight, double goalx, double goaly) {
+    public TurretAlign(Drivetrain drive, ShooterPivot shooter, Limelight limelight) {
         m_drive = drive;
         m_shooter = shooter;
         m_limelight = limelight;
-        m_GoalX = goalx;
-        m_GoalY = goaly;
+
 
         addRequirements(m_drive, m_shooter);
 
@@ -48,6 +47,13 @@ public class TurretAlign extends Command {
         //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
         m_isDone = false;
         m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
+        if (constants.k_isRed){
+            m_GoalX = constants.kRedSpeakerX;
+            m_GoalY = constants.kRedSpeakerY;
+        }else{
+            m_GoalX = constants.kBlueSpeakerX;
+            m_GoalY = constants.kBlueSpeakerY;            
+        }
 
         // turn on the shooter
         //m_shooter.setRPM(constants.kShooterDefaultRPM);

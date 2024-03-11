@@ -7,18 +7,20 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
 import frc.robot.subsystems.Leds;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterPivot;
+import frc.robot.subsystems.ShooterFlywheels;
+import frc.robot.subsystems.ShooterFeeder;
 
 public class ShooterCommands {
 
     // ONLY USE FOR TESTING
-    public class AngleShooter extends Command {
+    public static class AngleShooter extends Command {
 
-        private final Shooter m_shooter;
+        private final ShooterPivot m_shooter;
         private final double angle;
         private boolean isdone;
 
-        public AngleShooter(Shooter shooter, double angle) {
+        public AngleShooter(ShooterPivot shooter, double angle) {
             this.angle = angle;
             this.isdone = false;
             m_shooter = shooter;
@@ -37,10 +39,10 @@ public class ShooterCommands {
     }
 
     public static class ShooterManualAngleControl extends Command {
-        private final Shooter m_shooter;
+        private final ShooterPivot m_shooter;
         private final DoubleSupplier m_angleSupplier;
 
-        public ShooterManualAngleControl(Shooter shooter, DoubleSupplier angleSupplier) {
+        public ShooterManualAngleControl(ShooterPivot shooter, DoubleSupplier angleSupplier) {
             m_angleSupplier = angleSupplier;
             m_shooter = shooter;
             addRequirements(m_shooter);
@@ -58,10 +60,10 @@ public class ShooterCommands {
     }
 
     public static class SetShooterRPM extends Command {
-        public final Shooter m_shooter;
+        public final ShooterFlywheels m_shooter;
         public final double m_RPM;
 
-        public SetShooterRPM(Shooter shooter, double RPM) {
+        public SetShooterRPM(ShooterFlywheels shooter, double RPM) {
             m_shooter = shooter;
             m_RPM = RPM;
 
@@ -84,10 +86,10 @@ public class ShooterCommands {
 
     public static class FeedToFlywheels extends Command {
         
-        public final Shooter m_Shooter;
+        public final ShooterFeeder m_Shooter;
         public final Leds m_Leds;
 
-        public FeedToFlywheels(Shooter shooter, Leds leds) {
+        public FeedToFlywheels(ShooterFeeder shooter, Leds leds) {
             m_Shooter = shooter;
             m_Leds = leds;
 

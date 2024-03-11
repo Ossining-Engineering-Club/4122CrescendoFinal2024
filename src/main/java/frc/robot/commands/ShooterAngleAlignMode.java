@@ -13,18 +13,18 @@ import java.util.function.DoubleSupplier;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterPivot;
 import java.lang.Math;
 
 public class ShooterAngleAlignMode extends Command {
     private final Drivetrain m_drive;
-    private final Shooter m_shooter;
+    private final ShooterPivot m_shooter;
     private final Limelight m_limelight;
     private final double m_GoalX;
     private final double m_GoalY;
     private boolean m_isDone = false;
 
-    public ShooterAngleAlignMode(Drivetrain drive, Shooter shooter, Limelight limelight, double goalx, double goaly) {
+    public ShooterAngleAlignMode(Drivetrain drive, ShooterPivot shooter, Limelight limelight, double goalx, double goaly) {
         m_drive = drive;
         m_shooter = shooter;
         m_limelight = limelight;

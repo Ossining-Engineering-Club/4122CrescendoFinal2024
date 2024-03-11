@@ -18,6 +18,12 @@ public final class constants {
 
 
     public static final double k_PI = 3.141592653589793238462643383279502884197169399;
+
+    public static boolean k_isRed;
+    public static final double kRedSpeakerX = 16.579342;
+    public static final double kRedSpeakerY = 5.547868;
+    public static final double kBlueSpeakerX = -0.0381;
+    public static final double kBlueSpeakerY = 5.547868;
     //SwerveModule constants
     public static final double DrivingMotorGearRatio = (1.0/6.75);
     public static final double WheelDiameterInMeters = 0.0967;
@@ -157,6 +163,14 @@ public final class constants {
     public static final double kStartAngle = 58.0;//in degrees
     public static final double kShooterMaxAngle = 62.0;
     public static final double kShooterMinAngle = 21.9;
+    // Pins/CAN ids
+    public static final int kShooterFlywheel1ID = 30;
+    public static final int kShooterFlywheel2ID = 31;
+    public static final int kShooterPivotID = 32;
+    public static final int kShooterFeederID = 33;
+    public static final int kShooterBreakbeamPin = 0;
+    public static final int kShooterAngleEncoderChannelA = 0;
+    public static final int kShooterAngleEncoderChannelB = 1;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
