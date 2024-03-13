@@ -77,7 +77,7 @@ public class TurretAlign extends Command {
             double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
             SmartDashboard.putNumber("rotSpeed", rotSpeed);
             
-            m_drive.Drive(0.0, 0.0, rotSpeed, true);
+            m_drive.Drive(0.0, 0.0, rotSpeed, true, true);
 
             // setting shooter angle
             //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
@@ -98,7 +98,7 @@ public class TurretAlign extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.Drive(0.0, 0.0, 0.0, true);
+        m_drive.Drive(0.0, 0.0, 0.0, true, true);
         m_shooter.stopAngle();
     }
 

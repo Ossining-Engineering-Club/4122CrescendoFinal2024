@@ -121,6 +121,7 @@ public class RobotContainer {
                     JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
                     JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
                     JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                    true,
                     true),
             m_robotDrive));
 
@@ -128,7 +129,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
   
-    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive, m_intake));
+    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive, m_intake, m_shooterFeeder));
 
     m_driverController.x()
       .onTrue(
@@ -154,6 +155,8 @@ public class RobotContainer {
     m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stop(), m_intake));
     
     m_shooterFeeder.setDefaultCommand(Commands.runOnce(() -> m_shooterFeeder.disableFeeder(), m_shooterFeeder));
+
+    m_shooterFlywheels.setDefaultCommand(Commands.runOnce(() -> {m_shooterFlywheels.stopFlywheels();}, m_shooterFlywheels));
     
     // set shooter to fixed angle
     (new OECTrigger(m_secondaryController.button(6)::getAsBoolean))
@@ -161,8 +164,7 @@ public class RobotContainer {
 
     // flywheel control
     (new OECTrigger(m_secondaryController.button(constants.kShooterButton)::getAsBoolean))
-      .everyTimeItsTrue(Commands.runOnce(() -> {m_shooterFlywheels.setRPM(constants.kShooterDefaultRPM);}, m_shooterFeeder))
-      .everyTimeItsFalse(Commands.runOnce(() -> {m_shooterFlywheels.stopFlywheels();}, m_shooterFeeder));
+      .whileTrue(Commands.run(() -> {m_shooterFlywheels.setRPM(constants.kShooterDefaultRPM);}, m_shooterFlywheels));
 
     // intake note to shooter
     (new OECTrigger(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean))
@@ -170,7 +172,7 @@ public class RobotContainer {
 
     // manual feeder control
     (new OECTrigger(m_secondaryController.button(constants.kEjectButton)::getAsBoolean))
-        .everyTimeItsTrue(Commands.runOnce(() -> {m_shooterFeeder.enableFeeder();}, m_shooterFeeder));
+        .whileTrue(Commands.run(() -> {m_shooterFeeder.enableFeeder();}, m_shooterFeeder));
     
     // m_driverController.x()
     //   .and(() -> !m_secondaryController.button(constants.kAutomaticOrManualButton).getAsBoolean())

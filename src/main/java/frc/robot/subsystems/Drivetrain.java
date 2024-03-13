@@ -31,6 +31,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.OECNavX;
+
 
 public class Drivetrain extends SubsystemBase {
   private final Field2d m_field = new Field2d();
@@ -47,7 +49,7 @@ public class Drivetrain extends SubsystemBase {
   private Translation2d backRightLocation = new Translation2d(-0.275, -0.2275);
 
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation); 
-  OECPigeionIMU gyro;
+  OECNavX gyro;
   SwerveDrivePoseEstimator odometry;
   Trajectory trajectory;
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
@@ -71,7 +73,7 @@ public class Drivetrain extends SubsystemBase {
        * 
        */
       //Gyro intialization process
-      gyro = new OECPigeionIMU(gyroport);  
+      gyro = new OECNavX();  
       gyro.ResetYaw();
 
       //initialize limelight variables
@@ -120,14 +122,14 @@ public class Drivetrain extends SubsystemBase {
             return false;
           },this);
   }
-  public void Drive(double xSpeed,double ySpeed,double rot, boolean fieldRelative){
-    if(constants.k_isRed){
+  public void Drive(double xSpeed,double ySpeed,double rot, boolean fieldRelative, boolean isJoystick){
+    if(isJoystick && constants.k_isRed){
       xSpeed = -xSpeed;
       ySpeed = -ySpeed;
     }
       SwerveModuleState[] states = kinematics.toSwerveModuleStates(
           fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                              xSpeed, ySpeed, rot, this.getAngle())
+                              xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.GetYaw()))
                         : new ChassisSpeeds(xSpeed, ySpeed, rot));
     
       SwerveDriveKinematics.desaturateWheelSpeeds(states, constants.kMaxSpeed);
@@ -185,12 +187,12 @@ public class Drivetrain extends SubsystemBase {
       //return Rotation2d.fromRadians(((gyro.GetYaw()*((constants.k_PI)/(180.0)))));
       return SwerveOdometryGetPose().getRotation();
   }
-  public Rotation2d getPitchRad(){
-      return new Rotation2d((gyro.GetPitch()*((constants.k_PI)/(180.0))));
-  }
-  public Rotation2d getRolRad(){
-      return new Rotation2d((gyro.GetRoll()*((constants.k_PI)/(180.0))));
-  }
+  // public Rotation2d getPitchRad(){
+  //     return new Rotation2d((gyro.GetPitch()*((constants.k_PI)/(180.0))));
+  // }
+  // public Rotation2d getRolRad(){
+  //     return new Rotation2d((gyro.GetRoll()*((constants.k_PI)/(180.0))));
+  // }
   public void ResetDrive(){
       LFMod.ResetEncoder();
       LBMod.ResetEncoder();
@@ -297,6 +299,8 @@ public class Drivetrain extends SubsystemBase {
     v_ySpeed = (SwerveOdometryGetPose().getY()-v_prevPose.getY())/0.02;
     v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
     v_prevPose = SwerveOdometryGetPose();
+
+    SmartDashboard.putNumber("Gyro Angle", gyro.GetYaw());
 
     // SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
     // SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());

@@ -61,7 +61,7 @@ public class ShooterAngleAlignMode extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_drive.Drive(0.0, 0.0, 0.0, true);
+        m_drive.Drive(0.0, 0.0, 0.0, true, false);
         m_shooter.stopAngle();
     }
 

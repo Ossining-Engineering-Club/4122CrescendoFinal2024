@@ -108,7 +108,7 @@ public class GoToNote extends Command {
         //SmartDashboard.putNumber("ySpeed", ySpeed);
         //SmartDashboard.putNumber("rotSpeed", rotSpeed);
             
-        m_drive.Drive(xSpeed, ySpeed, rotSpeed, true);
+        m_drive.Drive(xSpeed, ySpeed, rotSpeed, true, false);
 
         //SmartDashboard.putNumber("vision x pid setpoint", m_xPIDController.getSetpoint().position);
     }
@@ -131,7 +131,7 @@ public class GoToNote extends Command {
     @Override
     public void end(boolean interrupted) {
         m_led.setGreen();
-         m_drive.Drive(0.0, 0.0, 0.0, true);
+         m_drive.Drive(0.0, 0.0, 0.0, true, false);
     }
 
     public double wrapAngle(double angle) {

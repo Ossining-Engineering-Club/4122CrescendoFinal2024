@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.ShooterFeeder;
 import frc.robot.subsystems.Leds;
+import frc.robot.constants.Direction;
 
 public class IntakeNoteToShooter extends Command {
     private final Intake m_intake;
@@ -32,6 +33,7 @@ public class IntakeNoteToShooter extends Command {
 
     @Override
     public boolean isFinished() {
+        if (m_shooter.getDirection() == Direction.REVERSE) return false;
         return m_shooter.BBisTripped();
     }
 }
