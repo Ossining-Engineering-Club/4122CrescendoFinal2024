@@ -61,39 +61,34 @@ public class TurretAlign extends Command {
 
     @Override
     public void execute() {
-      //  if (m_limelight.hasTarget()) {
-            Pose2d robotPose = m_drive.SwerveOdometryGetPose();
-            //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
-            //double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX())));
-            double rotPos = robotPose.getRotation().getRadians();
-            double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX())));
+        Pose2d robotPose = m_drive.SwerveOdometryGetPose();
+        //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
+        //double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX())));
+        double rotPos = robotPose.getRotation().getRadians();
+        double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX())));
 
-            SmartDashboard.putNumber("rotPos", rotPos);
-            SmartDashboard.putNumber("rotGoal", rotGoal);
+        // SmartDashboard.putNumber("rotPos", rotPos);
+        // SmartDashboard.putNumber("rotGoal", rotGoal);
 
-            if (Math.abs(rotPos-rotGoal) < constants.kVisTurretToleranceRadians) rotPos = rotGoal;
+        if (Math.abs(rotPos-rotGoal) < constants.kVisTurretToleranceRadians) rotPos = rotGoal;
 
-            m_rotPIDController.setGoal(rotGoal);
-            double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
-            SmartDashboard.putNumber("rotSpeed", rotSpeed);
-            
-            m_drive.Drive(0.0, 0.0, rotSpeed, true, true);
+        m_rotPIDController.setGoal(rotGoal);
+        double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
+        //SmartDashboard.putNumber("rotSpeed", rotSpeed);
+        
+        m_drive.Drive(0.0, 0.0, rotSpeed, true, true);
 
-            // setting shooter angle
-            //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
-            double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
-            SmartDashboard.putNumber("distance from speaker", distFromTarget);
-            m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+        // setting shooter angle
+        //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
+        double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
+        //SmartDashboard.putNumber("distance from speaker", distFromTarget);
+        m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
 
-            SmartDashboard.putNumber("turret rot error", Math.abs(rotPos-rotGoal));
+        //SmartDashboard.putNumber("turret rot error", Math.abs(rotPos-rotGoal));
 
-            if (Math.abs(rotPos-rotGoal) <= constants.kVisTurretToleranceRadians && m_shooter.isAngleReached()) {
-                m_isDone = true;
-            }
-        // }
-        // else {
-        //     m_drive.Drive(0.0, 0.0, 0.0, true);
-        // }
+        if (Math.abs(rotPos-rotGoal) <= constants.kVisTurretToleranceRadians && m_shooter.isAngleReached()) {
+            m_isDone = true;
+        }
     }
 
     @Override

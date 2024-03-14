@@ -165,6 +165,9 @@ public final class constants {
     public static final double kShooterMaxAngle = 62.0;
     public static final double kShooterMinAngle = 21.9;
     public static final double kShooterSpeakerVoltage = 5.0;
+    public static final double kShooterSubwooferAngle = 52.8;
+    public static final double kShooterPodiumAngle = 52.8;
+    public static final double kShooterAmpAngle = 52.8;
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;

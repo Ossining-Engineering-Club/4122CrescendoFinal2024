@@ -58,54 +58,6 @@ public class ShooterCommands {
         }
     }
 
-    public static class SetShooterVoltage extends Command {
-        public final ShooterFlywheels m_shooter;
-        public double m_Voltage;
-
-        public SetShooterVoltage(ShooterFlywheels shooter, double Voltage) {
-            m_shooter = shooter;
-            m_Voltage = Voltage;
-
-            addRequirements(m_shooter);
-        }
-
-        @Override 
-        public void initialize() {
-            m_shooter.setFlywheelsVoltage(m_Voltage);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
-    }
-
-
-    public static class SetShooterRPM extends Command {
-        public final ShooterFlywheels m_shooter;
-        public final double m_RPM;
-
-        public SetShooterRPM(ShooterFlywheels shooter, double RPM) {
-            m_shooter = shooter;
-            m_RPM = RPM;
-
-            addRequirements(m_shooter);
-        }
-
-        @Override
-        public void execute() {
-            if (m_RPM == 0.0) m_shooter.stopFlywheels();
-            else m_shooter.setRPM(m_RPM);
-        }
-
-        @Override 
-        public boolean isFinished(){
-            if (m_RPM == 0.0) return true;
-            return m_shooter.isRPMReached();
-        }
-
-    }
-
     public static class FeedToFlywheels extends Command {
         
         public final ShooterFeeder m_Shooter;
