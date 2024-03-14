@@ -59,9 +59,17 @@ public class ShooterFlywheels extends SubsystemBase {
         e_Shooter2.setPosition(0.0);
     }
     //sets shooter flywheel voltage
-    public void setFlywheelsVoltage(double setPoint){
-        m_Shooter1.setVoltage(setPoint);
-        m_Shooter2.setVoltage(setPoint);
+    public void setFlywheelsVoltage(double voltage){
+        m_Shooter1.setVoltage(voltage);
+        m_Shooter2.setVoltage(voltage);
+    }
+
+    public void start() {
+        setFlywheelsVoltage(constants.kShooterSpeakerVoltage);
+    }
+
+    public void stop() {
+        setFlywheelsVoltage(0);
     }
 
     //returns true if setpoint is reached false otherwise
@@ -94,8 +102,8 @@ public class ShooterFlywheels extends SubsystemBase {
     }
 
     public void stopFlywheels() {
-        m_Shooter1.set(0);
-        m_Shooter2.set(0);
+        m_Shooter1.setVoltage(0);
+        m_Shooter2.setVoltage(0);
     }
 
     public boolean isRPMReached() {

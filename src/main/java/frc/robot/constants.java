@@ -140,8 +140,9 @@ public final class constants {
 
     // Intake
     public static final double kIntakePower = 1.0;
-    public static final int kIntakeMotorTopID = 20;
-    public static final int kIntakeMotorBottomID = 21;
+    // public static final int kIntakeMotorTopID = 20;
+    // public static final int kIntakeMotorBottomID = 21;
+    public static final int kIntakeMotorID = 20;
     public static final int kIntakeBreakbeamPin = 1;
 
     // Intermediate
@@ -163,6 +164,7 @@ public final class constants {
     public static final double kStartAngle = 58.0;//in degrees
     public static final double kShooterMaxAngle = 62.0;
     public static final double kShooterMinAngle = 21.9;
+    public static final double kShooterSpeakerVoltage = 5.0;
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;

@@ -55,7 +55,7 @@ public class RobotContainer {
   private final Limelight m_noteLimelight = new Limelight("limelight-note");
   private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandJoystick m_secondaryController = new CommandJoystick(1);
+  CommandXboxController m_secondaryController = new CommandXboxController(1);
 
   private DigitalInput m_autoSwitch0 = new DigitalInput(constants.kAutoSwitch0Pin);
   private DigitalInput m_autoSwitch1 = new DigitalInput(constants.kAutoSwitch1Pin);
@@ -64,7 +64,7 @@ public class RobotContainer {
 
   private Leds m_led = new Leds(constants.kPWMLedPin);
 
-  private Intake m_intake = new Intake(constants.kIntakeMotorTopID, constants.kIntakeMotorBottomID, constants.kIntakeBreakbeamPin);
+  private Intake m_intake = new Intake(constants.kIntakeMotorID, constants.kIntakeBreakbeamPin);
   private ShooterFeeder m_shooterFeeder = new ShooterFeeder(constants.kShooterFeederID, constants.kShooterBreakbeamPin);
   private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
@@ -134,28 +134,28 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
   
-    m_driverController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive, m_intake, m_shooterFeeder));
+    m_secondaryController.b().onTrue(Commands.runOnce(() -> {}, m_robotDrive, m_intake, m_shooterFeeder));
 
-    m_driverController.x()
+    m_secondaryController.a()
       .onTrue(
         new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
 
-    m_driverController.x()
+    m_secondaryController.a()
       .onTrue(
         new IntakeNoteToShooter(m_intake, m_shooterFeeder, m_led));
     
     // forwards/reverse
-    (new OECTrigger(() -> true))
-      .everyTimeItsTrue(
-        new ConditionalCommand(
-          Commands.runOnce(() -> {m_shooterFeeder.setReverse(true); m_intake.setReverse(true);}),
-          Commands.runOnce(() -> {m_shooterFeeder.setReverse(false); m_intake.setReverse(false);}),
-          m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
+    // (new OECTrigger(() -> true))
+    //   .everyTimeItsTrue(
+    //     new ConditionalCommand(
+    //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(true); m_intake.setReverse(true);}),
+    //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(false); m_intake.setReverse(false);}),
+    //       m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
 
     // manual angle control
     m_shooterPivot.setDefaultCommand(new ShooterManualAngleControl(
                                            m_shooterPivot,
-                                           () -> MathUtil.applyDeadband(m_secondaryController.getX(), 0.1)));
+                                           () -> MathUtil.applyDeadband(m_secondaryController.getRightY(), 0.1)));
 
     m_intake.setDefaultCommand(Commands.runOnce(() -> m_intake.stop(), m_intake));
     
@@ -169,7 +169,7 @@ public class RobotContainer {
 
     // flywheel control
     (new OECTrigger(m_secondaryController.button(constants.kShooterButton)::getAsBoolean))
-      .whileTrue(Commands.run(() -> {m_shooterFlywheels.setRPM(constants.kShooterDefaultRPM);}, m_shooterFlywheels));
+      .onTrue(Commands.runOnce(() -> {m_shooterFlywheels.setFlywheelsVoltage(constants.kShooterSpeakerVoltage);}, m_shooterFlywheels));
 
     // intake note to shooter
     (new OECTrigger(m_secondaryController.button(constants.kIntakeToShooterButton)::getAsBoolean))

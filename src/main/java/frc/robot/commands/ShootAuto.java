@@ -10,7 +10,8 @@ import frc.robot.subsystems.Leds;
 public class ShootAuto extends SequentialCommandGroup {
     public ShootAuto(ShooterFlywheels shooterFlywheels, ShooterFeeder shooterFeeder, Leds leds) {
         addCommands(
-            new ShooterCommands.SetShooterRPM(shooterFlywheels, constants.kShooterDefaultRPM),
+            new ShooterCommands.SetShooterVoltage(shooterFlywheels, constants.kShooterSpeakerVoltage),
+            new WaitCommand(1.0),
             new ShooterCommands.FeedToFlywheels(shooterFeeder, leds),
             new WaitCommand(.25)//,
             //new ShooterCommands.SetShooterRPM(shooter, 0.0)

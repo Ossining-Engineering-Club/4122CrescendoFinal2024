@@ -9,14 +9,16 @@ import frc.robot.subsystems.Breakbeam;
 import frc.robot.constants.Direction;
 
 public class Intake extends SubsystemBase {
-    private final CANSparkMax m_intakeMotorTop;
-    private final CANSparkMax m_intakeMotorBottom;
+    // private final CANSparkMax m_intakeMotorTop;
+    // private final CANSparkMax m_intakeMotorBottom;
+    private final CANSparkMax m_intakeMotor;
     private final Breakbeam m_breakbeam;
     private Direction m_direction = Direction.STOPPED;
     private boolean m_isReversed = false;
-    public Intake(int intakeMotorTopID, int intakeMotorBottomID, int breakbeamReceiverPin) {
-        m_intakeMotorTop = new CANSparkMax(intakeMotorTopID, MotorType.kBrushless);
-        m_intakeMotorBottom = new CANSparkMax(intakeMotorBottomID, MotorType.kBrushless);
+    public Intake(int intakeMotorID, int breakbeamReceiverPin) {
+        // m_intakeMotorTop = new CANSparkMax(intakeMotorTopID, MotorType.kBrushless);
+        // m_intakeMotorBottom = new CANSparkMax(intakeMotorBottomID, MotorType.kBrushless);
+        m_intakeMotor = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
         m_breakbeam = new Breakbeam(breakbeamReceiverPin);
     }
     @Override
@@ -25,8 +27,9 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putBoolean("intake beambreak isTripped", m_breakbeam.isTripped());
     }
     public void setVelocity(double power) {
-        m_intakeMotorTop.set(power);
-        m_intakeMotorBottom.set(power);
+        // m_intakeMotorTop.set(power);
+        // m_intakeMotorBottom.set(power);
+        m_intakeMotor.set(power);
     }
     public void start() {
         if (!m_isReversed) {
