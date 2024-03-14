@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -56,6 +56,11 @@ public class RobotContainer {
   private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandJoystick m_secondaryController = new CommandJoystick(1);
+
+  private DigitalInput m_autoSwitch0 = new DigitalInput(constants.kAutoSwitch0Pin);
+  private DigitalInput m_autoSwitch1 = new DigitalInput(constants.kAutoSwitch1Pin);
+  private DigitalInput m_autoSwitch2 = new DigitalInput(constants.kAutoSwitch2Pin);
+  private DigitalInput m_autoSwitch3 = new DigitalInput(constants.kAutoSwitch3Pin);
 
   private Leds m_led = new Leds(constants.kPWMLedPin);
 
@@ -362,7 +367,24 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
-      return new PathPlannerAuto("Pos2-P-A-B-C");
+      //return new PathPlannerAuto("Pos2-P-A-B-C");
+
+      int val = 0b0;
+      val += (m_autoSwitch0.get() ? 1 : 0) << 0;
+      val += (m_autoSwitch1.get() ? 1 : 0) << 1;
+      val += (m_autoSwitch2.get() ? 1 : 0) << 2;
+      val += (m_autoSwitch3.get() ? 1 : 0) << 3;
+
+      if (val == 0b0000) return Commands.runOnce(() -> {});
+      else if (val == 0b0001) return Commands.runOnce(() -> {});
+      else if (val == 0b0010) return Commands.runOnce(() -> {});
+      else if (val == 0b0011) return Commands.runOnce(() -> {});
+      else if (val == 0b0100) return Commands.runOnce(() -> {});
+      else if (val == 0b0101) return Commands.runOnce(() -> {});
+      else if (val == 0b0111) return Commands.runOnce(() -> {});
+      else if (val == 0b1000) return Commands.runOnce(() -> {});
+      else return Commands.runOnce(() -> {});
+      //return new PathPlannerAuto("Pos2-P-A-B-C");
     }
 
     public void enabledInit() {
