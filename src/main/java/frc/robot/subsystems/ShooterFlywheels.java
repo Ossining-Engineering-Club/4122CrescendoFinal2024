@@ -58,6 +58,12 @@ public class ShooterFlywheels extends SubsystemBase {
         e_Shooter1.setPosition(0.0);
         e_Shooter2.setPosition(0.0);
     }
+    //sets shooter flywheel voltage
+    public void setFlywheelsVoltage(double setPoint){
+        m_Shooter1.setVoltage(setPoint);
+        m_Shooter2.setVoltage(setPoint);
+    }
+
     //returns true if setpoint is reached false otherwise
     public boolean setRPM(double targetRPM){
         double currentRPMS1 = e_Shooter1.getVelocity();
