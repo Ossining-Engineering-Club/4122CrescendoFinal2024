@@ -11,7 +11,6 @@ public class Leds extends SubsystemBase {
     public Leds(int ledPin) {
         this.m_Led = new Spark(ledPin);
     }
-    
     public void setGreen() {
         m_Led.set(0.77);
     }
