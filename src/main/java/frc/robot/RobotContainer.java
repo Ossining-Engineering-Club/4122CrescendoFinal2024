@@ -65,7 +65,7 @@ public class RobotContainer {
 
   private Intake m_intake = new Intake(constants.kIntakeMotorID, constants.kIntakeBreakbeamPin);
   private ShooterFeeder m_shooterFeeder = new ShooterFeeder(constants.kShooterFeederID, constants.kShooterBreakbeamPin);
-  private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID);
+  private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, constants.kPWMLedPin);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
                                                           constants.kShooterAngleEncoderChannelA,
                                                           constants.kShooterAngleEncoderChannelB,
