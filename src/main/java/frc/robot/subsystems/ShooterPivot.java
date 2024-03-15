@@ -20,7 +20,7 @@ import frc.robot.constants.Direction;
 
 public class ShooterPivot extends SubsystemBase {
 
-    public CANSparkFlex m_Angle;
+    public CANSparkMax m_Angle;
     private Encoder e_Angle;
     public PIDController AnglePIDController = new PIDController(constants.kAnglePIDGains[0],
                                                                 constants.kAnglePIDGains[1],
@@ -36,7 +36,7 @@ public class ShooterPivot extends SubsystemBase {
     int angleEncoderChannelB,
     double startangle,
     boolean isAngleInverted){
-        m_Angle = new CANSparkFlex(motorAnglePort,MotorType.kBrushless);
+        m_Angle = new CANSparkMax(motorAnglePort,MotorType.kBrushless);
         is_backward=false;
         v_startAngle = startangle;
         e_Angle = new Encoder(angleEncoderChannelA, angleEncoderChannelB, isAngleInverted);

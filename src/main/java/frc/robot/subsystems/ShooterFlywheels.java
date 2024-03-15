@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.constants;
 import frc.robot.constants.Direction;
 
@@ -24,6 +25,8 @@ public class ShooterFlywheels extends SubsystemBase {
     public CANSparkFlex m_Shooter2;
     private RelativeEncoder e_Shooter1;
     private RelativeEncoder e_Shooter2;
+
+    private Timer m_timer = new Timer();
 
     public ShooterFlywheels(
         int Flywheelport1,
@@ -37,6 +40,8 @@ public class ShooterFlywheels extends SubsystemBase {
             e_Shooter2.setVelocityConversionFactor(constants.kShooterGearRatio);
             
             this.resetEncoders();
+            m_timer.reset();
+            m_timer.stop();
     }
 
     @Override
@@ -56,10 +61,17 @@ public class ShooterFlywheels extends SubsystemBase {
     }
 
     public void start() {
+        m_timer.start();
         setFlywheelsVoltage(constants.kShooterSpeakerVoltage);
     }
 
     public void stop() {
+        m_timer.stop();
+        m_timer.reset();
         setFlywheelsVoltage(0);
+    }
+
+    public boolean isSpunUp() {
+        return m_timer.get() >= constants.kShooterFlywheelSpinUpTime;
     }
 }

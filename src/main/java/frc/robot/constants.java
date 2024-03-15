@@ -139,10 +139,10 @@ public final class constants {
     public static final double kNoteLimelightRightOffset = 0.0;
 
     // Intake
-    public static final double kIntakePower = 1.0;
+    public static final double kIntakePower = 0.5;
     // public static final int kIntakeMotorTopID = 20;
     // public static final int kIntakeMotorBottomID = 21;
-    public static final int kIntakeMotorID = 20;
+    public static final int kIntakeMotorID = 21;
     public static final int kIntakeBreakbeamPin = 1;
 
     // Intermediate
@@ -168,6 +168,7 @@ public final class constants {
     public static final double kShooterSubwooferAngle = 52.8;
     public static final double kShooterPodiumAngle = 52.8;
     public static final double kShooterAmpAngle = 52.8;
+    public static final double kShooterFlywheelSpinUpTime = 1.0; // seconds
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;

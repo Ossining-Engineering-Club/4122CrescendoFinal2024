@@ -33,11 +33,11 @@ public class Intake extends SubsystemBase {
     }
     public void start() {
         if (!m_isReversed) {
-            setVelocity(constants.kIntakePower);
+            setVelocity(-constants.kIntakePower);
             m_direction = Direction.FORWARD;
         }
         else {
-            setVelocity(-constants.kIntakePower);
+            setVelocity(constants.kIntakePower);
             m_direction = Direction.REVERSE;
         }
     }

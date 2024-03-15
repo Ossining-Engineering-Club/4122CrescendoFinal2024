@@ -120,9 +120,9 @@ public class RobotContainer {
       m_shooterPivot));
 
     // go to note
-    m_secondaryController.a()
-      .onTrue(
-        new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
+    // m_secondaryController.a()
+    //   .onTrue(
+    //     new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
 
     m_secondaryController.a()
       .onTrue(
@@ -151,7 +151,7 @@ public class RobotContainer {
     //     new ConditionalCommand(
     //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(true); m_intake.setReverse(true);}),
     //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(false); m_intake.setReverse(false);}),
-    //       m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));s
+    //       m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
  
   }
 

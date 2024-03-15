@@ -11,8 +11,7 @@ import frc.robot.subsystems.Leds;
 public class ShootAuto extends SequentialCommandGroup {
     public ShootAuto(ShooterFlywheels shooterFlywheels, ShooterFeeder shooterFeeder, Leds leds) {
         addCommands(
-            Commands.runOnce(() -> shooterFlywheels.start(), shooterFlywheels),
-            new WaitCommand(1.0),
+            new ShooterCommands.SpinUpFlywheels(shooterFlywheels),
             new ShooterCommands.FeedToFlywheels(shooterFeeder, leds),
             new WaitCommand(.25)
         );

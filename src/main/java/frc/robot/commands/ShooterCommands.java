@@ -72,7 +72,7 @@ public class ShooterCommands {
         }
 
         @Override
-        public void execute() {
+        public void initialize() {
             m_Shooter.enableFeeder();
         }
 
@@ -84,6 +84,24 @@ public class ShooterCommands {
         @Override
         public void end(boolean isInterrupted) {
             m_Leds.setRed();
+        }
+    }
+
+    public static class SpinUpFlywheels extends Command {
+        public final ShooterFlywheels m_flywheels;
+
+        public SpinUpFlywheels(ShooterFlywheels shooterFlywheels) {
+            m_flywheels = shooterFlywheels;
+        }
+
+        @Override
+        public void initialize() {
+            m_flywheels.start();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return m_flywheels.isSpunUp();
         }
     }
 }
