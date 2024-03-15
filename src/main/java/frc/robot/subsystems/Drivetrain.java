@@ -7,6 +7,7 @@
 package frc.robot.subsystems;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -49,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
   private Translation2d backRightLocation = new Translation2d(-0.275, -0.2275);
 
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation); 
-  OECNavX gyro;
+  public final PigeonIMU gyro;
   SwerveDrivePoseEstimator odometry;
   Trajectory trajectory;
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
@@ -73,8 +74,7 @@ public class Drivetrain extends SubsystemBase {
        * 
        */
       //Gyro intialization process
-      gyro = new OECNavX();  
-      gyro.ResetYaw();
+      gyro = new PigeonIMU(gyroport);
 
       //initialize limelight variables
       this.m_shooterLimelight = shooterLimelight;
@@ -82,7 +82,7 @@ public class Drivetrain extends SubsystemBase {
       //Odometry Initialization
       this.odometry =  new SwerveDrivePoseEstimator(
             kinematics,
-            Rotation2d.fromDegrees(gyro.GetYaw()),
+            Rotation2d.fromDegrees(gyro.getYaw()),
             new SwerveModulePosition[] {
               LFMod.GetPosition(),
               RFMod.GetPosition(),
@@ -129,7 +129,7 @@ public class Drivetrain extends SubsystemBase {
     }
       SwerveModuleState[] states = kinematics.toSwerveModuleStates(
           fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                              xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.GetYaw()))
+                              xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.getYaw()))
                         : new ChassisSpeeds(xSpeed, ySpeed, rot));
     
       SwerveDriveKinematics.desaturateWheelSpeeds(states, constants.kMaxSpeed);
@@ -173,7 +173,7 @@ public class Drivetrain extends SubsystemBase {
   }
   public void UpdateOdometry() {
       //Wheel states as order declared in kinematics constructor
-      odometry.update(Rotation2d.fromDegrees(gyro.GetYaw()),
+      odometry.update(Rotation2d.fromDegrees(gyro.getYaw()),
                         new SwerveModulePosition[]{
                         LFMod.GetPosition(), 
                         RFMod.GetPosition(),
@@ -214,7 +214,7 @@ public class Drivetrain extends SubsystemBase {
                                     RBMod.GetState()};
   }
   public void resetPose(Pose2d pose) {
-    odometry.resetPosition(Rotation2d.fromDegrees(gyro.GetYaw()),this.getModulePositions(), pose);
+    odometry.resetPosition(Rotation2d.fromDegrees(gyro.getYaw()),this.getModulePositions(), pose);
   }
   public double getXSpeed() {
     return v_xSpeed;
@@ -300,7 +300,7 @@ public class Drivetrain extends SubsystemBase {
     v_rotSpeed = (SwerveOdometryGetPose().getRotation().getRadians()-v_prevPose.getRotation().getRadians())/0.02;
     v_prevPose = SwerveOdometryGetPose();
 
-    SmartDashboard.putNumber("Gyro Angle", gyro.GetYaw());
+    SmartDashboard.putNumber("Gyro Angle", gyro.getYaw());
 
     // SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
     // SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
