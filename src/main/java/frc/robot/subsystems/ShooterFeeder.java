@@ -37,7 +37,7 @@ public class ShooterFeeder extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
+        SmartDashboard.putBoolean("shooter BB", BBisTripped());
     }
 
     public void enableFeeder() {

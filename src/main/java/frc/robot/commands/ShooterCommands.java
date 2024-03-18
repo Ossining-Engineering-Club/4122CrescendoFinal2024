@@ -74,6 +74,7 @@ public class ShooterCommands {
         @Override
         public void initialize() {
             m_Shooter.enableFeeder();
+            System.out.println("feeding to flywheels");
         }
 
         @Override
@@ -84,6 +85,7 @@ public class ShooterCommands {
         @Override
         public void end(boolean isInterrupted) {
             m_Leds.setRed();
+            m_Shooter.disableFeeder();
         }
     }
 

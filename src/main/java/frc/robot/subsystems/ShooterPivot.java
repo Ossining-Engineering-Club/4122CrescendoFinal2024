@@ -21,7 +21,7 @@ import frc.robot.constants.Direction;
 public class ShooterPivot extends SubsystemBase {
 
     public CANSparkMax m_Angle;
-    private Encoder e_Angle;
+    private RelativeEncoder e_Angle;
     public PIDController AnglePIDController = new PIDController(constants.kAnglePIDGains[0],
                                                                 constants.kAnglePIDGains[1],
                                                                 constants.kAnglePIDGains[2]);
@@ -32,16 +32,17 @@ public class ShooterPivot extends SubsystemBase {
 
   public ShooterPivot(
     int motorAnglePort,
-    int angleEncoderChannelA,
-    int angleEncoderChannelB,
     double startangle,
     boolean isAngleInverted){
         m_Angle = new CANSparkMax(motorAnglePort,MotorType.kBrushless);
         is_backward=false;
         v_startAngle = startangle;
-        e_Angle = new Encoder(angleEncoderChannelA, angleEncoderChannelB, isAngleInverted);
+        m_Angle.setInverted(isAngleInverted);
+        e_Angle = m_Angle.getEncoder();
         
-        e_Angle.setDistancePerPulse(constants.kAngleRatio/2048.0);
+        e_Angle.setPositionConversionFactor(constants.kAngleRatio);
+        e_Angle.setVelocityConversionFactor(constants.kAngleRatio / 60.0);
+
         this.resetEncoders(startangle);
     }
 
@@ -54,8 +55,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public void resetEncoders(double startangle){
-        v_startAngle = startangle;
-        e_Angle.reset();
+        e_Angle.setPosition(startangle);
     }
 
     //returns true if setpoint is reached false otherwise
@@ -91,7 +91,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public double getAngle() {
-        return e_Angle.getDistance()+v_startAngle;
+        return e_Angle.getPosition();
     }
 
     public void stopAngle() {

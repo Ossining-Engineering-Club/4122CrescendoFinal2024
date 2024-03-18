@@ -33,8 +33,8 @@ public class IntakeNoteToShooter extends Command {
 
     @Override
     public boolean isFinished() {
-        // if (m_shooter.getDirection() == Direction.REVERSE) return false;
-        // return m_shooter.BBisTripped();
-        return false;
+        if (m_shooter.getDirection() == Direction.REVERSE) return false;
+        return m_shooter.BBisTripped();
+        //return false;
     }
 }

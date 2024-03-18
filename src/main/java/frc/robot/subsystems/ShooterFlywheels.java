@@ -34,13 +34,13 @@ public class ShooterFlywheels extends SubsystemBase {
     public ShooterFlywheels(
         int Flywheelport1,
         int Flywheelport2,
-        int ledPin){
+        Leds led){
             m_Shooter1 = new CANSparkFlex(Flywheelport1,MotorType.kBrushless);
             m_Shooter2 = new CANSparkFlex(Flywheelport2,MotorType.kBrushless);
             e_Shooter1 = m_Shooter1.getEncoder();
             e_Shooter2 = m_Shooter2.getEncoder();
 
-            m_led = new Leds(ledPin);
+            m_led = led;
             
             e_Shooter1.setVelocityConversionFactor(constants.kShooterGearRatio);
             e_Shooter2.setVelocityConversionFactor(constants.kShooterGearRatio);
@@ -53,6 +53,7 @@ public class ShooterFlywheels extends SubsystemBase {
     @Override
     public void periodic() {
         // SmartDashboard.putNumber("shooter RPM", e_Shooter2.getVelocity());
+        SmartDashboard.putNumber("timer", m_timer.get());
     }
 
     public void resetEncoders(){
@@ -80,5 +81,17 @@ public class ShooterFlywheels extends SubsystemBase {
 
     public boolean isSpunUp() {
         return m_timer.get() >= constants.kShooterFlywheelSpinUpTime;
+    }
+
+    public void resetTimer() {
+        m_timer.reset();
+    }
+
+    public void stopTimer() {
+        m_timer.stop();
+    }
+
+    public void startTimer() {
+        m_timer.start();
     }
 }

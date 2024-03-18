@@ -65,10 +65,8 @@ public class RobotContainer {
 
   private Intake m_intake = new Intake(constants.kIntakeMotorID, constants.kIntakeBreakbeamPin);
   private ShooterFeeder m_shooterFeeder = new ShooterFeeder(constants.kShooterFeederID, constants.kShooterBreakbeamPin);
-  private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, constants.kPWMLedPin);
+  private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, m_led);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
-                                                          constants.kShooterAngleEncoderChannelA,
-                                                          constants.kShooterAngleEncoderChannelB,
                                                           constants.kStartAngle,
                                                           false);
   // private Climber m_climber;
@@ -120,9 +118,9 @@ public class RobotContainer {
       m_shooterPivot));
 
     // go to note
-    // m_secondaryController.a()
-    //   .onTrue(
-    //     new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
+    m_secondaryController.a()
+      .onTrue(
+        new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
 
     m_secondaryController.a()
       .onTrue(
@@ -187,6 +185,8 @@ public class RobotContainer {
       m_shooterFlywheels.m_Shooter2.set(0.0);
       m_shooterFeeder.disableFeeder();
       m_intake.stop();
+      m_shooterFlywheels.stopTimer();
+      m_shooterFlywheels.resetTimer();
 
       // Start robot with red LEDS
       m_led.setRed(); 

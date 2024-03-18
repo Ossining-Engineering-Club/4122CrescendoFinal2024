@@ -23,8 +23,8 @@ public class Intake extends SubsystemBase {
     }
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("intake beambreak voltage", m_breakbeam.getVoltage());
-        SmartDashboard.putBoolean("intake beambreak isTripped", m_breakbeam.isTripped());
+        // SmartDashboard.putNumber("intake beambreak voltage", m_breakbeam.getVoltage());
+        SmartDashboard.putBoolean("intake BB", m_breakbeam.isTripped());
     }
     public void setVelocity(double power) {
         // m_intakeMotorTop.set(power);

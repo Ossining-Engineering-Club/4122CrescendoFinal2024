@@ -149,26 +149,26 @@ public final class constants {
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double[] kShooter1PIDGains = {0.000003, 0.0, 0.0};
-    public static final double[] kShooter2PIDGains = {0.000003, 0.0, 0.0};
+    public static final double[] kShooter1PIDGains = {0.000006, 0.0, 0.0};
+    public static final double[] kShooter2PIDGains = {0.000006, 0.0, 0.0};
     public static final double[] kAnglePIDGains = {.8, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
     public static final double kangleTolerance = 1.0;
-    public static final double kAngleRatio = 18.0/48.0*90.0;
+    public static final double kAngleRatio = 1.0 / 100.0 * 15.0 / 46.0 * 360.0;//18.0/48.0*90.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 4500.0;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
     public static final double kStartAngle = 58.0;//in degrees
-    public static final double kShooterMaxAngle = 62.0;
-    public static final double kShooterMinAngle = 21.9;
-    public static final double kShooterSpeakerVoltage = 5.0;
+    public static final double kShooterMaxAngle = 180.0;//62.0;
+    public static final double kShooterMinAngle = 0.0;//21.9;
+    public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 52.8;
     public static final double kShooterPodiumAngle = 52.8;
     public static final double kShooterAmpAngle = 52.8;
-    public static final double kShooterFlywheelSpinUpTime = 1.0; // seconds
+    public static final double kShooterFlywheelSpinUpTime = 1.5; // seconds
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;
