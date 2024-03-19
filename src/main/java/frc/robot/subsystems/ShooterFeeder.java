@@ -38,6 +38,7 @@ public class ShooterFeeder extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("shooter BB", BBisTripped());
+        SmartDashboard.putBoolean("feeder isReversed", is_backward);
     }
 
     public void enableFeeder() {

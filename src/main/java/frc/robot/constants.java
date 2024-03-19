@@ -135,8 +135,9 @@ public final class constants {
     public static final double[] kVisTurretPID = {1.0, 0.0, 0.0}; // {kP, kI, kD}
     public static final double kVisTurretToleranceRadians = 0.262;
     // Limelight
-    public static final double kNoteLimelightForwardOffset = 0.0;
-    public static final double kNoteLimelightRightOffset = 0.0;
+    public static final double kNoteLimelightForwardOffset = 0.41;
+    public static final double kNoteLimelightRightOffset = 0.25;
+    public static final double kNoteLimelightYawOffset = 18.0; // deg
 
     // Intake
     public static final double kIntakePower = 0.5;
@@ -161,14 +162,15 @@ public final class constants {
     public static final double kShooterDefaultRPM = 4500.0;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
-    public static final double kStartAngle = 58.0;//in degrees
-    public static final double kShooterMaxAngle = 180.0;//62.0;
+    public static final double kStartAngle = 45.0;//in degrees
+    public static final double kShooterMaxAngle = 48.0;//62.0;
     public static final double kShooterMinAngle = 0.0;//21.9;
     public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 52.8;
     public static final double kShooterPodiumAngle = 52.8;
     public static final double kShooterAmpAngle = 52.8;
     public static final double kShooterFlywheelSpinUpTime = 1.5; // seconds
+    public static final double kPos1Or3ShooterAngle = 0.0;
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;

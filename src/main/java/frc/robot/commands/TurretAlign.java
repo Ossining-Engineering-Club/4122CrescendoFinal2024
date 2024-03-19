@@ -102,9 +102,9 @@ public class TurretAlign extends Command {
         return m_isDone;
     }
 
-    // TO DO
     public double convertDistanceToShooterAngle(double dist) {
-        return 3.1574 * Math.pow(dist,2) - 28.635*dist + 84.562;
+        //return 3.1574 * Math.pow(dist,2) - 28.635*dist + 84.562;
+        return 17.451*Math.pow(dist, 2) - 80.608*dist + 120.3;
     }
 
     public double wrapAngle(double angle) {

@@ -31,6 +31,11 @@ public class ShooterCommands {
             this.isdone=m_shooter.setAngle(this.angle);
         }
 
+        @Override
+        public void end(boolean interrupted) {
+            m_shooter.setAngleMotor(0.0);
+        }
+
         @Override 
         public boolean isFinished() { // set  position
             return this.isdone;

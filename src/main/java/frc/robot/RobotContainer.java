@@ -13,6 +13,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
+
+import org.w3c.dom.NamedNodeMap;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -27,6 +30,7 @@ import frc.robot.commands.GoToNote;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretAlign;
 import frc.robot.commands.ShooterCommands.ShooterManualAngleControl;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Breakbeam;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
@@ -48,6 +52,7 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.ShootAuto;
 import frc.robot.commands.IntakeNoteToShooter;
 import frc.robot.commands.ShooterCommands.AngleShooter;
+import frc.robot.commands.GoToNoteAuto;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -68,17 +73,19 @@ public class RobotContainer {
   private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, m_led);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
                                                           constants.kStartAngle,
-                                                          false);
+                                                          true);
   // private Climber m_climber;
 
   // public State m_state;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    NamedCommands.registerCommand("GoToNote", new GoToNote(m_robotDrive, m_noteLimelight, m_intake, m_led));
+    NamedCommands.registerCommand("GoToNote", new GoToNoteAuto(m_robotDrive, m_intake));
     NamedCommands.registerCommand("Shoot", new ShootAuto(m_shooterFlywheels, m_shooterFeeder, m_led));
     NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooterPivot, m_shooterLimelight));
     NamedCommands.registerCommand("IntakeNoteToShooter", new IntakeNoteToShooter(m_intake, m_shooterFeeder, m_led));
+    NamedCommands.registerCommand("Pos1Or3AngleShooter", new AngleShooter(m_shooterPivot, constants.kPos1Or3ShooterAngle));
+    NamedCommands.registerCommand("StowShooter", new AngleShooter(m_shooterPivot, constants.kStartAngle));
 
     m_shooterLimelight.setPipeline(0);
     m_noteLimelight.setPipeline(0);
@@ -118,9 +125,13 @@ public class RobotContainer {
       m_shooterPivot));
 
     // go to note
-    m_secondaryController.a()
-      .onTrue(
-        new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
+    // m_secondaryController.a()
+    //   .onTrue(
+    //     new GoToNote(m_robotDrive,m_noteLimelight,m_intake,m_led));
+
+    // m_secondaryController.a()
+    //   .onTrue(
+    //     new GoToNoteAuto(m_robotDrive,m_intake));
 
     m_secondaryController.a()
       .onTrue(
@@ -161,21 +172,29 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
       //return new PathPlannerAuto("Pos2-P-A-B-C");
 
-      int val = 0b0;
-      val += (m_autoSwitch0.get() ? 1 : 0) << 0;
-      val += (m_autoSwitch1.get() ? 1 : 0) << 1;
-      val += (m_autoSwitch2.get() ? 1 : 0) << 2;
-      val += (m_autoSwitch3.get() ? 1 : 0) << 3;
+      // int val = 0b0;
+      // val += (m_autoSwitch0.get() ? 1 : 0) << 0;
+      // val += (m_autoSwitch1.get() ? 1 : 0) << 1;
+      // val += (m_autoSwitch2.get() ? 1 : 0) << 2;
+      // val += (m_autoSwitch3.get() ? 1 : 0) << 3;
 
-      if (val == 0b0000) return Commands.runOnce(() -> {});
-      else if (val == 0b0001) return Commands.runOnce(() -> {});
-      else if (val == 0b0010) return Commands.runOnce(() -> {});
-      else if (val == 0b0011) return Commands.runOnce(() -> {});
-      else if (val == 0b0100) return Commands.runOnce(() -> {});
-      else if (val == 0b0101) return Commands.runOnce(() -> {});
-      else if (val == 0b0111) return Commands.runOnce(() -> {});
-      else if (val == 0b1000) return Commands.runOnce(() -> {});
-      else return Commands.runOnce(() -> {});
+      // if (val == 0b0000) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 0");});
+      // else if (val == 0b0001) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 1");});
+      // else if (val == 0b0010) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 2");});
+      // else if (val == 0b0011) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 3");});
+      // else if (val == 0b0100) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 4");});
+      // else if (val == 0b0101) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 5");});
+      // else if (val == 0b0111) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 6");});
+      // else if (val == 0b1000) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 7");});
+      // else return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto default");});
+
+      if (m_autoSwitch3.get() && m_autoSwitch2.get() && m_autoSwitch1.get() && m_autoSwitch0.get()) {
+        return new PathPlannerAuto("Pos2-P-A-B-C");
+      }
+      else {
+        return new PathPlannerAuto("Forward-Nothing");
+      }
+
       //return new PathPlannerAuto("Pos2-P-A-B-C");
     }
 
@@ -193,26 +212,3 @@ public class RobotContainer {
     }
     
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

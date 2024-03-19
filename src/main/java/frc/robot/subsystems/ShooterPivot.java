@@ -48,7 +48,7 @@ public class ShooterPivot extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("shooter angle",this.getAngle());
+        SmartDashboard.putNumber("shooter angle",this.getAngle());
         // SmartDashboard.putNumber("shooter angle setpoint", AnglePIDController.getSetpoint());
         Logger.recordOutput("ShooterAngle", this.getAngle());
     

@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
@@ -38,7 +39,7 @@ public class GoToNote extends Command {
     private double prevTX;
     private double prevTransAngle;
 
-    private final LinearFilter m_rotFilter = LinearFilter.movingAverage(50);
+    private final LinearFilter m_rotFilter = LinearFilter.movingAverage(19);
 
     public GoToNote(Drivetrain drive, Limelight limelight, Intake intake, Leds led) {
         m_drive = drive;
@@ -71,11 +72,14 @@ public class GoToNote extends Command {
         if (m_limelight.hasTarget()) {
             m_led.setOrange();
             double tx = -m_limelight.getTX()/180*Math.PI;
+            double ty = m_limelight.getTY();
             double ta = m_limelight.getTA()/100;
 
-            if (Math.abs(tx) < constants.kVisionXToleranceRadians) tx = 0;
+            SmartDashboard.putNumber("distance from note", convertYAngleToDistance(ty));
 
-            transAngle = m_drive.getAngle().getRadians()+tx;
+            //if (Math.abs(tx) < constants.kVisionXToleranceRadians) tx = 0;
+
+            transAngle = m_drive.getAngle().getRadians()+correctOffset(tx, ty);
             // if the limelight measurement is old, use the previous transAngle
             if (Math.abs(tx-prevTX) < 0.00001) transAngle = prevTransAngle;
             else {
@@ -107,6 +111,10 @@ public class GoToNote extends Command {
         //SmartDashboard.putNumber("xSpeed", xSpeed);
         //SmartDashboard.putNumber("ySpeed", ySpeed);
         //SmartDashboard.putNumber("rotSpeed", rotSpeed);
+
+        SmartDashboard.putNumber("gotonote xspeed", xSpeed);
+        SmartDashboard.putNumber("gotonote yspeed", ySpeed);
+        SmartDashboard.putNumber("gotonote rotspeed", rotSpeed);
             
         m_drive.Drive(xSpeed, ySpeed, rotSpeed, true, false);
 
@@ -136,6 +144,25 @@ public class GoToNote extends Command {
 
     public double wrapAngle(double angle) {
         return (angle+Math.PI)%(2*Math.PI)-Math.PI;
+    }
+
+    public double convertYAngleToDistance(double angle) {
+        return 0.71+0.0374*angle+.00292*Math.pow(angle,2)+.000135*Math.pow(angle,3);
+    }
+
+    public double correctOffset(double tx, double ty) {
+        double camToNoteDist = convertYAngleToDistance(ty);
+        tx += Units.degreesToRadians(constants.kNoteLimelightYawOffset);
+        double origX = camToNoteDist * Math.cos(tx);
+        double origY = camToNoteDist * Math.sin(tx);
+        double correctedX = origX + constants.kNoteLimelightForwardOffset;
+        double correctedY = origY - constants.kNoteLimelightRightOffset;
+        double correctedTx = Math.atan2(correctedY, correctedX);
+        SmartDashboard.putNumber("yaw corrected tx", tx);
+        SmartDashboard.putNumber("correctedX", correctedX);
+        SmartDashboard.putNumber("correctedY", correctedY);
+        SmartDashboard.putNumber("correctedTx", correctedTx);
+        return correctedTx;
     }
 
 }

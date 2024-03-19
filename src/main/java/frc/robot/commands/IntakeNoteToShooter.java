@@ -20,6 +20,7 @@ public class IntakeNoteToShooter extends Command {
 
     @Override
     public void initialize() {
+        m_shooter.setReverse(false);
         m_shooter.enableFeeder();
         m_intake.start();
     }
@@ -33,7 +34,7 @@ public class IntakeNoteToShooter extends Command {
 
     @Override
     public boolean isFinished() {
-        if (m_shooter.getDirection() == Direction.REVERSE) return false;
+        //if (m_shooter.getDirection() == Direction.REVERSE) return false;
         return m_shooter.BBisTripped();
         //return false;
     }

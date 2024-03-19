@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.2748661086294606,
-      "y": 5.553919733431884
+      "x": 1.28,
+      "y": 5.55
     },
     "rotation": 0
   },
@@ -11,24 +11,6 @@
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "TurretAlign"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Pos2-B"
-          }
-        },
         {
           "type": "named",
           "data": {
