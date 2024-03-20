@@ -18,7 +18,7 @@ public final class constants {
 
 
     public static final double k_PI = 3.141592653589793238462643383279502884197169399;
-
+    public static final double absAngleOffset = 51.3;
     public static boolean k_isRed;
     public static final double kRedSpeakerX = 16.579342;
     public static final double kRedSpeakerY = 5.547868;

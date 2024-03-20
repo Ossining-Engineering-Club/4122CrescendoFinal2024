@@ -13,6 +13,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants;
@@ -21,12 +22,13 @@ import frc.robot.constants.Direction;
 public class ShooterPivot extends SubsystemBase {
 
     public CANSparkMax m_Angle;
-    private RelativeEncoder e_Angle;
+    //private RelativeEncoder e_Angle;
     public PIDController AnglePIDController = new PIDController(constants.kAnglePIDGains[0],
                                                                 constants.kAnglePIDGains[1],
                                                                 constants.kAnglePIDGains[2]);
 
     public double v_startAngle = 58.0;
+    private DutyCycleEncoder e_Angle;
     private boolean is_backward;
 
 
@@ -38,12 +40,12 @@ public class ShooterPivot extends SubsystemBase {
         is_backward=false;
         v_startAngle = startangle;
         m_Angle.setInverted(isAngleInverted);
-        e_Angle = m_Angle.getEncoder();
-        
-        e_Angle.setPositionConversionFactor(constants.kAngleRatio);
-        e_Angle.setVelocityConversionFactor(constants.kAngleRatio / 60.0);
+        e_Angle =  new DutyCycleEncoder(0);//m_Angle.getEncoder();
+        e_Angle.setDistancePerRotation(360.0 / 3.0);
+        // e_Angle.setPositionConversionFactor(constants.kAngleRatio);
+        // e_Angle.setVelocityConversionFactor(constants.kAngleRatio / 60.0);
 
-        this.resetEncoders(startangle);
+        // this.resetEncoders();
     }
 
     @Override
@@ -54,9 +56,9 @@ public class ShooterPivot extends SubsystemBase {
     
     }
 
-    public void resetEncoders(double startangle){
-        e_Angle.setPosition(startangle);
-    }
+    // public void resetEncoders(){
+    //     e_Angle.setPositionOffset(constants.absAngleOffset);
+    // }
 
     //returns true if setpoint is reached false otherwise
     public boolean setAngle(double Angle){
@@ -91,7 +93,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public double getAngle() {
-        return e_Angle.getPosition();
+        return e_Angle.getDistance() - constants.absAngleOffset;
     }
 
     public void stopAngle() {
