@@ -91,7 +91,7 @@ public class SwerveMod {
             else if(turningVal < -1.0) turningVal = -1.0;
     
     
-            m_Drive.set(optimizedState.speedMetersPerSecond*(1.0/constants.kMaxSpeed)); //Change to variable later
+            m_Drive.setVoltage(optimizedState.speedMetersPerSecond*(1.0/constants.kMaxSpeed)*12.0); //Change to variable later
             m_Rotator.set(turningVal);
         }
         else{

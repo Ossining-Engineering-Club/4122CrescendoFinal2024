@@ -10,10 +10,10 @@ public class AmpShoot extends SequentialCommandGroup {
     public AmpShoot(ShooterFeeder shooterFeeder, Leds leds) {
         addCommands(
             Commands.runOnce(() -> shooterFeeder.setReverse(true)),
-            Commands.runOnce(() -> shooterFeeder.enableFeeder()),
-            new WaitCommand(1.0),
-            Commands.runOnce(() -> shooterFeeder.disableFeeder(), shooterFeeder),
-            Commands.runOnce(() -> shooterFeeder.setReverse(false))
+            Commands.runOnce(() -> shooterFeeder.enableAmpFeeder())
+            // new WaitCommand(1.0),
+            // Commands.runOnce(() -> shooterFeeder.disableFeeder(), shooterFeeder),
+            // Commands.runOnce(() -> shooterFeeder.setReverse(false))
         );
     }
 }

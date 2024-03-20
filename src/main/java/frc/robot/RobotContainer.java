@@ -53,6 +53,7 @@ import frc.robot.commands.ShootAuto;
 import frc.robot.commands.IntakeNoteToShooter;
 import frc.robot.commands.ShooterCommands.AngleShooter;
 import frc.robot.commands.GoToNoteAuto;
+import frc.robot.commands.ReverseNote;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
@@ -73,7 +74,8 @@ public class RobotContainer {
   private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, m_led);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
                                                           constants.kStartAngle,
-                                                          true);
+                                                          true/*,
+                                                          constants.kShooterLimitSwitchPin*/);
   // private Climber m_climber;
 
   // public State m_state;
@@ -149,10 +151,15 @@ public class RobotContainer {
     m_secondaryController.y().onTrue(new AngleShooter(m_shooterPivot, constants.kShooterAmpAngle));
 
     // speaker shot
-    m_secondaryController.rightBumper().onTrue(new Shoot(m_shooterFlywheels, m_shooterFeeder, m_led));
+    m_secondaryController.rightBumper().onTrue(new Shoot(m_shooterFlywheels, m_shooterFeeder, m_led)
+                                      .andThen(new AngleShooter(m_shooterPivot, constants.kStartAngle)));
 
     // amp shot
-    m_secondaryController.leftBumper().onTrue(new AmpShoot(m_shooterFeeder, m_led));
+    m_secondaryController.leftBumper().whileTrue(new AmpShoot(m_shooterFeeder, m_led));
+    m_secondaryController.leftBumper().onFalse(Commands.runOnce(() -> m_shooterFeeder.disableFeeder(), m_shooterFeeder));
+    m_secondaryController.leftBumper().onFalse(Commands.runOnce(() -> m_shooterFeeder.setReverse(false), m_shooterFeeder));
+
+    m_secondaryController.rightTrigger(0.9).whileTrue(new ReverseNote(m_intake, m_shooterFeeder, m_led));
     
     // forwards/reverse
     // (new OECTrigger(() -> true))
@@ -177,6 +184,25 @@ public class RobotContainer {
       // val += (m_autoSwitch1.get() ? 1 : 0) << 1;
       // val += (m_autoSwitch2.get() ? 1 : 0) << 2;
       // val += (m_autoSwitch3.get() ? 1 : 0) << 3;
+      int val = (m_autoSwitch0.get() ? 1 : 0)
+            + 2*(m_autoSwitch1.get() ? 1 : 0)
+            + 4*(m_autoSwitch2.get() ? 1 : 0)
+            + 8*(m_autoSwitch3.get() ? 1 : 0);
+
+      switch (val) {
+        case 0:
+          return new PathPlannerAuto("Forward-Nothing");
+        case 1:
+          return new PathPlannerAuto("Pos1-P");
+        case 2:
+          return new PathPlannerAuto("Pos2-P");
+        case 3:
+          return new PathPlannerAuto("Pos3-P");
+        case 15:
+          return new PathPlannerAuto("Pos2-P-A-B-C");
+        default:
+          return new PathPlannerAuto("Forward-Nothing");
+      }
 
       // if (val == 0b0000) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 0");});
       // else if (val == 0b0001) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 1");});
@@ -188,27 +214,37 @@ public class RobotContainer {
       // else if (val == 0b1000) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 7");});
       // else return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto default");});
 
-      if (m_autoSwitch3.get() && m_autoSwitch2.get() && m_autoSwitch1.get() && m_autoSwitch0.get()) {
-        return new PathPlannerAuto("Pos2-P-A-B-C");
-      }
-      else {
-        return new PathPlannerAuto("Forward-Nothing");
-      }
+      // if (m_autoSwitch3.get() && m_autoSwitch2.get() && m_autoSwitch1.get() && m_autoSwitch0.get()) {
+      //   return new PathPlannerAuto("Pos2-P-A-B-C");
+      // }
+      // else {
+      //   return new PathPlannerAuto("Forward-Nothing");
+      // }
 
       //return new PathPlannerAuto("Pos2-P-A-B-C");
     }
 
     public void enabledInit() {
       m_shooterPivot.m_Angle.set(0);
-      m_shooterFlywheels.m_Shooter1.set(0.0);
-      m_shooterFlywheels.m_Shooter2.set(0.0);
+      m_shooterFlywheels.stop();
       m_shooterFeeder.disableFeeder();
       m_intake.stop();
-      m_shooterFlywheels.stopTimer();
-      m_shooterFlywheels.resetTimer();
+      m_shooterFeeder.setReverse(false);
 
       // Start robot with red LEDS
       m_led.setRed(); 
+    }
+
+    public void periodic() {
+      int val = (m_autoSwitch0.get() ? 1 : 0)
+            + 2*(m_autoSwitch1.get() ? 1 : 0)
+            + 4*(m_autoSwitch2.get() ? 1 : 0)
+            + 8*(m_autoSwitch3.get() ? 1 : 0);
+      SmartDashboard.putNumber("auto val", val);
+      SmartDashboard.putBoolean("auto switch 0", m_autoSwitch0.get());
+      SmartDashboard.putBoolean("auto switch 1", m_autoSwitch1.get());
+      SmartDashboard.putBoolean("auto switch 2", m_autoSwitch2.get());
+      SmartDashboard.putBoolean("auto switch 3", m_autoSwitch3.get());
     }
     
 }

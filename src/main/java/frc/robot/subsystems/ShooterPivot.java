@@ -13,15 +13,20 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.constants;
 import frc.robot.constants.Direction;
 
 public class ShooterPivot extends SubsystemBase {
 
     public CANSparkMax m_Angle;
-    private RelativeEncoder e_Angle;
+    private DutyCycleEncoder e_Angle;
+    private DigitalInput m_limitSwitch;
     public PIDController AnglePIDController = new PIDController(constants.kAnglePIDGains[0],
                                                                 constants.kAnglePIDGains[1],
                                                                 constants.kAnglePIDGains[2]);
@@ -33,29 +38,27 @@ public class ShooterPivot extends SubsystemBase {
   public ShooterPivot(
     int motorAnglePort,
     double startangle,
-    boolean isAngleInverted){
+    boolean isAngleInverted//,
+    /*int limitSwitchPin*/){
         m_Angle = new CANSparkMax(motorAnglePort,MotorType.kBrushless);
         is_backward=false;
         v_startAngle = startangle;
         m_Angle.setInverted(isAngleInverted);
-        e_Angle = m_Angle.getEncoder();
+        e_Angle = new DutyCycleEncoder(0);
         
-        e_Angle.setPositionConversionFactor(constants.kAngleRatio);
-        e_Angle.setVelocityConversionFactor(constants.kAngleRatio / 60.0);
+        e_Angle.setDistancePerRotation(constants.kAngleRatio);
 
-        this.resetEncoders(startangle);
+        //m_limitSwitch = new DigitalInput(limitSwitchPin);
+
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("shooter angle",this.getAngle());
+        SmartDashboard.putNumber("pivot set speed", m_Angle.get());
         // SmartDashboard.putNumber("shooter angle setpoint", AnglePIDController.getSetpoint());
         Logger.recordOutput("ShooterAngle", this.getAngle());
     
-    }
-
-    public void resetEncoders(double startangle){
-        e_Angle.setPosition(startangle);
     }
 
     //returns true if setpoint is reached false otherwise
@@ -67,7 +70,13 @@ public class ShooterPivot extends SubsystemBase {
 
         AnglePIDController.setSetpoint(Angle);
         double adjustmentval = AnglePIDController.calculate(currentangle);
-        m_Angle.set(adjustmentval);
+        // if (e_Angle.getPosition() >= constants.kShooterMaxAngle) {
+        //     adjustmentval = Math.min(0, adjustmentval);
+        // }
+        // if (e_Angle.getPosition() <= constants.kShooterMinAngle || m_limitSwitch.get()) {
+        //     adjustmentval = Math.max(0, adjustmentval);
+        // }
+        setAngleMotor(adjustmentval);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;
@@ -78,7 +87,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public void setAngleMotor(double power) {
-        m_Angle.set(power);
+        m_Angle.set(power-0.015);
     }
 
     public void setReverse(boolean isOn){
@@ -91,7 +100,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public double getAngle() {
-        return e_Angle.getPosition();
+        return e_Angle.getDistance()-constants.absAngleOffset;
     }
 
     public void stopAngle() {

@@ -47,6 +47,12 @@ public class ShooterFeeder extends SubsystemBase {
         else
             m_Feeder.set(constants.kShooterFeederSpeed);
     }
+    public void enableAmpFeeder() {
+        if(this.is_backward)
+            m_Feeder.set(-constants.kShooterFeederAmpSpeed);
+        else
+            m_Feeder.set(constants.kShooterFeederAmpSpeed);
+    }
     public void disableFeeder() {
         m_Feeder.set(0.0);
     }

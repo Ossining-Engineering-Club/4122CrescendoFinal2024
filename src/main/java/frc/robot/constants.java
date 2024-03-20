@@ -53,7 +53,7 @@ public final class constants {
     public static final double k_OdometryToleranceRot = 0.1;
     //breakbeam threshold and code in volts
     public static final double k_BreakbeamVoltageThreshold = 2.5;
-    public static final int k_BreakbeamSamplingWindow = 2;
+    public static final int k_BreakbeamSamplingWindow = 4;
 
     public static final double kMaxSpeed = 5.0292; // also remember to change in pathplanner
     public static final double kMaxAcceleration = 5.0292; // 4.441
@@ -136,7 +136,7 @@ public final class constants {
     public static final double kVisTurretToleranceRadians = 0.262;
     // Limelight
     public static final double kNoteLimelightForwardOffset = 0.41;
-    public static final double kNoteLimelightRightOffset = 0.25;
+    public static final double kNoteLimelightRightOffset = 0.23;
     public static final double kNoteLimelightYawOffset = 18.0; // deg
 
     // Intake
@@ -150,27 +150,31 @@ public final class constants {
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double[] kShooter1PIDGains = {0.000006, 0.0, 0.0};
-    public static final double[] kShooter2PIDGains = {0.000006, 0.0, 0.0};
-    public static final double[] kAnglePIDGains = {.8, 0.0, 0.0};
+    public static final double absAngleOffset = 47.3;
+    public static final double[] kShooter1PIDGains = {0.0015, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // bottom
+    public static final double[] kShooter2PIDGains = {0.0005, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // top
+    public static final double kShooter1StartingVoltage = 8.0;
+    public static final double kShooter2StartingVoltage = 8.0;
+    public static final double[] kAnglePIDGains = {.25, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
     public static final double kangleTolerance = 1.0;
-    public static final double kAngleRatio = 1.0 / 100.0 * 15.0 / 46.0 * 360.0;//18.0/48.0*90.0;
+    public static final double kAngleRatio = 15.0 / 46.0 * 360.0; //1.0 / 100.0 * 15.0 / 46.0 * 360.0;//18.0/48.0*90.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 4500.0;//3000.0;//5100.0;
     public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
     public static final double kShooterFeederSpeed = 0.4;
+    public static final double kShooterFeederAmpSpeed = 1.0;
     public static final double kStartAngle = 45.0;//in degrees
     public static final double kShooterMaxAngle = 48.0;//62.0;
-    public static final double kShooterMinAngle = 0.0;//21.9;
+    public static final double kShooterMinAngle = -30.0;//21.9;
     public static final double kShooterSpeakerVoltage = 8.0;
-    public static final double kShooterSubwooferAngle = 52.8;
-    public static final double kShooterPodiumAngle = 52.8;
+    public static final double kShooterSubwooferAngle = 45.0;
+    public static final double kShooterPodiumAngle = 23.2;
     public static final double kShooterAmpAngle = 52.8;
     public static final double kShooterFlywheelSpinUpTime = 1.5; // seconds
-    public static final double kPos1Or3ShooterAngle = 0.0;
+    public static final double kPos1Or3ShooterAngle = 45.0;
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;
@@ -179,6 +183,7 @@ public final class constants {
     public static final int kShooterBreakbeamPin = 0;
     public static final int kShooterAngleEncoderChannelA = 0;
     public static final int kShooterAngleEncoderChannelB = 1;
+    public static final int kShooterLimitSwitchPin = 0;
 
     //Elevator
     public static final double kElevatorGearing = 1.0;
