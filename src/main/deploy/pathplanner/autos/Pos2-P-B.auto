@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "TurretAlign"
+            "name": "StowShooter"
           }
         },
         {
@@ -24,9 +24,34 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StowShooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Pos2-B"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeNoteToShooter"
+                }
+              }
+            ]
           }
         },
         {

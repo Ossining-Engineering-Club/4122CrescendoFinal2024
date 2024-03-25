@@ -52,7 +52,7 @@ public final class constants {
     public static final double k_OdometryToleranceRot = 0.1;
     //breakbeam threshold and code in volts
     public static final double k_BreakbeamVoltageThreshold = 2.5;
-    public static final int k_BreakbeamSamplingWindow = 4;
+    public static final int k_BreakbeamSamplingWindow = 2;
 
     public static final double kMaxSpeed = 5.0292; // also remember to change in pathplanner
     public static final double kMaxAcceleration = 5.0292; // 4.441
@@ -132,7 +132,7 @@ public final class constants {
     public static final double[] kVisionTransPIDGains = {0.5, 0.0, 0.0}; // {kP, kI, kD}
     public static final double[] kVisionRotPIDGains = {1.0, 0.0, 0.0}; // {kP, kI, kD}
     public static final double[] kVisTurretPID = {1.0, 0.0, 0.0}; // {kP, kI, kD}
-    public static final double kVisTurretToleranceRadians = 0.262;
+    public static final double kVisTurretToleranceRadians = 0.05;
     // Limelight
     public static final double kNoteLimelightForwardOffset = 0.41;
     public static final double kNoteLimelightRightOffset = 0.23;
@@ -154,10 +154,10 @@ public final class constants {
     public static final double[] kShooter2PIDGains = {0.0005, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // top
     public static final double kShooter1StartingVoltage = 8.0;
     public static final double kShooter2StartingVoltage = 8.0;
-    public static final double[] kAnglePIDGains = {.25, 0.0, 0.0};
+    public static final double[] kAnglePIDGains = {.15, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
-    public static final double kangleTolerance = 1.0;
+    public static final double kangleTolerance = 0.5;
     public static final double kAngleRatio = 15.0 / 46.0 * 360.0; //1.0 / 100.0 * 15.0 / 46.0 * 360.0;//18.0/48.0*90.0;
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;

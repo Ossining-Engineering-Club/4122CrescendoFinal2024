@@ -76,6 +76,8 @@ public class Drivetrain extends SubsystemBase {
       //Gyro intialization process
       gyro = new PigeonIMU(gyroport);
 
+      gyro.setYaw(0);
+
       //initialize limelight variables
       this.m_shooterLimelight = shooterLimelight;
 
@@ -129,7 +131,7 @@ public class Drivetrain extends SubsystemBase {
     }
       SwerveModuleState[] states = kinematics.toSwerveModuleStates(
           fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                              xSpeed, ySpeed, rot, Rotation2d.fromDegrees(gyro.getYaw()))
+                              xSpeed, ySpeed, rot, getAngle()/*Rotation2d.fromDegrees(gyro.getYaw())*/)
                         : new ChassisSpeeds(xSpeed, ySpeed, rot));
     
       SwerveDriveKinematics.desaturateWheelSpeeds(states, constants.kMaxSpeed);

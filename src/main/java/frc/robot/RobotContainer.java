@@ -112,6 +112,9 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
+    m_driverController.a().onTrue(
+      Commands.runOnce(() -> m_robotDrive.resetPose(new Pose2d(0, 0, new Rotation2d(0)))));
+
     // manual angle control
     m_shooterPivot.setDefaultCommand(new ShooterManualAngleControl(
                                            m_shooterPivot,
@@ -160,6 +163,10 @@ public class RobotContainer {
     m_secondaryController.leftBumper().onFalse(Commands.runOnce(() -> m_shooterFeeder.setReverse(false), m_shooterFeeder));
 
     m_secondaryController.rightTrigger(0.9).whileTrue(new ReverseNote(m_intake, m_shooterFeeder, m_led));
+
+    // manual feeder
+    m_secondaryController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> m_shooterFeeder.enableFeeder()));
+    m_secondaryController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> m_shooterFeeder.disableFeeder()));
     
     // forwards/reverse
     // (new OECTrigger(() -> true))
@@ -198,6 +205,8 @@ public class RobotContainer {
           return new PathPlannerAuto("Pos2-P");
         case 3:
           return new PathPlannerAuto("Pos3-P");
+        case 4:
+          return new PathPlannerAuto("Pos2-P-B");
         case 15:
           return new PathPlannerAuto("Pos2-P-A-B-C");
         default:
