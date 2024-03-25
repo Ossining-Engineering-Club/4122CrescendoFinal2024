@@ -54,7 +54,8 @@ public class ShooterCommands {
 
         @Override
         public void execute() {
-            m_shooter.setAngle(m_shooter.getAngle()-m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
+            //m_shooter.setAngle(m_shooter.getAngle()-m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
+            m_shooter.setAngleMotor(-m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
         }
 
         @Override 

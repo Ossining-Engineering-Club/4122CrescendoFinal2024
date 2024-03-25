@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ClimberMoveTo;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.ShooterCommands;
@@ -62,10 +63,10 @@ public class RobotContainer {
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandXboxController m_secondaryController = new CommandXboxController(1);
 
-  private DigitalInput m_autoSwitch0 = new DigitalInput(constants.kAutoSwitch0Pin);
-  private DigitalInput m_autoSwitch1 = new DigitalInput(constants.kAutoSwitch1Pin);
-  private DigitalInput m_autoSwitch2 = new DigitalInput(constants.kAutoSwitch2Pin);
-  private DigitalInput m_autoSwitch3 = new DigitalInput(constants.kAutoSwitch3Pin);
+  // private DigitalInput m_autoSwitch0 = new DigitalInput(constants.kAutoSwitch0Pin);
+  // private DigitalInput m_autoSwitch1 = new DigitalInput(constants.kAutoSwitch1Pin);
+  // private DigitalInput m_autoSwitch2 = new DigitalInput(constants.kAutoSwitch2Pin);
+  // private DigitalInput m_autoSwitch3 = new DigitalInput(constants.kAutoSwitch3Pin);
 
   private Leds m_led = new Leds(constants.kPWMLedPin);
 
@@ -76,6 +77,8 @@ public class RobotContainer {
                                                           constants.kStartAngle,
                                                           true/*,
                                                           constants.kShooterLimitSwitchPin*/);
+
+  private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   // private Climber m_climber;
 
   // public State m_state;
@@ -167,15 +170,18 @@ public class RobotContainer {
     // manual feeder
     m_secondaryController.leftTrigger(0.9).onTrue(Commands.runOnce(() -> m_shooterFeeder.enableFeeder()));
     m_secondaryController.leftTrigger(0.9).onFalse(Commands.runOnce(() -> m_shooterFeeder.disableFeeder()));
-    
-    // forwards/reverse
-    // (new OECTrigger(() -> true))
-    //   .everyTimeItsTrue(
-    //     new ConditionalCommand(
-    //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(true); m_intake.setReverse(true);}),
-    //       Commands.runOnce(() -> {m_shooterFeeder.setReverse(false); m_intake.setReverse(false);}),
-    //       m_secondaryController.button(constants.kForwardsOrReverseButton)::getAsBoolean));
- 
+  }
+
+  public void configureAutos() {
+    m_autoChooser.setDefaultOption("Do Nothing", new PathPlannerAuto("Forward-Nothing"));
+    m_autoChooser.addOption("1P", new PathPlannerAuto("Pos1-P"));
+    m_autoChooser.addOption("2P", new PathPlannerAuto("Pos2-P"));
+    m_autoChooser.addOption("3P", new PathPlannerAuto("Pos3-P"));
+    m_autoChooser.addOption("2PB", new PathPlannerAuto("Pos2-P-B"));
+    m_autoChooser.addOption("2PABC", new PathPlannerAuto("Pos2-P-A-B-C"));
+    m_autoChooser.addOption("3PHG", new PathPlannerAuto("Pos3-P-H-G"));
+
+    SmartDashboard.putData(m_autoChooser);
   }
 
   /**
@@ -184,6 +190,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
     public Command getAutonomousCommand() {
+      return m_autoChooser.getSelected();
       //return new PathPlannerAuto("Pos2-P-A-B-C");
 
       // int val = 0b0;
@@ -191,27 +198,27 @@ public class RobotContainer {
       // val += (m_autoSwitch1.get() ? 1 : 0) << 1;
       // val += (m_autoSwitch2.get() ? 1 : 0) << 2;
       // val += (m_autoSwitch3.get() ? 1 : 0) << 3;
-      int val = (m_autoSwitch0.get() ? 1 : 0)
-            + 2*(m_autoSwitch1.get() ? 1 : 0)
-            + 4*(m_autoSwitch2.get() ? 1 : 0)
-            + 8*(m_autoSwitch3.get() ? 1 : 0);
+      // int val = (m_autoSwitch0.get() ? 1 : 0)
+      //       + 2*(m_autoSwitch1.get() ? 1 : 0)
+      //       + 4*(m_autoSwitch2.get() ? 1 : 0)
+      //       + 8*(m_autoSwitch3.get() ? 1 : 0);
 
-      switch (val) {
-        case 0:
-          return new PathPlannerAuto("Forward-Nothing");
-        case 1:
-          return new PathPlannerAuto("Pos1-P");
-        case 2:
-          return new PathPlannerAuto("Pos2-P");
-        case 3:
-          return new PathPlannerAuto("Pos3-P");
-        case 4:
-          return new PathPlannerAuto("Pos2-P-B");
-        case 15:
-          return new PathPlannerAuto("Pos2-P-A-B-C");
-        default:
-          return new PathPlannerAuto("Forward-Nothing");
-      }
+      // switch (val) {
+      //   case 0:
+      //     return new PathPlannerAuto("Forward-Nothing");
+      //   case 1:
+      //     return new PathPlannerAuto("Pos1-P");
+      //   case 2:
+      //     return new PathPlannerAuto("Pos2-P");
+      //   case 3:
+      //     return new PathPlannerAuto("Pos3-P");
+      //   case 4:
+      //     return new PathPlannerAuto("Pos2-P-B");
+      //   case 15:
+      //     return new PathPlannerAuto("Pos2-P-A-B-C");
+      //   default:
+      //     return new PathPlannerAuto("Forward-Nothing");
+      // }
 
       // if (val == 0b0000) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 0");});
       // else if (val == 0b0001) return Commands.runOnce(() -> {SmartDashboard.putString("auto", "auto 1");});
@@ -245,15 +252,15 @@ public class RobotContainer {
     }
 
     public void periodic() {
-      int val = (m_autoSwitch0.get() ? 1 : 0)
-            + 2*(m_autoSwitch1.get() ? 1 : 0)
-            + 4*(m_autoSwitch2.get() ? 1 : 0)
-            + 8*(m_autoSwitch3.get() ? 1 : 0);
-      SmartDashboard.putNumber("auto val", val);
-      SmartDashboard.putBoolean("auto switch 0", m_autoSwitch0.get());
-      SmartDashboard.putBoolean("auto switch 1", m_autoSwitch1.get());
-      SmartDashboard.putBoolean("auto switch 2", m_autoSwitch2.get());
-      SmartDashboard.putBoolean("auto switch 3", m_autoSwitch3.get());
+      // int val = (m_autoSwitch0.get() ? 1 : 0)
+      //       + 2*(m_autoSwitch1.get() ? 1 : 0)
+      //       + 4*(m_autoSwitch2.get() ? 1 : 0)
+      //       + 8*(m_autoSwitch3.get() ? 1 : 0);
+      // SmartDashboard.putNumber("auto val", val);
+      // SmartDashboard.putBoolean("auto switch 0", m_autoSwitch0.get());
+      // SmartDashboard.putBoolean("auto switch 1", m_autoSwitch1.get());
+      // SmartDashboard.putBoolean("auto switch 2", m_autoSwitch2.get());
+      // SmartDashboard.putBoolean("auto switch 3", m_autoSwitch3.get());
     }
     
 }

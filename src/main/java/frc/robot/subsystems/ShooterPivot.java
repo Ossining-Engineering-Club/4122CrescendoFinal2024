@@ -87,7 +87,7 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     public void setAngleMotor(double power) {
-        m_Angle.set(power-0.015);
+        m_Angle.set(power/*-0.015*/);
     }
 
     public void setReverse(boolean isOn){

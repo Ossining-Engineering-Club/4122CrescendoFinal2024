@@ -167,7 +167,7 @@ public final class constants {
     public static final double kShooterFeederAmpSpeed = 1.0;
     public static final double kStartAngle = 45.0;//in degrees
     public static final double kShooterMaxAngle = 48.0;//62.0;
-    public static final double kShooterMinAngle = -30.0;//21.9;
+    public static final double kShooterMinAngle = -60.0;//21.9;
     public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 45.0;
     public static final double kShooterPodiumAngle = 23.2;
