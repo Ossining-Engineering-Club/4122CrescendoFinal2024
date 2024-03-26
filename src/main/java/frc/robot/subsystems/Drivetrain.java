@@ -44,10 +44,11 @@ public class Drivetrain extends SubsystemBase {
   //Robot Dimensions 27,305 by 29,845 (in inches)
   //Positions defined from a top down view
   public Pose2d tempSetpoint;
-  private Translation2d frontLeftLocation = new Translation2d(0.275, 0.2275);
-  private Translation2d frontRightLocation = new Translation2d(0.275, -0.2275);
-  private Translation2d backLeftLocation = new Translation2d(-0.275, 0.2275);
-  private Translation2d backRightLocation = new Translation2d(-0.275, -0.2275);
+
+  private Translation2d frontLeftLocation = new Translation2d(0.2275, 0.275);
+  private Translation2d frontRightLocation = new Translation2d(0.2275, -0.275);
+  private Translation2d backLeftLocation = new Translation2d(-0.2275, 0.275);
+  private Translation2d backRightLocation = new Translation2d(-0.2275, -0.275);
 
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation); 
   public final PigeonIMU gyro;
@@ -304,13 +305,14 @@ public class Drivetrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Gyro Angle", gyro.getYaw());
 
-    // SmartDashboard.putNumber("front left abs", LFMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("front right abs", RFMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("back left abs", LBMod.GetAbsEncoderAngle());
-    // SmartDashboard.putNumber("back right abs", RBMod.GetAbsEncoderAngle());
+    SmartDashboard.putNumber("front left ", LFMod.GetCurrentAngle());
+    SmartDashboard.putNumber("front right ", RFMod.GetCurrentAngle());
+    SmartDashboard.putNumber("back left ", LBMod.GetCurrentAngle());
+    SmartDashboard.putNumber("back right ", RBMod.GetCurrentAngle());
     // SmartDashboard.putNumber("motor positionofamotoer", RBMod.m_Drive.getPosition().getValueAsDouble());
-    // SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
-    // SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
+    SmartDashboard.putNumber("x", SwerveOdometryGetPose().getX());
+    SmartDashboard.putNumber("displacement", Math.sqrt(Math.pow(SwerveOdometryGetPose().getX(), 2)+Math.pow(SwerveOdometryGetPose().getY(), 2)));
+    SmartDashboard.putNumber("y", SwerveOdometryGetPose().getY());
     // SmartDashboard.putNumber("rot deg", SwerveOdometryGetPose().getRotation().getDegrees());
 
     // SmartDashboard.putNumber("gyro angle", this.getAngle().getRadians());

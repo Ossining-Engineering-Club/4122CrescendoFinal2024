@@ -72,7 +72,11 @@ public class SwerveMod {
         return angle;
     }
     public double GetCurrentAngle(){
-        return e_Rotator.getPosition() + turningEncoderOffset;
+        
+        return wrapAngle(e_Rotator.getPosition() + turningEncoderOffset);
+    }
+    public double wrapAngle(double angle) {
+        return (angle+Math.PI)%(2*Math.PI)-Math.PI;
     }
     public void ResetEncoder(){
         turningEncoderOffset = this.GetAbsEncoderAngle();

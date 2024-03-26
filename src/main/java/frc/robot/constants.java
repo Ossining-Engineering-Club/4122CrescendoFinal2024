@@ -25,7 +25,7 @@ public final class constants {
     public static final double kBlueSpeakerY = 5.547868;
     //SwerveModule constants
     public static final double DrivingMotorGearRatio = (1.0/6.75);
-    public static final double WheelDiameterInMeters = 0.0967;
+    public static final double WheelDiameterInMeters = 0.0967;//0.09868;//0.12287;//0.0967;
     public static final double TurningMotorGearRatio = (7.0/150.0);
     public static final double k_DriveEncoderPosFactor = (DrivingMotorGearRatio * k_PI * WheelDiameterInMeters);
     public static final double k_DriveEncoderVelocityFactor = (k_DriveEncoderPosFactor / 60.0);
@@ -39,11 +39,11 @@ public final class constants {
     public static final double k_KRD = 0.00025;
     
     //Auto Translational PID
-    public static final double k_AutoXYP = 5.0;
-    public static final double k_AutoXYI = 0.0;
+    public static final double k_AutoXYP = 2.50;
+    public static final double k_AutoXYI = 0.00015;
     public static final double k_AutoXYD = 0.0;
     //Auto Rotational PID
-    public static final double k_AutoRotP = 5.0;
+    public static final double k_AutoRotP = 2.50;
     public static final double k_AutoRotI = 0.0;
     public static final double k_AutoRotD = 0.0;
     //Odometry at setpoint condition meters and radians
@@ -90,10 +90,10 @@ public final class constants {
     // public static final double k_LBZERO =(5.787710-1.57079632)-3.1415926535 + 0.006;
     //
     //Offset values for motor604388
-    public static final double k_RFZERO =2.141437-3.1415926535;//1.055379;
-    public static final double k_RBZERO =-1.6858448+3.1415926535;//0.777728-3.1415926535;
-    public static final double k_LFZERO =0.716369;//1.787;
-    public static final double k_LBZERO =-1.29467;//0.199418-3.1415926535;
+    public static final double k_RFZERO =-.9955535133; //2.141437-3.1415926535;//1.055379;
+    public static final double k_RBZERO =1.44807786; //-1.6858448+3.1415926535;//0.777728-3.1415926535;
+    public static final double k_LFZERO =.7209709703; //0.716369;//1.787;
+    public static final double k_LBZERO =-1.31157364; //-1.29467;//0.199418-3.1415926535;
 
     public static final double k_gyroOffset = -k_PI;
 
@@ -162,12 +162,12 @@ public final class constants {
     public static final double kShooterAngleMaxVelocity = 1.0;
     public static final double kShooterAngleMaxAcceleration = 1.0;
     public static final double kShooterDefaultRPM = 4500.0;//3000.0;//5100.0;
-    public static final double kShooterManualAngleControlSpeedMultiplier = 0.75;
+    public static final double kShooterManualAngleControlSpeedMultiplier = 0.25;
     public static final double kShooterFeederSpeed = 0.4;
     public static final double kShooterFeederAmpSpeed = 1.0;
     public static final double kStartAngle = 45.0;//in degrees
-    public static final double kShooterMaxAngle = 48.0;//62.0;
-    public static final double kShooterMinAngle = -60.0;//21.9;
+    public static final double kShooterMaxAngle = 45.0;//62.0;
+    public static final double kShooterMinAngle = 0.0;//-60.0;//21.9;
     public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 45.0;
     public static final double kShooterPodiumAngle = 23.2;

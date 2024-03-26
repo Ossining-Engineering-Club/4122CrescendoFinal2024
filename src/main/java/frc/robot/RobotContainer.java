@@ -97,6 +97,7 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+    configureAutos();
 
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
