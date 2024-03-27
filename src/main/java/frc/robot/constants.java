@@ -154,7 +154,7 @@ public final class constants {
     public static final double[] kShooter2PIDGains = {0.0005, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // top
     public static final double kShooter1StartingVoltage = 8.0;
     public static final double kShooter2StartingVoltage = 8.0;
-    public static final double[] kAnglePIDGains = {.15, 0.0, 0.0};
+    public static final double[] kAnglePIDGains = {.1, 0.0, 0.0};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
     public static final double kangleTolerance = 0.5;
@@ -167,13 +167,14 @@ public final class constants {
     public static final double kShooterFeederAmpSpeed = 1.0;
     public static final double kStartAngle = 45.0;//in degrees
     public static final double kShooterMaxAngle = 45.0;//62.0;
-    public static final double kShooterMinAngle = 0.0;//-60.0;//21.9;
+    public static final double kShooterMinAngle = -60.0;//0.0;//-60.0;//21.9;
     public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 45.0;
     public static final double kShooterPodiumAngle = 23.2;
-    public static final double kShooterAmpAngle = 52.8;
+    public static final double kShooterAmpAngle = -40.0;
     public static final double kShooterFlywheelSpinUpTime = 1.5; // seconds
     public static final double kPos1Or3ShooterAngle = 45.0;
+    public static final double kShooterClearAmpPivotAngle = 0.0;
     // Pins/CAN ids
     public static final int kShooterFlywheel1ID = 30;
     public static final int kShooterFlywheel2ID = 31;
@@ -192,6 +193,12 @@ public final class constants {
     public static final double kElevatorMaxAcceleration = 1.0;
     public static final double kElevatorHighDefault = 1.0;
     public static final double kElevatorManualAngleControlSpeedMultiplier = 0.1;
+
+    // Amp Pivot
+    public static final int kAmpPivotID = 35;
+    public static final double[] kAmpPivotPIDGains = {0.0055, 0.0, 0.0};
+    public static final double kAmpPivotTolerance = 3.0;
+    public static final double kAmpPivotAmpAngle = -141.7;
 
     // Led
     public static final int kPWMLedPin = 9;

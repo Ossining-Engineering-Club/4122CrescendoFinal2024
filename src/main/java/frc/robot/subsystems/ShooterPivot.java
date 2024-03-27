@@ -76,7 +76,7 @@ public class ShooterPivot extends SubsystemBase {
         // if (e_Angle.getPosition() <= constants.kShooterMinAngle || m_limitSwitch.get()) {
         //     adjustmentval = Math.max(0, adjustmentval);
         // }
-        setAngleMotor(adjustmentval);
+        setAngleMotor(adjustmentval-0.015);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;

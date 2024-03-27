@@ -11,8 +11,10 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import org.w3c.dom.NamedNodeMap;
 
@@ -32,6 +34,7 @@ import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretAlign;
 import frc.robot.commands.ShooterCommands.ShooterManualAngleControl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.AmpPivot;
 import frc.robot.subsystems.Breakbeam;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
@@ -47,6 +50,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Leds;
 import frc.robot.JoystickMath;
 import frc.robot.commands.AmpShoot;
+import frc.robot.commands.AngleAmpPivot;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
@@ -77,11 +81,12 @@ public class RobotContainer {
                                                           constants.kStartAngle,
                                                           true/*,
                                                           constants.kShooterLimitSwitchPin*/);
+  private AmpPivot m_ampPivot = new AmpPivot(constants.kAmpPivotID);
 
   private final SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   // private Climber m_climber;
 
-  // public State m_state;
+  private boolean m_isAmpModeOn = false;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -126,12 +131,13 @@ public class RobotContainer {
     
     // cancel everything
     m_secondaryController.povDown().onTrue(
-      Commands.runOnce(() -> {enabledInit();},
+      Commands.runOnce(() -> {clearAndStop();},
       m_robotDrive,
       m_intake,
       m_shooterFeeder,
       m_shooterFlywheels,
-      m_shooterPivot));
+      m_shooterPivot,
+      m_ampPivot));
 
     // go to note
     // m_secondaryController.a()
@@ -154,8 +160,22 @@ public class RobotContainer {
     m_secondaryController.x().onTrue(new AngleShooter(m_shooterPivot, constants.kShooterPodiumAngle));
     m_secondaryController.x().onTrue(Commands.runOnce(() -> m_shooterFlywheels.start(), m_shooterFlywheels));
 
-    // set shooter to amp angle
-    m_secondaryController.y().onTrue(new AngleShooter(m_shooterPivot, constants.kShooterAmpAngle));
+    // toggle shooter to amp angle
+    //m_secondaryController.y().onTrue(new AngleShooter(m_shooterPivot, constants.kShooterAmpAngle));
+    m_secondaryController.y().onTrue(Commands.runOnce(() -> m_isAmpModeOn = !m_isAmpModeOn));
+    (new Trigger(() -> m_isAmpModeOn)).onTrue(
+      new SequentialCommandGroup(
+        new ShooterCommands.AngleShooter(m_shooterPivot, constants.kShooterAmpAngle),
+        new AngleAmpPivot(m_ampPivot, constants.kAmpPivotAmpAngle)));
+
+    (new Trigger(() -> m_isAmpModeOn)).onFalse(
+      new SequentialCommandGroup(
+        new ConditionalCommand(
+          new ShooterCommands.AngleShooter(m_shooterPivot, constants.kShooterClearAmpPivotAngle),
+          Commands.runOnce(() -> {}),
+          () -> m_shooterPivot.getAngle() > constants.kShooterClearAmpPivotAngle),
+        new AngleAmpPivot(m_ampPivot, 0.0),
+        new ShooterCommands.AngleShooter(m_shooterPivot, constants.kStartAngle)));
 
     // speaker shot
     m_secondaryController.rightBumper().onTrue(new Shoot(m_shooterFlywheels, m_shooterFeeder, m_led)
@@ -247,6 +267,20 @@ public class RobotContainer {
       m_shooterFeeder.disableFeeder();
       m_intake.stop();
       m_shooterFeeder.setReverse(false);
+      m_ampPivot.stopMotor();
+      m_isAmpModeOn = false;
+
+      // Start robot with red LEDS
+      m_led.setRed(); 
+    }
+
+    public void clearAndStop() {
+      m_shooterPivot.m_Angle.set(0);
+      m_shooterFlywheels.stop();
+      m_shooterFeeder.disableFeeder();
+      m_intake.stop();
+      m_shooterFeeder.setReverse(false);
+      m_ampPivot.stopMotor();
 
       // Start robot with red LEDS
       m_led.setRed(); 
