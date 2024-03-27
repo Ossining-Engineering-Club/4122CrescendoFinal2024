@@ -39,11 +39,11 @@ public final class constants {
     public static final double k_KRD = 0.00025;
     
     //Auto Translational PID
-    public static final double k_AutoXYP = 2.50;
-    public static final double k_AutoXYI = 0.00015;
+    public static final double k_AutoXYP = 5.00;
+    public static final double k_AutoXYI = 0.0;//0.00015;
     public static final double k_AutoXYD = 0.0;
     //Auto Rotational PID
-    public static final double k_AutoRotP = 2.50;
+    public static final double k_AutoRotP = 5.00;
     public static final double k_AutoRotI = 0.0;
     public static final double k_AutoRotD = 0.0;
     //Odometry at setpoint condition meters and radians
