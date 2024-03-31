@@ -114,7 +114,7 @@ public class ShooterFlywheels extends SubsystemBase {
     public void start() {
         m_timer.start();
         //setFlywheelsVoltage(constants.kShooterSpeakerVoltage);
-        setRPM(4500.0);
+        setRPM(constants.kShooterDefaultRPM);
         integralBottom = 0.0;
         integralTop = 0.0;
         m_led.strobeWhite();

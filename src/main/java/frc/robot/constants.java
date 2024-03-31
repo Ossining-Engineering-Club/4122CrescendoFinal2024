@@ -43,7 +43,7 @@ public final class constants {
     public static final double k_AutoXYI = 0.0;//0.00015;
     public static final double k_AutoXYD = 0.0;
     //Auto Rotational PID
-    public static final double k_AutoRotP = 5.00;
+    public static final double k_AutoRotP = 8.00;
     public static final double k_AutoRotI = 0.0;
     public static final double k_AutoRotD = 0.0;
     //Odometry at setpoint condition meters and radians
@@ -149,12 +149,12 @@ public final class constants {
     public static final int kIntermediateMotorPower = 1;
 
     //Shooter 
-    public static final double absAngleOffset = 47.3;
+    public static final double absAngleOffset = 63.4;//47.3;
     public static final double[] kShooter1PIDGains = {0.0015, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // bottom
     public static final double[] kShooter2PIDGains = {0.0005, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // top
     public static final double kShooter1StartingVoltage = 8.0;
     public static final double kShooter2StartingVoltage = 8.0;
-    public static final double[] kAnglePIDGains = {.1, 0.0, 0.0};
+    public static final double[] kAnglePIDGains = {.1, 0.0, 0.00004};
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
     public static final double kangleTolerance = 0.5;

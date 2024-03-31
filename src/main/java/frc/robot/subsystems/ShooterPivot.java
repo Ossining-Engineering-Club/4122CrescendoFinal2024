@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycle;
@@ -76,7 +77,7 @@ public class ShooterPivot extends SubsystemBase {
         // if (e_Angle.getPosition() <= constants.kShooterMinAngle || m_limitSwitch.get()) {
         //     adjustmentval = Math.max(0, adjustmentval);
         // }
-        setAngleMotor(adjustmentval-0.015);
+        setAngleMotor(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;

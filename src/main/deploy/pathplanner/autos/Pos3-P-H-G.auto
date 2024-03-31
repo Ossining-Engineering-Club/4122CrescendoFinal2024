@@ -50,6 +50,12 @@
                       }
                     },
                     {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
+                      }
+                    },
+                    {
                       "type": "path",
                       "data": {
                         "pathName": "H-Pos3"
@@ -103,6 +109,12 @@
                       "type": "named",
                       "data": {
                         "name": "GoToNote"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.1
                       }
                     },
                     {
