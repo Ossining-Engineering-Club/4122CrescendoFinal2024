@@ -201,6 +201,7 @@ public class RobotContainer {
     m_autoChooser.addOption("2PB", new PathPlannerAuto("Pos2-P-B"));
     m_autoChooser.addOption("2PABC", new PathPlannerAuto("Pos2-P-A-B-C"));
     m_autoChooser.addOption("3PHG", new PathPlannerAuto("Pos3-P-H-G"));
+    m_autoChooser.addOption("3PH", new PathPlannerAuto("Pos3-P-H"));
 
     SmartDashboard.putData(m_autoChooser);
   }

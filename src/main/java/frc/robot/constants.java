@@ -39,7 +39,7 @@ public final class constants {
     public static final double k_KRD = 0.00025;
     
     //Auto Translational PID
-    public static final double k_AutoXYP = 5.00;
+    public static final double k_AutoXYP = 7.00;
     public static final double k_AutoXYI = 0.0;//0.00015;
     public static final double k_AutoXYD = 0.0;
     //Auto Rotational PID
