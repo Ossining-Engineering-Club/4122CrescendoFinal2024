@@ -77,7 +77,7 @@ public class ShooterPivot extends SubsystemBase {
         // if (e_Angle.getPosition() <= constants.kShooterMinAngle || m_limitSwitch.get()) {
         //     adjustmentval = Math.max(0, adjustmentval);
         // }
-        setAngleMotor(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
+        setAngleMotorVoltage(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;
@@ -89,6 +89,10 @@ public class ShooterPivot extends SubsystemBase {
 
     public void setAngleMotor(double power) {
         m_Angle.set(power/*-0.015*/);
+    }
+
+    public void setAngleMotorVoltage(double voltage) {
+        m_Angle.setVoltage(voltage);
     }
 
     public void setReverse(boolean isOn){
