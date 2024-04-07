@@ -28,7 +28,7 @@ public class ShooterCommands {
         }
         @Override
         public void execute() { //set position
-            this.isdone=m_shooter.setAngle(this.angle);
+            this.isdone=m_shooter.setAngle(this.angle, false);
         }
 
         @Override

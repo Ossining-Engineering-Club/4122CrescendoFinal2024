@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +24,7 @@ public class TurretAlign extends Command {
     private double m_GoalX;
     private double m_GoalY;
     private boolean m_isDone = false;
+    private final Timer m_timer = new Timer();
 
     private final ProfiledPIDController m_rotPIDController = new ProfiledPIDController(
         constants.kVisTurretPID[0],
@@ -45,6 +47,7 @@ public class TurretAlign extends Command {
     @Override
     public void initialize() {
         //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
+        m_timer.restart();
         m_isDone = false;
         m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
         if (constants.k_isRed){
@@ -82,11 +85,14 @@ public class TurretAlign extends Command {
         //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
         double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
         //SmartDashboard.putNumber("distance from speaker", distFromTarget);
-        m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+        m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget), true);
 
         //SmartDashboard.putNumber("turret rot error", Math.abs(rotPos-rotGoal));
 
-        if (Math.abs(rotPos-rotGoal) <= constants.kVisTurretToleranceRadians && m_shooter.isAngleReached()) {
+        if (Math.abs(rotPos-rotGoal) <= constants.kVisTurretToleranceRadians && m_shooter.isAngleReached(true)) {
+            m_isDone = true;
+        }
+        if (m_timer.get() >= constants.kTurretAlignTimeout) {
             m_isDone = true;
         }
     }

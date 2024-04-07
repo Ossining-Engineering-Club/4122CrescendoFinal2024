@@ -51,7 +51,7 @@ public class ShooterAngleAlignMode extends Command {
             //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
             double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
             SmartDashboard.putNumber("distance from speaker", distFromTarget);
-            m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget));
+            m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget), false);
 
         // }
         // else {

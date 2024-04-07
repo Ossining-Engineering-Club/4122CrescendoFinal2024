@@ -42,6 +42,10 @@ public class AmpPivot extends SubsystemBase {
         return Math.abs(e_pivot.getPosition() - m_pid.getSetpoint()) <= constants.kAmpPivotTolerance;
     }
 
+    public void setMotor(double speed) {
+        m_pivot.set(speed);
+    }
+
     public void stopMotor() {
         m_pivot.set(0);
     }

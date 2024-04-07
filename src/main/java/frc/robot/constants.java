@@ -154,7 +154,9 @@ public final class constants {
     public static final double[] kShooter2PIDGains = {0.0005, 0.0, 0.0};//{0.000003, 0.0, 0.0}; // top
     public static final double kShooter1StartingVoltage = 8.0;
     public static final double kShooter2StartingVoltage = 8.0;
-    public static final double[] kAnglePIDGains = {.8, 0.0, 0.0/*0.00004*/};
+    public static final double[] kAnglePIDGains = {.85/*.8*/, 0.0, 0.0/*0.00004*/};
+    public static final double[] kAutoAnglePIDGains = {.85/*.8*/, 0.0, 0.0/*0.00004*/};
+    public static final double kTurretAlignTimeout = 1.0;
     public static final double kShooterGearRatio = 1.0/1.0;
     public static final double kRPMTolerance = 150.0;
     public static final double kangleTolerance = 0.5;
@@ -171,7 +173,7 @@ public final class constants {
     public static final double kShooterSpeakerVoltage = 8.0;
     public static final double kShooterSubwooferAngle = 45.0;
     public static final double kShooterPodiumAngle = 23.2;
-    public static final double kShooterAmpAngle = -40.0;
+    public static final double kShooterAmpAngle = -42.0;///-40.0;
     public static final double kShooterFlywheelSpinUpTime = 1.5; // seconds
     public static final double kPos1Or3ShooterAngle = 45.0;
     public static final double kShooterClearAmpPivotAngle = 0.0;

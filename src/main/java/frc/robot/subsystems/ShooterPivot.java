@@ -32,6 +32,10 @@ public class ShooterPivot extends SubsystemBase {
                                                                 constants.kAnglePIDGains[1],
                                                                 constants.kAnglePIDGains[2]);
 
+    public PIDController AutoAnglePIDController = new PIDController(constants.kAutoAnglePIDGains[0],
+                                                                    constants.kAutoAnglePIDGains[1],
+                                                                    constants.kAutoAnglePIDGains[2]);
+
     public double v_startAngle = 58.0;
     private boolean is_backward;
 
@@ -57,27 +61,37 @@ public class ShooterPivot extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("shooter angle",this.getAngle());
         SmartDashboard.putNumber("pivot set speed", m_Angle.get());
-        // SmartDashboard.putNumber("shooter angle setpoint", AnglePIDController.getSetpoint());
+        SmartDashboard.putNumber("shooter angle setpoint", AnglePIDController.getSetpoint());
+        SmartDashboard.putNumber("auto shooter angle setpoint", AutoAnglePIDController.getSetpoint());
         Logger.recordOutput("ShooterAngle", this.getAngle());
     
     }
 
     //returns true if setpoint is reached false otherwise
-    public boolean setAngle(double Angle){
+    public boolean setAngle(double Angle, boolean isAuto){
         if (Angle < constants.kShooterMinAngle) Angle = constants.kShooterMinAngle;
         else if (Angle > constants.kShooterMaxAngle) Angle = constants.kShooterMaxAngle;
 
         double currentangle = getAngle();
-
-        AnglePIDController.setSetpoint(Angle);
-        double adjustmentval = AnglePIDController.calculate(currentangle);
+        
+        double adjustmentval;
+        if (isAuto) {
+            AutoAnglePIDController.setSetpoint(Angle);
+            adjustmentval = AutoAnglePIDController.calculate(currentangle);
+            setAngleMotorVoltage(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
+        }
+        else {
+            AnglePIDController.setSetpoint(Angle);
+            adjustmentval = AnglePIDController.calculate(currentangle);
+            setAngleMotorVoltage(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
+        }
         // if (e_Angle.getPosition() >= constants.kShooterMaxAngle) {
         //     adjustmentval = Math.min(0, adjustmentval);
         // }
         // if (e_Angle.getPosition() <= constants.kShooterMinAngle || m_limitSwitch.get()) {
         //     adjustmentval = Math.max(0, adjustmentval);
         // }
-        setAngleMotorVoltage(adjustmentval-0.026*Math.cos(Units.degreesToRadians(Angle))/*-0.015*/);
+        
 
         if(Math.abs(Angle-currentangle) < constants.kangleTolerance){
             return true;
@@ -100,8 +114,9 @@ public class ShooterPivot extends SubsystemBase {
     }
 
     //returns true if setpoint is reached false otherwise
-    public boolean isAngleReached() {
-        return Math.abs(AnglePIDController.getSetpoint()-getAngle()) < constants.kangleTolerance;
+    public boolean isAngleReached(boolean isAuto) {
+        if (isAuto) return Math.abs(AutoAnglePIDController.getSetpoint()-getAngle()) < constants.kangleTolerance;
+        else return Math.abs(AnglePIDController.getSetpoint()-getAngle()) < constants.kangleTolerance;
     }
 
     public double getAngle() {
