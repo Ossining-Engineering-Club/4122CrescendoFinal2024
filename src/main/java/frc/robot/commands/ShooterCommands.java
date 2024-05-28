@@ -6,18 +6,20 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Leds;
+import frc.robot.subsystems.ShooterPivot;
+import frc.robot.subsystems.ShooterFlywheels;
+import frc.robot.subsystems.ShooterFeeder;
 
 public class ShooterCommands {
 
-    // ONLY USE FOR TESTING
-    public class AngleShooter extends Command {
+    public static class AngleShooter extends Command {
 
-        private final Shooter m_shooter;
+        private final ShooterPivot m_shooter;
         private final double angle;
         private boolean isdone;
 
-        public AngleShooter(Shooter shooter, double angle) {
+        public AngleShooter(ShooterPivot shooter, double angle) {
             this.angle = angle;
             this.isdone = false;
             m_shooter = shooter;
@@ -26,7 +28,12 @@ public class ShooterCommands {
         }
         @Override
         public void execute() { //set position
-            this.isdone=m_shooter.setAngle(this.angle);
+            this.isdone=m_shooter.setAngle(this.angle, false);
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            m_shooter.setAngleMotor(0.0);
         }
 
         @Override 
@@ -36,10 +43,10 @@ public class ShooterCommands {
     }
 
     public static class ShooterManualAngleControl extends Command {
-        private final Shooter m_shooter;
+        private final ShooterPivot m_shooter;
         private final DoubleSupplier m_angleSupplier;
 
-        public ShooterManualAngleControl(Shooter shooter, DoubleSupplier angleSupplier) {
+        public ShooterManualAngleControl(ShooterPivot shooter, DoubleSupplier angleSupplier) {
             m_angleSupplier = angleSupplier;
             m_shooter = shooter;
             addRequirements(m_shooter);
@@ -47,7 +54,11 @@ public class ShooterCommands {
 
         @Override
         public void execute() {
-            m_shooter.setAngle(m_shooter.getAngle()+m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
+            //m_shooter.setAngle(m_shooter.getAngle()-m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier);
+            double output = -m_angleSupplier.getAsDouble()*constants.kShooterManualAngleControlSpeedMultiplier;
+            if (m_shooter.getAngle() <= constants.kShooterMinAngle) output = Math.max(output, 0);
+            if (m_shooter.getAngle() >= constants.kShooterMaxAngle) output = Math.min(output, 0);
+            m_shooter.setAngleMotor(output);
         }
 
         @Override 
@@ -56,45 +67,52 @@ public class ShooterCommands {
         }
     }
 
-    public static class SetShooterRPM extends Command {
-        public final Shooter m_shooter;
-        public final double m_RPM;
-
-        public SetShooterRPM(Shooter shooter, double RPM) {
-            m_shooter = shooter;
-            m_RPM = RPM;
-
-            addRequirements(m_shooter);
-        }
-
-        @Override
-        public void execute() {
-            if (m_RPM == 0.0) m_shooter.stopFlywheels();
-            else m_shooter.setRPM(m_RPM);
-        }
-
-        @Override 
-        public boolean isFinished(){
-            return m_shooter.isRPMReached();
-        }
-
-    }
-
-    // TO DO
-    // idk which motors are feeding
-    public static class FeedToShooter extends Command {
+    public static class FeedToFlywheels extends Command {
         
-        public final Shooter m_Shooter;
+        public final ShooterFeeder m_Shooter;
+        public final Leds m_Leds;
 
-        public FeedToShooter(Shooter shooter) {
+        public FeedToFlywheels(ShooterFeeder shooter, Leds leds) {
             m_Shooter = shooter;
+            m_Leds = leds;
 
             addRequirements(m_Shooter);
+            addRequirements(m_Leds);
         }
 
         @Override
-        public void execute() {
+        public void initialize() {
             m_Shooter.enableFeeder();
+            System.out.println("feeding to flywheels");
+        }
+
+        @Override
+        public boolean isFinished() {
+            return !m_Shooter.BBisTripped();
+        }
+
+        @Override
+        public void end(boolean isInterrupted) {
+            m_Leds.setRed();
+            m_Shooter.disableFeeder();
+        }
+    }
+
+    public static class SpinUpFlywheels extends Command {
+        public final ShooterFlywheels m_flywheels;
+
+        public SpinUpFlywheels(ShooterFlywheels shooterFlywheels) {
+            m_flywheels = shooterFlywheels;
+        }
+
+        @Override
+        public void initialize() {
+            m_flywheels.start();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return m_flywheels.isSpunUp();
         }
     }
 }

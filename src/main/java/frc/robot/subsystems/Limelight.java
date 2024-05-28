@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Limelight extends SubsystemBase {
     private final String m_name;
-    private double[] m_botpose = new double[7];
+    private double[] m_botpose = new double[11];
 
     public Limelight(String name) {
         m_name = name;
@@ -15,7 +15,7 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_botpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose_wpiblue").getDoubleArray(new double[7]);        
+        m_botpose = NetworkTableInstance.getDefault().getTable(m_name).getEntry("botpose_wpiblue").getDoubleArray(new double[11]);        
     }
 
     public boolean hasTarget() {
@@ -54,22 +54,24 @@ public class Limelight extends SubsystemBase {
         return m_botpose[6];
     }
 
+    public double getTagCount()  {
+        return m_botpose[7];
+    }
+
+    public double getTagSpan()  {
+        return m_botpose[8];
+    }
+
+    public double getAverageTagDistanceFromCamera()  {
+        return m_botpose[9];
+    }
+
+    public double getAverageTagArea()  {
+        return m_botpose[10];
+    }
+
     public Pose2d getBotPose() {
         return new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
-    }
-
-    public int getNumTargets() {
-        return countStringOccurrences(NetworkTableInstance.getDefault().getTable(m_name).getEntry("json").getString(""), "pts");
-    }
-
-    private int countStringOccurrences(String str, String substr) {
-        int occurrences = 0;
-        for (int i = 0; i < str.length()-substr.length()+1; i++) {
-            if (str.substring(i, i+substr.length()).equals(substr)) {
-                occurrences++;
-            }
-        }
-        return occurrences;
     }
 
     public double getTX() {

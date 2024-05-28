@@ -1,15 +1,18 @@
 {
-  "robotWidth": 0.88,
-  "robotLength": 0.91,
+  "robotWidth": 0.85,
+  "robotLength": 0.76,
   "holonomicMode": true,
   "pathFolders": [
     "Center Bottom Note Searching",
+    "New Folder",
     "Note Detection"
   ],
-  "autoFolders": [],
-  "defaultMaxVel": 2.0,
-  "defaultMaxAccel": 0.4,
+  "autoFolders": [
+    "New Folder"
+  ],
+  "defaultMaxVel": 5.0,
+  "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 566.66,
-  "defaultMaxAngAccel": 566.66,
-  "maxModuleSpeed": 4.441
+  "defaultMaxAngAccel": 400.0,
+  "maxModuleSpeed": 5.0292
 }
