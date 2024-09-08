@@ -96,8 +96,8 @@ public class Drivetrain extends SubsystemBase {
               RBMod.GetPosition()
             },
             new Pose2d(0, 0, new Rotation2d(0)),
-             constants.STATE_STANDARD_DEVIATIONS,
-            constants.VISION_MEASUREMENT_STANDARD_DEVIATIONS);
+              constants.STATE_STANDARD_DEVIATIONS,
+              constants.VISION_STANDARD_DEVIATIONS);
       
       // this.odometry = new SwerveDriveOdometry(
       //   kinematics,
@@ -133,7 +133,7 @@ public class Drivetrain extends SubsystemBase {
             return false;
           },this);
   }
-  public void Drive(double xSpeed,double ySpeed,double rot, boolean fieldRelative, boolean isJoystick){
+  public void Drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean isJoystick){
     if(isJoystick && constants.k_isRed){
       xSpeed = -xSpeed;
       ySpeed = -ySpeed;

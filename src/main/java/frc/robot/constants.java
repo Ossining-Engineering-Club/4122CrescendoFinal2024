@@ -4,17 +4,11 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -162,12 +156,6 @@ public final class constants {
     public static final double kNoteLimelightForwardOffset = 0.41;
     public static final double kNoteLimelightRightOffset = 0.23;
     public static final double kNoteLimelightYawOffset = 18.0; // deg
-    //photonvision
-    public static final double kAprilTagAmbiguityThreshold = 0.2;
-    public static final String kShooterCamName = "Arducam_OV9281_USB_Camera";
-    public static final Transform3d kRobotToShooterCam = new Transform3d(
-            new Translation3d(-0.09, -0.004, .4587), // x, y, z meters
-            new Rotation3d(0.0, Units.degreesToRadians(-7.0), Units.degreesToRadians(180.0))); // roll, pitch, yaw radians
 
     // Intake
     public static final double kIntakePower = 0.5;
@@ -273,11 +261,6 @@ public final class constants {
     public static final int kIntakeToShooterButton = 3;
     public static final int kShooterElevatorJoystickAxis = 0;
     public static final int kClimberJoystickAxis = 2;
-    
-    public static final double kSingleTagMaxDistance = 5.0;
-    // Pose estimator
-    public static final double[] kPoseEstimatorStateStdDevs = {0.1, 0.1, 0.1}; // {x meters, y meters, theta radians}
-    public static final double[] kPoseEstimatorVisionStdDevs = {5.0, 5.0, 5.0}; // {x meters, y meters, theta radians}
 
     // Go To Note
     public static final double kGoToNoteTimeout = 2.0; // seconds
@@ -289,41 +272,7 @@ public final class constants {
     public static final int kAutoSwitch2Pin = 5;
     public static final int kAutoSwitch3Pin = 6;
 
-    
-        /** Minimum target ambiguity. Targets with higher ambiguity will be discarded */
-        public static final double APRILTAG_AMBIGUITY_THRESHOLD = 0.2;
-        public static final double POSE_AMBIGUITY_SHIFTER = 0.2;
-        public static final double POSE_AMBIGUITY_MULTIPLIER = 4;
-        public static final double NOISY_DISTANCE_METERS = 2.5;
-        public static final double DISTANCE_WEIGHT = 7;
-        public static final int TAG_PRESENCE_WEIGHT = 10;
-
-        /**
-         * Standard deviations of model states. Increase these numbers to trust your
-         * model's state estimates less. This
-         * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then
-         * meters.
-         */
-        public static final Matrix<N3, N1> VISION_MEASUREMENT_STANDARD_DEVIATIONS = VecBuilder.fill(
-            // if these numbers are less than one, multiplying will do bad things
-            1, // x
-            1, // y
-            1 * Math.PI); // theta
-
-        /**
-         * Standard deviations of the vision measurements. Increase these numbers to
-         * trust global measurements from vision
-         * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and
-         * radians.
-         */
-        public static final Matrix<N3, N1> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(
-            // if these numbers are less than one, multiplying will do bad things
-            .1, // x
-            .1, // y
-            .1);
-
-        public static final Matrix<N3, N1> MULTI_TAG_STANDARD_DEVIATIONS = VecBuilder.fill(0.3, 0.3, 999999999.0/*3.14*/);
-        public static final Matrix<N3, N1> SINGLE_TAG_STANDARD_DEVIATIONS = VecBuilder.fill(1.5, 1.5, 999999999.0/*6.24*/);
-
-        public static final Matrix<N3, N1> IGNORE = VecBuilder.fill(999999999, 999999999, 999999999);
+    // pose estimator std devs
+    public static final Matrix<N3, N1> STATE_STANDARD_DEVIATIONS = VecBuilder.fill(.1, .1, .1); // {x meters, y meters, theta radians}
+    public static final Matrix<N3, N1> VISION_STANDARD_DEVIATIONS = VecBuilder.fill(.9, .9, .9); // this does nothing {x meters, y meters, theta radians}
 }
