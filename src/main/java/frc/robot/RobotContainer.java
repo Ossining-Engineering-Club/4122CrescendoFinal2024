@@ -64,7 +64,7 @@ public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
   private final Limelight m_noteLimelight = new Limelight("limelight-note");
   private final Vision vision = new Vision(VisionConstants.FRONT_CAMERA);
-  private final Drivetrain m_robotDrive = new Drivetrain(60, vision, m_shooterLimelight);
+  private final Drivetrain m_robotDrive = new Drivetrain(60, vision);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandXboxController m_secondaryController = new CommandXboxController(1);
 

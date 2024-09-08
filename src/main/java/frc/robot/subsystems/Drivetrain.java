@@ -38,7 +38,6 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.OECNavX;
-import frc.robot.subsystems.Photon;
 import frc.robot.subsystems.vision.Vision.PoseEstimate;
 
 public class Drivetrain extends SubsystemBase {
@@ -50,7 +49,6 @@ public class Drivetrain extends SubsystemBase {
   //Robot Dimensions 27,305 by 29,845 (in inches)
   //Positions defined from a top down view
   public Pose2d tempSetpoint;
-  private Photon cam =  new Photon(constants.kShooterCamName, constants.kRobotToShooterCam);
   private Translation2d frontLeftLocation = new Translation2d(0.2275, 0.275);
   private Translation2d frontRightLocation = new Translation2d(0.2275, -0.275);
   private Translation2d backLeftLocation = new Translation2d(-0.2275, 0.275);
@@ -62,17 +60,15 @@ public class Drivetrain extends SubsystemBase {
   Trajectory trajectory;
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
 
-  private final Limelight m_shooterLimelight;
   private final Vision vision;
 
-  private double v_prevShooterLLTimestamp = -1;
   public static boolean is_red;
   private Pose2d v_prevPose;
   private double v_xSpeed = 0; // m/s
   private double v_ySpeed = 0; // m/s
   private double v_rotSpeed = 0; // rad/s
 
-  public Drivetrain(int gyroport, Vision vision, Limelight shooterLimelight){
+  public Drivetrain(int gyroport, Vision vision){
       //Motor process:
       /*Decide front back, left and right and assign locations/module names accordingly
         Find the encoder offsets by reading the absolute encoders when all the wheels are lined up in a direction parallel to front
@@ -88,9 +84,6 @@ public class Drivetrain extends SubsystemBase {
 
       // pass in vision subsystem
       this.vision = vision;
-
-      //initialize limelight variables
-      this.m_shooterLimelight = shooterLimelight;
 
       //Odometry Initialization
       this.odometry =  new SwerveDrivePoseEstimator(
@@ -263,14 +256,6 @@ public class Drivetrain extends SubsystemBase {
   public Pose2d replaceRotWithGyro(Pose2d pose) {
     return new Pose2d(pose.getX(), pose.getY(), getAngle());
   }
-  private Matrix<N3, N1> confidenceCalculator(EstimatedRobotPose estimation) {
-    if (estimation.targetsUsed.size() >= 2) {
-      return constants.MULTI_TAG_STANDARD_DEVIATIONS;
-    }
-    else {
-      return constants.SINGLE_TAG_STANDARD_DEVIATIONS;
-    }
-  }
 
   public void updateEstimates(PoseEstimate... poses) {
     for (int i = 0; i < poses.length; i++) {
@@ -281,77 +266,11 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
-  public void updatePoseWithVision(Photon photon) {
-    photon.update();
-    EstimatedRobotPose estimatedRobotPose = photon.getLatestEstimatedPose();
-    if (estimatedRobotPose != null) {
-      var pose2d = estimatedRobotPose.estimatedPose.toPose2d();
-      odometry.addVisionMeasurement(pose2d, estimatedRobotPose.timestampSeconds,
-            confidenceCalculator(estimatedRobotPose));
-    }
-  }
-/* 
-  public void updatePoseEstimatorWithVisionBotPose(Limelight limelight) {
-    Pose2d visionBotPose = limelight.getBotPose();
-    // invalid LL data
-    if (doublesAreEqual(visionBotPose.getX(), 0.0)) {
-      SmartDashboard.putBoolean("vision measurement added?", false);
-      return;
-    }
-
-    // distance from current pose to vision estimated pose
-    double poseDifference = odometry.getEstimatedPosition().getTranslation()
-        .getDistance(visionBotPose.getTranslation());
-
-    if (limelight.hasTarget()) {
-      double xyStds;
-      double degStds;
-      // multiple targets detected
-      if (limelight.getTagCount() >= 2) {
-        xyStds = 0.5;
-        degStds = 6;
-      }
-      // 1 target with large area and close to estimated pose
-      else if (limelight.getTA() > 0.8 && poseDifference < 0.5) {
-        xyStds = 1.0;
-        degStds = 12;
-      }
-      // 1 target farther away and estimated pose is close
-      else if (limelight.getTA() > 0.1 && poseDifference < 0.3) {
-        xyStds = 2.0;
-        degStds = 30;
-      }
-      // conditions don't match to add a vision measurement
-      else {
-        SmartDashboard.putBoolean("vision measurement added?", false);
-        return;
-      }
-
-      SmartDashboard.putBoolean("vision measurement added?", true);
-      SmartDashboard.putNumber("xyStds", xyStds);
-      //SmartDashboard.putNumber("degStds", degStds);
-
-      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, 9999999));
-      odometry.addVisionMeasurement(visionBotPose, Timer.getFPGATimestamp() - limelight.getLatencyMilliseconds()/1000.0);
-    }
-    else {
-      SmartDashboard.putBoolean("vision measurement added?", false);
-    }
-  }
-*/
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     this.UpdateOdometry();
     m_field.setRobotPose(this.SwerveOdometryGetPose());
-
-    // adding vision measurements if the limelight has a target and it is a new measurement
-    // if (m_shooterLimelight.hasTarget() &&
-    //   !doublesAreEqual(Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0, v_prevShooterLLTimestamp)) {
-    //     odometry.addVisionMeasurement(replaceRotWithGyro(m_shooterLimelight.getBotPose()), Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0);
-    //     v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
-    // }
-    //updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
     
     // updating pose estimator with vision estimates
     updateEstimates(vision.getEstimatedGlobalPoses());
