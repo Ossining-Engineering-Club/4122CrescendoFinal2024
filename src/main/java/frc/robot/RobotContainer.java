@@ -15,9 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 import org.w3c.dom.NamedNodeMap;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -59,11 +57,14 @@ import frc.robot.commands.IntakeNoteToShooter;
 import frc.robot.commands.ShooterCommands.AngleShooter;
 import frc.robot.commands.GoToNoteAuto;
 import frc.robot.commands.ReverseNote;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 
 public class RobotContainer {
   private final Limelight m_shooterLimelight = new Limelight("limelight");
   private final Limelight m_noteLimelight = new Limelight("limelight-note");
-  private final Drivetrain m_robotDrive = new Drivetrain(60, m_shooterLimelight);
+  private final Vision vision = new Vision(VisionConstants.FRONT_CAMERA);
+  private final Drivetrain m_robotDrive = new Drivetrain(60, vision, m_shooterLimelight);
   CommandXboxController m_driverController = new CommandXboxController(0);
   CommandXboxController m_secondaryController = new CommandXboxController(1);
 
@@ -116,7 +117,6 @@ public class RobotContainer {
                     true,
                     true),
             m_robotDrive));
-
   }
 
   private void configureButtonBindings() {

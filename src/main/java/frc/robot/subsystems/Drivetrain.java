@@ -16,6 +16,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -33,10 +34,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.OECNavX;
 import frc.robot.subsystems.Photon;
+import frc.robot.subsystems.vision.Vision.PoseEstimate;
 
 public class Drivetrain extends SubsystemBase {
   private final Field2d m_field = new Field2d();
@@ -60,6 +63,7 @@ public class Drivetrain extends SubsystemBase {
   //String file = "D:/Temp Robotics/JavaSwerveDriveCommand-Imported/src/main/paths/output/Unnamed.wpilib.json";
 
   private final Limelight m_shooterLimelight;
+  private final Vision vision;
 
   private double v_prevShooterLLTimestamp = -1;
   public static boolean is_red;
@@ -68,7 +72,7 @@ public class Drivetrain extends SubsystemBase {
   private double v_ySpeed = 0; // m/s
   private double v_rotSpeed = 0; // rad/s
 
-  public Drivetrain(int gyroport, Limelight shooterLimelight){
+  public Drivetrain(int gyroport, Vision vision, Limelight shooterLimelight){
       //Motor process:
       /*Decide front back, left and right and assign locations/module names accordingly
         Find the encoder offsets by reading the absolute encoders when all the wheels are lined up in a direction parallel to front
@@ -81,6 +85,9 @@ public class Drivetrain extends SubsystemBase {
       gyro = new PigeonIMU(gyroport);
      
       gyro.setYaw(0);
+
+      // pass in vision subsystem
+      this.vision = vision;
 
       //initialize limelight variables
       this.m_shooterLimelight = shooterLimelight;
@@ -265,6 +272,15 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  public void updateEstimates(PoseEstimate... poses) {
+    for (int i = 0; i < poses.length; i++) {
+      odometry.addVisionMeasurement(
+          poses[i].estimatedPose().estimatedPose.toPose2d(),
+          poses[i].estimatedPose().timestampSeconds,
+          poses[i].standardDev());
+    }
+  }
+
   public void updatePoseWithVision(Photon photon) {
     photon.update();
     EstimatedRobotPose estimatedRobotPose = photon.getLatestEstimatedPose();
@@ -336,6 +352,9 @@ public class Drivetrain extends SubsystemBase {
     //     v_prevShooterLLTimestamp = Timer.getFPGATimestamp()-m_shooterLimelight.getLatencyMilliseconds()/1000.0;      
     // }
     //updatePoseEstimatorWithVisionBotPose(m_shooterLimelight);
+    
+    // updating pose estimator with vision estimates
+    updateEstimates(vision.getEstimatedGlobalPoses());
 
     // updating robot speeds
     v_xSpeed = (SwerveOdometryGetPose().getX()-v_prevPose.getX())/0.02;
