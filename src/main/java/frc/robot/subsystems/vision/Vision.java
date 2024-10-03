@@ -3,15 +3,18 @@ package frc.robot.subsystems.vision;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -46,9 +49,16 @@ public class Vision extends SubsystemBase {
 
     public PoseEstimate[] getEstimatedGlobalPoses() {
         List<PoseEstimate> estimates = new ArrayList<>();
+        List<Pose3d> detectedTagPoses = new ArrayList<>();
         for (int i = 0; i < estimators.length; i++) {
             var result = cameras[i].getLatestResult();
             var optionalEstimate = estimators[i].update(result);
+
+            // adding detected tags to list to be logged
+            for (PhotonTrackedTarget tag : result.getTargets()) {
+                VisionConstants.TAG_LAYOUT.getTagPose(tag.getFiducialId())
+                    .ifPresent((tagPose) -> detectedTagPoses.add(tagPose)); // if there's a pose, add it to the list
+            }
 
             if (optionalEstimate.isPresent()) {
                 var estimate = optionalEstimate.get();
@@ -65,6 +75,9 @@ public class Vision extends SubsystemBase {
                     new PoseEstimate(estimate, getEstimationStdDevs(estimate.estimatedPose.toPose2d(), result)));
             }
         }
+        // logging detected tags
+        Logger.recordOutput("Detected Tag Poses", detectedTagPoses.toArray(Pose3d[]::new));
+        
         return estimates.toArray(PoseEstimate[]::new);
     }
 
