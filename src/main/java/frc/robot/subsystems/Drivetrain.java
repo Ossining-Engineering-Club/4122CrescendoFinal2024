@@ -259,6 +259,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void updateEstimates(PoseEstimate... poses) {
     for (int i = 0; i < poses.length; i++) {
+      Logger.recordOutput("Raw Vision", poses[i].estimatedPose().estimatedPose.toPose2d());
+      Logger.recordOutput("Vision Timestamp", poses[i].estimatedPose().timestampSeconds);
+      Logger.recordOutput("Vision Std Dev", poses[i].standardDev().get(0, 0));
       odometry.addVisionMeasurement(
           poses[i].estimatedPose().estimatedPose.toPose2d(),
           poses[i].estimatedPose().timestampSeconds,
