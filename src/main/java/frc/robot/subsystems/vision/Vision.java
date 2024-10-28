@@ -67,9 +67,9 @@ public class Vision extends SubsystemBase {
                 if (!(estimate.estimatedPose.getX() > 0.0 && estimate.estimatedPose.getX() <= constants.kFieldLengthMeters &&
                     estimate.estimatedPose.getY() > 0.0 && estimate.estimatedPose.getY() <= constants.kFieldWidthMeters)) continue;
                 // don't use if estimate is too high, or too tilted
-                if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
-                if (Math.abs(estimate.estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE) continue;
-                if (Math.abs(estimate.estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE) continue;
+                // if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
+                // if (Math.abs(estimate.estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE) continue;
+                // if (Math.abs(estimate.estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE) continue;
 
                 estimates.add(
                     new PoseEstimate(estimate, getEstimationStdDevs(estimate.estimatedPose.toPose2d(), result)));
@@ -101,7 +101,7 @@ public class Vision extends SubsystemBase {
         // decrease std devs if multiple targets are visible
         if (numTags > 1) estStdDevs = VisionConstants.MULTIPLE_TAG_STD_DEVS;
         // increase std devs based on (average) distance
-        if (numTags == 1 && avgDist > 4) estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+        if (numTags == 1 && avgDist > 7) estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
 
         if (VisionConstants.IGNORE_YAW) estStdDevs.set(2, 0, Double.MAX_VALUE);
