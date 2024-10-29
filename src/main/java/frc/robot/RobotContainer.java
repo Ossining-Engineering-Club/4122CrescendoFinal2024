@@ -111,9 +111,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                    0.25*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                    0.25*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                    0.25*JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
                     true,
                     true),
             m_robotDrive));
@@ -203,6 +203,7 @@ public class RobotContainer {
     m_autoChooser.addOption("3PHG", new PathPlannerAuto("Pos3-P-H-G"));
     m_autoChooser.addOption("3PH", new PathPlannerAuto("Pos3-P-H"));
     m_autoChooser.addOption("VisionTest", new PathPlannerAuto("VisionTest"));
+    m_autoChooser.addOption("VisionTest2", new PathPlannerAuto("VisionTest2"));
 
     SmartDashboard.putData(m_autoChooser);
   }

@@ -67,9 +67,9 @@ public class Vision extends SubsystemBase {
                 if (!(estimate.estimatedPose.getX() > 0.0 && estimate.estimatedPose.getX() <= constants.kFieldLengthMeters &&
                     estimate.estimatedPose.getY() > 0.0 && estimate.estimatedPose.getY() <= constants.kFieldWidthMeters)) continue;
                 // don't use if estimate is too high, or too tilted
-                // if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
-                // if (Math.abs(estimate.estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE) continue;
-                // if (Math.abs(estimate.estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE) continue;
+                if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.MAX_HEIGHT) continue;
+                if (Math.abs(estimate.estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE) continue;
+                if (Math.abs(estimate.estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE) continue;
 
                 estimates.add(
                     new PoseEstimate(estimate, getEstimationStdDevs(estimate.estimatedPose.toPose2d(), result)));
