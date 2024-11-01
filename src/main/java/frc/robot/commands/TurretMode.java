@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -14,16 +13,25 @@ import java.util.function.DoubleSupplier;
 import frc.robot.constants;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.ShooterFlywheels;
 import frc.robot.subsystems.ShooterPivot;
+
 import java.lang.Math;
 
-public class TurretAlign extends Command {
+public class TurretMode extends Command {
     private final Drivetrain m_drive;
-    private final ShooterPivot m_shooter;
+    private final ShooterFlywheels m_flywheels;
+    private final ShooterPivot m_pivot;
+    private final DoubleSupplier m_StickX;
+    private final DoubleSupplier m_StickY;
+    private final DoubleSupplier m_StickYaw;
     private double m_GoalX;
     private double m_GoalY;
-    private boolean m_isDone = false;
-    private final Timer m_timer = new Timer();
+
+    // Slew rate limiters to cap the max acceleration of the inputs (joysticks) which makes them smoother
+    private final SlewRateLimiter m_xSpeedLimiter = new SlewRateLimiter(constants.kMaxAcceleration);
+    private final SlewRateLimiter m_ySpeedLimiter = new SlewRateLimiter(constants.kMaxAcceleration);
+    private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(constants.kMaxAngularAcceleration);
 
     private final ProfiledPIDController m_rotPIDController = new ProfiledPIDController(
         constants.kVisTurretPID[0],
@@ -32,21 +40,23 @@ public class TurretAlign extends Command {
         new TrapezoidProfile.Constraints(constants.kMaxAngularSpeed, constants.kMaxAngularAcceleration)
     );
 
-    public TurretAlign(Drivetrain drive, ShooterPivot shooter) {
+    public TurretMode(Drivetrain drive, ShooterFlywheels flywheels, ShooterPivot pivot, DoubleSupplier stickx, DoubleSupplier sticky, DoubleSupplier stickyaw) {
         m_drive = drive;
-        m_shooter = shooter;
+        m_flywheels = flywheels;
+        m_pivot = pivot;
+        m_StickX = stickx;
+        m_StickY = sticky;
+        m_StickYaw = stickyaw;
 
-        addRequirements(m_drive, m_shooter);
+        addRequirements(m_drive, m_flywheels, m_pivot);
 
         m_rotPIDController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
     public void initialize() {
-        //m_rotPIDController.reset(m_limelight.getBotYaw()/180*Math.PI);
-        m_timer.restart();
-        m_isDone = false;
         m_rotPIDController.reset(m_drive.SwerveOdometryGetPose().getRotation().getRadians());
+
         if (constants.k_isRed){
             m_GoalX = constants.kRedSpeakerX;
             m_GoalY = constants.kRedSpeakerY;
@@ -54,60 +64,47 @@ public class TurretAlign extends Command {
             m_GoalX = constants.kBlueSpeakerX;
             m_GoalY = constants.kBlueSpeakerY;            
         }
-
-        // turn on the shooter
-        //m_shooter.setRPM(constants.kShooterDefaultRPM);
     }
 
     @Override
     public void execute() {
+        final double xSpeed = m_StickX.getAsDouble();
+        final double ySpeed = m_StickY.getAsDouble();
+        final double rotation = m_StickYaw.getAsDouble();
+
+        // turn on the shooter
+        //m_flywheels.setRPM(constants.kShooterDefaultRPM);
+        
         Pose2d robotPose = m_drive.SwerveOdometryGetPose();
-        //double rotPos = m_limelight.getBotYaw()/180*Math.PI;
-        //double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - m_limelight.getBotY()), (m_GoalX - m_limelight.getBotX())));
         double rotPos = robotPose.getRotation().getRadians();
         double rotGoal = wrapAngle(Math.PI+Math.atan2((m_GoalY - robotPose.getY()), (m_GoalX - robotPose.getX())));
 
-        // SmartDashboard.putNumber("rotPos", rotPos);
-        // SmartDashboard.putNumber("rotGoal", rotGoal);
+        SmartDashboard.putNumber("rotPos", rotPos);
+        SmartDashboard.putNumber("rotGoal", rotGoal);
 
         if (Math.abs(rotPos-rotGoal) < constants.kVisTurretToleranceRadians) rotPos = rotGoal;
 
         m_rotPIDController.setGoal(rotGoal);
         double rotSpeed = MathUtil.clamp(m_rotPIDController.calculate(rotPos)+m_rotPIDController.getSetpoint().velocity, -constants.kMaxAngularSpeed, constants.kMaxAngularSpeed);
-        //SmartDashboard.putNumber("rotSpeed", rotSpeed);
+        SmartDashboard.putNumber("rotSpeed", rotSpeed);
         
-        m_drive.Drive(0.0, 0.0, rotSpeed, true, true);
+        m_drive.Drive(xSpeed, ySpeed, rotSpeed, true, true);
 
         // setting shooter angle
-        //double distFromTarget = Math.sqrt(Math.pow(m_GoalX - m_limelight.getBotX(), 2) + Math.pow(m_GoalY - m_limelight.getBotY(), 2));
         double distFromTarget = Math.sqrt(Math.pow(m_GoalX - robotPose.getX(), 2) + Math.pow(m_GoalY - robotPose.getY(), 2));
-        //SmartDashboard.putNumber("distance from speaker", distFromTarget);
-        m_shooter.setAngle(convertDistanceToShooterAngle(distFromTarget), true);
-
-        //SmartDashboard.putNumber("turret rot error", Math.abs(rotPos-rotGoal));
-
-        if (Math.abs(rotPos-rotGoal) <= constants.kVisTurretToleranceRadians && m_shooter.isAngleReached(true)) {
-            m_isDone = true;
-        }
-        if (m_timer.get() >= constants.kTurretAlignTimeout) {
-            m_isDone = true;
-        }
+        SmartDashboard.putNumber("distance from speaker", distFromTarget);
+        m_pivot.setAngle(convertDistanceToShooterAngle(distFromTarget), false);
     }
 
     @Override
     public void end(boolean interrupted) {
         m_drive.Drive(0.0, 0.0, 0.0, true, true);
-        m_shooter.stopAngle();
+        m_pivot.stopAngle();
     }
 
-    @Override
-    public boolean isFinished() {
-        return m_isDone;
-    }
-
+    // TO DO
     public double convertDistanceToShooterAngle(double dist) {
         //return 3.1574 * Math.pow(dist,2) - 28.635*dist + 84.562;
-        //return 17.451*Math.pow(dist, 2) - 80.608*dist + 120.3;
         return 4.5255*Math.pow(dist, 2) - 33.4663*dist + 82.7279;
     }
 

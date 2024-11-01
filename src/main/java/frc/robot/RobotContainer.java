@@ -30,6 +30,7 @@ import frc.robot.commands.ClimberMoveTo;
 import frc.robot.commands.GoToNote;
 import frc.robot.commands.ShooterCommands;
 import frc.robot.commands.TurretAlign;
+import frc.robot.commands.TurretMode;
 import frc.robot.commands.ShooterCommands.ShooterManualAngleControl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.AmpPivot;
@@ -49,6 +50,7 @@ import frc.robot.subsystems.Leds;
 import frc.robot.JoystickMath;
 import frc.robot.commands.AmpShoot;
 import frc.robot.commands.AngleAmpPivot;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.ClimberManualControl;
 import frc.robot.commands.GoToAndIntakeNote;
 import frc.robot.commands.Shoot;
@@ -93,7 +95,7 @@ public class RobotContainer {
   public RobotContainer() {
     NamedCommands.registerCommand("GoToNote", new GoToNoteAuto(m_robotDrive, m_intake));
     NamedCommands.registerCommand("Shoot", new ShootAuto(m_shooterFlywheels, m_shooterFeeder, m_led));
-    NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooterPivot, m_shooterLimelight));
+    NamedCommands.registerCommand("TurretAlign", new TurretAlign(m_robotDrive, m_shooterPivot));
     NamedCommands.registerCommand("IntakeNoteToShooter", new IntakeNoteToShooter(m_intake, m_shooterFeeder, m_led));
     NamedCommands.registerCommand("Pos1Or3AngleShooter", new AngleShooter(m_shooterPivot, constants.kPos1Or3ShooterAngle));
     NamedCommands.registerCommand("StowShooter", new AngleShooter(m_shooterPivot, constants.kStartAngle));
@@ -111,9 +113,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    0.25*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
-                    0.25*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
-                    0.25*JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
                     true,
                     true),
             m_robotDrive));
@@ -123,6 +125,25 @@ public class RobotContainer {
 
     m_driverController.a().onTrue(
       Commands.runOnce(() -> m_robotDrive.resetPose(new Pose2d(0, 0, new Rotation2d(0)))));
+
+    // TurretMode/AutoShoot
+    m_driverController.rightBumper().onTrue(new AutoShoot(m_robotDrive, m_shooterFlywheels, m_shooterPivot, m_shooterFeeder, m_led));
+    m_driverController.leftBumper().whileTrue(new TurretMode(
+      m_robotDrive,
+      m_shooterFlywheels,
+      m_shooterPivot,
+      () -> JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+      () -> JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+      () -> JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1)));
+
+    m_driverController.povDown().onTrue(
+      Commands.runOnce(() -> {clearAndStop();},
+      m_robotDrive,
+      m_intake,
+      m_shooterFeeder,
+      m_shooterFlywheels,
+      m_shooterPivot,
+      m_ampPivot));
 
     // manual angle control
     m_shooterPivot.setDefaultCommand(new ShooterManualAngleControl(

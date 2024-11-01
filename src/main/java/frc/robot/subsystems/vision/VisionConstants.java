@@ -24,7 +24,7 @@ public class VisionConstants {
             "Arducam_OV9281_USB_Camera",
             new Transform3d(
                 new Translation3d(-0.09, -0.004, .4587), // x, y, z meters
-                new Rotation3d(0.0, Units.degreesToRadians(-7.0/*-5.1-(-1.0)*/), Units.degreesToRadians(180.0)))); // roll, pitch, yaw radians
+                new Rotation3d(0.0, Units.degreesToRadians(/*-7.0*/-5.1-(-1.0)), Units.degreesToRadians(180.0)))); // roll, pitch, yaw radians
 
   public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(1.5, 1.5, 7);
   public static final Matrix<N3, N1> MULTIPLE_TAG_STD_DEVS = VecBuilder.fill(0.3, 0.3, 4);

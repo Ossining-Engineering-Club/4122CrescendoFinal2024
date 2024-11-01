@@ -87,6 +87,9 @@ public class SwerveMod {
     public void SetDesiredState(SwerveModuleState state) {
         if(Math.abs(state.speedMetersPerSecond) > 0.01){
             SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(this.GetCurrentAngle()));
+
+            // cosineScale
+            optimizedState.speedMetersPerSecond *= Math.cos(GetCurrentAngle()-optimizedState.angle.getRadians());
             
             double turningVal = turningPIDController.calculate(this.GetCurrentAngle(), 
                                                                optimizedState.angle.getRadians());

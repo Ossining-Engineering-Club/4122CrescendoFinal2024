@@ -75,7 +75,7 @@ public final class constants {
     public static final double ShelfGamma = -193.466797;
 
 
-    public static final double kControllerDeadband = 0.12;
+    public static final double kControllerDeadband = 0.06;
     // public static final double ShelfAlpha 8.500027
     // public static final double ShelfBeta -98.335808
     // public static final double ShelfGamma -178.277390
