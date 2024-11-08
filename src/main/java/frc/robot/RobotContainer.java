@@ -113,9 +113,9 @@ public class RobotContainer {
         new RunCommand(
             () -> 
                 m_robotDrive.Drive(
-                    JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
-                    JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
+                    0.3*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+                    0.3*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+                    0.6*JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1),
                     true,
                     true),
             m_robotDrive));
@@ -127,23 +127,23 @@ public class RobotContainer {
       Commands.runOnce(() -> m_robotDrive.resetPose(new Pose2d(0, 0, new Rotation2d(0)))));
 
     // TurretMode/AutoShoot
-    m_driverController.rightBumper().onTrue(new AutoShoot(m_robotDrive, m_shooterFlywheels, m_shooterPivot, m_shooterFeeder, m_led));
-    m_driverController.leftBumper().whileTrue(new TurretMode(
-      m_robotDrive,
-      m_shooterFlywheels,
-      m_shooterPivot,
-      () -> JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
-      () -> JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
-      () -> JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1)));
+    // m_driverController.rightBumper().onTrue(new AutoShoot(m_robotDrive, m_shooterFlywheels, m_shooterPivot, m_shooterFeeder, m_led));
+    // m_driverController.leftBumper().whileTrue(new TurretMode(
+    //   m_robotDrive,
+    //   m_shooterFlywheels,
+    //   m_shooterPivot,
+    //   () -> 0.3*JoystickMath.convert(m_driverController.getLeftY(), 2, 0.0, 1),
+    //   () -> 0.3*JoystickMath.convert(m_driverController.getLeftX(), 2, 0.0, 1),
+    //   () -> 0.6*JoystickMath.convert(m_driverController.getRightX(), 2, 0.0, 1)));
 
-    m_driverController.povDown().onTrue(
-      Commands.runOnce(() -> {clearAndStop();},
-      m_robotDrive,
-      m_intake,
-      m_shooterFeeder,
-      m_shooterFlywheels,
-      m_shooterPivot,
-      m_ampPivot));
+    // m_driverController.povDown().onTrue(
+    //   Commands.runOnce(() -> {clearAndStop();},
+    //   m_robotDrive,
+    //   m_intake,
+    //   m_shooterFeeder,
+    //   m_shooterFlywheels,
+    //   m_shooterPivot,
+    //   m_ampPivot));
 
     // manual angle control
     m_shooterPivot.setDefaultCommand(new ShooterManualAngleControl(

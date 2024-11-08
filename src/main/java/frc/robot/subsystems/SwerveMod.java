@@ -106,4 +106,31 @@ public class SwerveMod {
             m_Rotator.set(0.0);
         }
     }
+
+    public void driveAtVoltage(SwerveModuleState state) {
+        if(Math.abs(state.speedMetersPerSecond) > 0.01){
+            SwerveModuleState optimizedState = SwerveModuleState.optimize(state, new Rotation2d(this.GetCurrentAngle()));
+
+            // cosineScale
+            optimizedState.speedMetersPerSecond *= Math.cos(GetCurrentAngle()-optimizedState.angle.getRadians());
+            
+            double turningVal = turningPIDController.calculate(this.GetCurrentAngle(), 
+                                                               optimizedState.angle.getRadians());
+            
+            if(turningVal > 1.0) turningVal = 1.0;
+            else if(turningVal < -1.0) turningVal = -1.0;
+    
+    
+            m_Drive.setVoltage(optimizedState.speedMetersPerSecond); //Change to variable later
+            m_Rotator.set(turningVal);
+        }
+        else{
+            m_Drive.set(0.0);
+            m_Rotator.set(0.0);
+        }
+    }
+
+    public double getDriveVoltage() {
+        return m_Drive.getMotorVoltage().getValueAsDouble();
+    }
 }

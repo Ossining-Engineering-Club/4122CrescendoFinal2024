@@ -5,6 +5,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import static edu.wpi.first.units.Units.Volts;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.units.Velocity;
+
 import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
@@ -15,6 +19,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.units.Time;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -24,6 +29,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Time;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -31,9 +38,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.constants;
 import frc.robot.subsystems.Limelight;
@@ -67,6 +77,10 @@ public class Drivetrain extends SubsystemBase {
   private double v_xSpeed = 0; // m/s
   private double v_ySpeed = 0; // m/s
   private double v_rotSpeed = 0; // rad/s
+
+  //private final SysIdRoutine translationCharacterization;
+
+  //private final MutVoltage
 
   public Drivetrain(int gyroport, Vision vision){
       //Motor process:
@@ -111,6 +125,35 @@ public class Drivetrain extends SubsystemBase {
       //   );
 
       v_prevPose = SwerveOdometryGetPose();
+
+      // translationCharacterization =
+      //   new SysIdRoutine(
+      //       //new SysIdRoutine.Config(new Measure<Velocity<Voltage>>(1), new Measure<Voltage>(7), Measure<Time>(0)),
+      //       new SysIdRoutine.Config(),
+      //       new SysIdRoutine.Mechanism(
+      //           volts -> {
+      //             RFMod.SetDesiredState(new SwerveModuleState(volts.in(Volts), new Rotation2d(0)));
+      //             RBMod.SetDesiredState(new SwerveModuleState(volts.in(Volts), new Rotation2d(0)));
+      //             LBMod.SetDesiredState(new SwerveModuleState(volts.in(Volts), new Rotation2d(0)));
+      //             LFMod.SetDesiredState(new SwerveModuleState(volts.in(Volts), new Rotation2d(0)));
+      //           },
+      //           log -> {
+      //             log.motor("drive-left")
+      //               .voltage(new Measure(Voltage)))
+      //           },
+      //           this,
+      //           "translation"));
+
+      // SmartDashboard.putData(
+      //   "translation quasistatic forward",
+      //   translationCharacterization.quasistatic(Direction.kForward));
+      // SmartDashboard.putData(
+      //     "translation dynamic forward", translationCharacterization.dynamic(Direction.kForward));
+      // SmartDashboard.putData(
+      //     "translation quasistatic backward",
+      //     translationCharacterization.quasistatic(Direction.kReverse));
+      // SmartDashboard.putData(
+      //     "translation dynamic backward", translationCharacterization.dynamic(Direction.kReverse));
 
       //Auto Holonomic controller configuration sets
       AutoBuilder.configureHolonomic(
@@ -259,9 +302,9 @@ public class Drivetrain extends SubsystemBase {
 
   public void updateEstimates(PoseEstimate... poses) {
     for (int i = 0; i < poses.length; i++) {
-      Logger.recordOutput("Raw Vision", poses[i].estimatedPose().estimatedPose.toPose2d());
-      Logger.recordOutput("Vision Timestamp", poses[i].estimatedPose().timestampSeconds);
-      Logger.recordOutput("Vision Std Dev", poses[i].standardDev().get(0, 0));
+      //Logger.recordOutput("Raw Vision", poses[i].estimatedPose().estimatedPose.toPose2d());
+      //Logger.recordOutput("Vision Timestamp", poses[i].estimatedPose().timestampSeconds);
+      //Logger.recordOutput("Vision Std Dev", poses[i].standardDev().get(0, 0));
       odometry.addVisionMeasurement(
           poses[i].estimatedPose().estimatedPose.toPose2d(),
           poses[i].estimatedPose().timestampSeconds,

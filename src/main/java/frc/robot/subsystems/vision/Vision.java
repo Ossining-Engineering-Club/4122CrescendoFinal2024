@@ -15,6 +15,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -27,10 +28,12 @@ public class Vision extends SubsystemBase {
 
     private final PhotonCamera[] cameras;
     private final PhotonPoseEstimator[] estimators;
+    private final CameraConfig[] configs;
 
     public Vision(CameraConfig... configs) {
         cameras = new PhotonCamera[configs.length];
         estimators = new PhotonPoseEstimator[configs.length];
+        this.configs = configs;
 
         for (int i = 0; i < configs.length; i++) {
             PhotonCamera camera = new PhotonCamera(configs[i].name());
@@ -60,6 +63,7 @@ public class Vision extends SubsystemBase {
                     .ifPresent((tagPose) -> detectedTagPoses.add(tagPose)); // if there's a pose, add it to the list
             }
 
+            boolean addedPose = false;
             if (optionalEstimate.isPresent()) {
                 var estimate = optionalEstimate.get();
 
@@ -71,8 +75,18 @@ public class Vision extends SubsystemBase {
                 if (Math.abs(estimate.estimatedPose.getRotation().getX()) > VisionConstants.MAX_ANGLE) continue;
                 if (Math.abs(estimate.estimatedPose.getRotation().getY()) > VisionConstants.MAX_ANGLE) continue;
 
+                Matrix<N3, N1> stddevs = getEstimationStdDevs(estimate.estimatedPose.toPose2d(), result);
+                
+                addedPose = true;
+                Logger.recordOutput("/" + configs[i].name + "/Raw Vision", new Pose2d[]{estimate.estimatedPose.toPose2d()});
+                Logger.recordOutput("/" + configs[i].name + "/Vision Timestamp", estimate.timestampSeconds);
+                Logger.recordOutput("/" + configs[i].name + "/Vision Std Dev", new double[]{stddevs.get(0, 0), stddevs.get(1, 0), stddevs.get(2, 0)});
+
                 estimates.add(
-                    new PoseEstimate(estimate, getEstimationStdDevs(estimate.estimatedPose.toPose2d(), result)));
+                    new PoseEstimate(estimate, stddevs));
+            }
+            if (!addedPose) {
+                Logger.recordOutput("/" + configs[i].name + "/Raw Vision", new Pose2d[]{});
             }
         }
         // logging detected tags
