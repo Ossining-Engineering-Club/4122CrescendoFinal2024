@@ -19,6 +19,8 @@ import org.w3c.dom.NamedNodeMap;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -41,6 +43,7 @@ import frc.robot.subsystems.OECTrigger;
 import frc.robot.constants.State;
 import frc.robot.constants.Direction;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDController;
 import frc.robot.subsystems.Leds;
 import frc.robot.subsystems.ShooterFeeder;
 import frc.robot.subsystems.ShooterFlywheels;
@@ -75,9 +78,15 @@ public class RobotContainer {
   // private DigitalInput m_autoSwitch2 = new DigitalInput(constants.kAutoSwitch2Pin);
   // private DigitalInput m_autoSwitch3 = new DigitalInput(constants.kAutoSwitch3Pin);
 
+
+  // LEDS
   private Leds m_led = new Leds(constants.kPWMLedPin);
 
-  private Intake m_intake = new Intake(constants.kIntakeMotorID, constants.kIntakeBreakbeamPin);
+  private final LEDController m_ledController = new LEDController(0, 150);
+
+
+
+  private Intake m_intake = new Intake(constants.kIntakeMotorID, constants.kIntakeBreakbeamPin, m_ledController);
   private ShooterFeeder m_shooterFeeder = new ShooterFeeder(constants.kShooterFeederID, constants.kShooterBreakbeamPin);
   private ShooterFlywheels m_shooterFlywheels = new ShooterFlywheels(constants.kShooterFlywheel1ID, constants.kShooterFlywheel2ID, m_led);
   private ShooterPivot m_shooterPivot = new ShooterPivot(constants.kShooterPivotID,
@@ -106,6 +115,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     configureAutos();
+
+    // addressable led to red
+    m_ledController.setDefaultCommand(new RunCommand(() -> m_ledController.addressableRed(), m_ledController));
 
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -306,8 +318,6 @@ public class RobotContainer {
       m_shooterFeeder.setReverse(false);
       m_ampPivot.stopMotor();
 
-      // Start robot with red LEDS
-      m_led.setRed(); 
     }
 
     public void periodic() {

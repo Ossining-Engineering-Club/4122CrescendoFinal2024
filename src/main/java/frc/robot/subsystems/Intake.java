@@ -15,16 +15,29 @@ public class Intake extends SubsystemBase {
     private final Breakbeam m_breakbeam;
     private Direction m_direction = Direction.STOPPED;
     private boolean m_isReversed = false;
-    public Intake(int intakeMotorID, int breakbeamReceiverPin) {
+
+    private final LEDController m_LedController;
+
+    public Intake(int intakeMotorID, int breakbeamReceiverPin, LEDController m_LedController) {
         // m_intakeMotorTop = new CANSparkMax(intakeMotorTopID, MotorType.kBrushless);
         // m_intakeMotorBottom = new CANSparkMax(intakeMotorBottomID, MotorType.kBrushless);
         m_intakeMotor = new CANSparkMax(intakeMotorID, MotorType.kBrushless);
         m_breakbeam = new Breakbeam(breakbeamReceiverPin);
+
+        this.m_LedController = m_LedController;
     }
     @Override
     public void periodic() {
         // SmartDashboard.putNumber("intake beambreak voltage", m_breakbeam.getVoltage());
         SmartDashboard.putBoolean("intake BB", m_breakbeam.isTripped());
+
+        if (m_breakbeam.isTripped()) {
+            m_LedController.addressableGreen();
+            m_LedController.setLEDState(true);
+        }
+        else {
+            m_LedController.addressableRed();
+        }
     }
     public void setVelocity(double power) {
         // m_intakeMotorTop.set(power);
