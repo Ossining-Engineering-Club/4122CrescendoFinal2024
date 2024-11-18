@@ -7,6 +7,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.constants;
 import frc.robot.subsystems.Breakbeam;
 import frc.robot.constants.Direction;
+import frc.robot.constants.NoteState;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Intake extends SubsystemBase {
     // private final CANSparkMax m_intakeMotorTop;
@@ -17,6 +19,10 @@ public class Intake extends SubsystemBase {
     private boolean m_isReversed = false;
 
     private final LEDController m_LedController;
+    private NoteState m_noteState = NoteState.EMPTY;
+    private boolean m_lastIntakeBreakbeam = false;
+    private boolean m_lastShooterBreeakBeam = false;
+    private double transferStartTime = -1;
 
     public Intake(int intakeMotorID, int breakbeamReceiverPin, LEDController m_LedController) {
         // m_intakeMotorTop = new CANSparkMax(intakeMotorTopID, MotorType.kBrushless);
@@ -31,13 +37,9 @@ public class Intake extends SubsystemBase {
         // SmartDashboard.putNumber("intake beambreak voltage", m_breakbeam.getVoltage());
         SmartDashboard.putBoolean("intake BB", m_breakbeam.isTripped());
 
-        if (m_breakbeam.isTripped()) {
-            m_LedController.addressableGreen();
-            m_LedController.setLEDState(true);
-        }
-        else {
-            m_LedController.addressableRed();
-        }
+        updateNoteState();
+        SmartDashboard.putString("Note State", m_noteState.toString());
+        SmartDashboard.putNumber("Timeout timer", transferStartTime);
     }
     public void setVelocity(double power) {
         // m_intakeMotorTop.set(power);
@@ -74,4 +76,42 @@ public class Intake extends SubsystemBase {
         return m_direction;
     }
 
+    public void setShooterBBState(boolean state) {
+        m_lastShooterBreeakBeam = state;
+    }
+
+    public void updateNoteState() {
+        switch (m_noteState) {
+            case EMPTY:
+                if (BBisTripped()) {
+                    m_noteState = NoteState.INTAKING;
+                }
+                break;
+
+            case INTAKING:
+                if (!BBisTripped()) {
+                    transferStartTime = Timer.getFPGATimestamp(); // Start intermediate timer
+                    m_noteState = NoteState.INTERMEDIATE;
+                }
+                break;
+
+            case INTERMEDIATE:
+                if (m_lastShooterBreeakBeam) {
+                    m_noteState = NoteState.READY_TO_SHOOT; // Note reached the shooter
+                } else if (Timer.getFPGATimestamp() - transferStartTime > 5.0) { 
+                    m_noteState = NoteState.EMPTY; // Intermediate failed or timed out
+                                                    // (bc lets say after 5 seconds the note hasn't made it to the shooter but it should've already )
+                }
+                break;
+
+            case READY_TO_SHOOT:
+                if (!m_lastShooterBreeakBeam) {
+                    m_noteState = NoteState.EMPTY; // Note has left shooter
+                }
+                break;
+        }
+        m_LedController.setState(m_noteState);
+    }
+
+    
 }

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.NoteState;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLED;
 
@@ -12,6 +13,8 @@ public class LEDController extends SubsystemBase {
     private final AddressableLEDBuffer m_addressableBuffer;
 
     private boolean state;
+
+    private NoteState m_noteState = NoteState.EMPTY;
 
     ////////////
 
@@ -24,7 +27,6 @@ public class LEDController extends SubsystemBase {
         m_addressable.setLength(m_addressableBuffer.getLength());
         m_addressable.setData(m_addressableBuffer);
         m_addressable.start();
-
 
         addressableRed();
     }
@@ -55,22 +57,26 @@ public class LEDController extends SubsystemBase {
         }
     }
 
-    public void setLEDState(boolean state) {
-        this.state = state;
+    public void setState(NoteState newState) {
+        m_noteState = newState;
     }
 
-    public boolean getLEDState() {
-        return state;
+    public void updateLEDs() {
+        switch (m_noteState) {
+            case EMPTY:
+                addressableRed();
+                break;
+            case INTAKING:
+            case INTERMEDIATE:
+            case READY_TO_SHOOT:
+                addressableGreen();
+                break;
+        }
     }
-
-    public void update() {
-        m_addressable.setData(m_addressableBuffer);
-    }
-
 
     @Override
     public void periodic() {
-        update();
+        updateLEDs();
     }
     
 }

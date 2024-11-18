@@ -224,6 +224,14 @@ public final class constants {
     // Led
     public static final int kPWMLedPin = 9;
 
+    // Led Enum
+    public enum NoteState {
+        EMPTY,
+        INTAKING,
+        INTERMEDIATE,
+        READY_TO_SHOOT
+    }
+
     // Enums
     public static enum State {
         CLEAR,

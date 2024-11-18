@@ -81,7 +81,6 @@ public class RobotContainer {
 
   // LEDS
   private Leds m_led = new Leds(constants.kPWMLedPin);
-
   private final LEDController m_ledController = new LEDController(0, 150);
 
 
@@ -321,6 +320,8 @@ public class RobotContainer {
     }
 
     public void periodic() {
+
+      m_intake.setShooterBBState(m_shooterFeeder.BBisTripped());
       // int val = (m_autoSwitch0.get() ? 1 : 0)
       //       + 2*(m_autoSwitch1.get() ? 1 : 0)
       //       + 4*(m_autoSwitch2.get() ? 1 : 0)

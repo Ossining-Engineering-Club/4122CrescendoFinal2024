@@ -13,8 +13,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.AddressableLED;
-import frc.robot.subsystems.LEDController;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,23 +32,16 @@ public class ShooterFeeder extends SubsystemBase {
 
   public ShooterFeeder(
     int feederPort,
-    int breakbeamPin /* , LEDController m_LedController*/){
+    int breakbeamPin){
         m_Feeder = new CANSparkMax(feederPort,MotorType.kBrushless);
         m_breakbeam = new Breakbeam(breakbeamPin);
         is_backward=false;
-
-        // this.m_LedController = m_LedController;
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("shooter BB", BBisTripped());
         SmartDashboard.putBoolean("feeder isReversed", is_backward);
-
-        /*if (!BBisTripped() && !m_LedController.getLEDState()) {
-            m_LedController.addressableRed();
-        }
-        */
     }
 
     public void enableFeeder() {
@@ -81,4 +72,5 @@ public class ShooterFeeder extends SubsystemBase {
         if (is_backward) return Direction.REVERSE;
         return Direction.FORWARD;
     }
+
 }
